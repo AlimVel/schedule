@@ -92,6 +92,6 @@
 
 <div align="center">
 
-<sub>Разработано с ♥ командой <b>GoShiet</b></sub>
+<sub>Разработано с ❤️ командой <b>GoShiet</b></sub>
 
 </div>
