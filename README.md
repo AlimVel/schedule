@@ -28,10 +28,10 @@
 
 <table>
   <tr>
-    <td align="center" width="25%"><b>👑 Superusers</b></td>
-    <td align="center" width="25%"><b>🛡️ Администраторы</b></td>
-    <td align="center" width="25%"><b>🎓 Преподаватели</b></td>
-    <td align="center" width="25%"><b>👀 Студенты</b></td>
+    <td align="center" width="25%"><b>🟡 Superusers</b></td>
+    <td align="center" width="25%"><b>🔵 Администраторы</b></td>
+    <td align="center" width="25%"><b>🟣 Преподаватели</b></td>
+    <td align="center" width="25%"><b>🟢 Студенты</b></td>
   </tr>
   <tr>
     <td align="center">Создание структуры университета и профилей преподавателей</td>
