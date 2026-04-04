@@ -3,11 +3,12 @@
 <img src="logo.svg" width="680"/>
 
 <br/>
+<br/>
 
-![Python](https://img.shields.io/badge/Python-7c3aed?style=flat-square&logo=python&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-6d28d9?style=flat-square&logo=postgresql&logoColor=white)
-![Telegram](https://img.shields.io/badge/Telegram_Bot-8b5cf6?style=flat-square&logo=telegram&logoColor=white)
-![Status](https://img.shields.io/badge/status-active-a78bfa?style=flat-square)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Telegram](https://img.shields.io/badge/Telegram_Bot-26A5E4?style=flat-square&logo=telegram&logoColor=white)
+![Status](https://img.shields.io/badge/status-active-28a745?style=flat-square)
 
 <br/>
 
