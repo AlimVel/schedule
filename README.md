@@ -1,19 +1,6 @@
 <div align="center">
 
-<svg width="680" height="200" viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
-  <rect x="40" y="20" width="600" height="160" rx="16" fill="#f5f3ff"/>
-  <rect x="40" y="20" width="600" height="4" rx="2" fill="#7c3aed"/>
-  <rect x="40" y="20" width="4" height="160" rx="2" fill="#7c3aed"/>
-  <rect x="636" y="20" width="4" height="160" rx="2" fill="#c4b5fd"/>
-  <rect x="44" y="176" width="596" height="4" rx="2" fill="#c4b5fd"/>
-  <circle cx="68" cy="44" r="6" fill="#ff5f57"/>
-  <circle cx="88" cy="44" r="6" fill="#ffbd2e"/>
-  <circle cx="108" cy="44" r="6" fill="#28ca41"/>
-  <text x="340" y="128" font-family="'Courier New', monospace" font-size="80" font-weight="700" text-anchor="middle" letter-spacing="-2">
-    <tspan fill="#1a1625">Go</tspan><tspan fill="#7c3aed">Shiet</tspan>
-  </text>
-  <text x="340" y="163" font-family="'Courier New', monospace" font-size="11" fill="#8b5cf6" text-anchor="middle" letter-spacing="5">СИСТЕМА АВТОМАТИЧЕСКОГО РАСПИСАНИЯ</text>
-</svg>
+<img src="logo.svg" width="680"/>
 
 <br/>
 
