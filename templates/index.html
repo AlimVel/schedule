@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoShiet — Расписание, которое работает на людей</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Обновленная, более насыщенная и сочная палитра */
+  :root {
+    --purple: #5A3FFF; /* Глубокий, насыщенный фиолетовый */
+    --purple-light: #E8E5FF;
+    --purple-bg: #8870FF;
+    --green: #00E676; /* Сочный изумрудно-зеленый */
+    --green-bright: #14FF00;
+    --blue-light: #D0EBFF;
+    --blue: #0084FF; /* Насыщенный синий акцент */
+    --yellow: #FFD600; /* Глубокий желтый */
+    --pink: #FF2D55; /* Яркий розовый для акцентов */
+    --black: #0D0D12;
+    --white: #FFFFFF;
+    --gray: #F0F0F5;
+    --text-gray: #4A4A5A;
+    --orange: #FF6B00;
+    
+    --glass-white: rgba(255,255,255,0.65);
+    --glass-strong: rgba(255,255,255,0.85);
+    --glass-border: rgba(255,255,255,0.7);
+    --surface-border: rgba(13,13,18,0.08);
+    --shadow-premium: 0 20px 60px rgba(90, 63, 255, 0.15), 0 8px 24px rgba(13,13,18,0.08);
+    --shadow-premium-hover: 0 28px 80px rgba(90, 63, 255, 0.22), 0 14px 36px rgba(13,13,18,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; color: var(--black); background: #fff; overflow-x: hidden; }
+
+  /* ===== ФОНОВЫЕ ГРАДИЕНТЫ (Более насыщенные) ===== */
+  body {
+    background:
+      radial-gradient(circle at 0% 0%, rgba(90, 63, 255, 0.12), transparent 35%),
+      radial-gradient(circle at 100% 15%, rgba(0, 230, 118, 0.12), transparent 30%),
+      radial-gradient(circle at 50% 100%, rgba(255, 45, 85, 0.08), transparent 40%),
+      linear-gradient(180deg, #FAFAFF 0%, #F0F2FF 48%, #FAFAFF 100%);
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 14px; left: 24px; right: 24px; z-index: 100;
+    background: rgba(255,255,255,0.75);
+    display: flex; align-items: center;
+    justify-content: space-between; padding: 0 10px 0 26px; height: 68px;
+    border: 1px solid rgba(255,255,255,0.9);
+    box-shadow: 0 8px 32px rgba(90,63,255,0.08), 0 2px 8px rgba(13,13,18,0.06);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border-radius: 22px;
+    transition: all 0.3s ease;
+  }
+  nav::before { display: none; }
+  nav.scrolled {
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 16px 48px rgba(90,63,255,0.1), 0 4px 16px rgba(13,13,18,0.08);
+  }
+
+  .nav-logo { font-size: 1.55rem; font-weight: 900; letter-spacing: -0.04em; color: var(--black); text-decoration: none; }
+  .nav-logo span { color: var(--purple); background: none; -webkit-background-clip: unset; -webkit-text-fill-color: var(--purple); }
+
+  .nav-links { display: flex; gap: 2px; list-style: none; align-items: center; }
+  .nav-links a {
+    text-decoration: none; color: var(--text-gray); font-size: 0.9rem; font-weight: 600;
+    padding: 9px 15px; border-radius: 12px; transition: all 0.22s ease;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--black); background: rgba(90,63,255,0.07); }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 2.5px; border-radius: 999px;
+    background: linear-gradient(90deg, var(--purple), var(--pink));
+    transition: width 0.25s ease;
+  }
+  .nav-links a:hover::after { width: 16px; }
+
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+  .btn-login {
+      background: var(--black); 
+      border: 2px solid var(--black); 
+      font-size: 0.88rem; 
+      font-weight: 700;
+      padding: 9px 16px; 
+      border-radius: 12px; 
+      cursor: pointer;
+      color: #fff; 
+      transition: all 0.3s ease;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden; /* Чтобы градиент не вылезал за края */
+      z-index: 1;
+    }
+
+    /* Скрытый градиент, который ждет внизу */
+    .btn-login::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      z-index: -1;
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      transform: translateY(100%); /* Спрятан снизу */
+      border-radius: 10px;
+    }
+
+    .btn-login:hover { 
+      color: #fff; 
+      border-color: transparent;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(90, 63, 255, 0.3);
+    }
+
+    /* При наведении градиент поднимается наверх */
+    .btn-login:hover::before {
+      transform: translateY(0);
+    }
+  .btn-sales {
+    background: rgba(255,255,255,0.8); border: 1px solid rgba(13,13,18,0.1);
+    border-radius: 14px; padding: 9px 18px; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; color: var(--black); transition: all 0.25s ease;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-sales:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(13,13,18,0.1); }
+  .btn-primary, .btn-primary-lg { background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); color: #fff; border: none; border-radius: 14px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 8px 24px rgba(90,63,255,0.35); font-family: 'DM Sans', sans-serif; }
+  .btn-primary { padding: 10px 20px; font-size: 0.88rem; font-weight: 800; }
+  .btn-primary-lg { padding: 16px 32px; font-size: 1rem; font-weight: 800; }
+  .btn-primary::before, .btn-primary-lg::before { content: ""; position: absolute; top: 0; left: -120%; width: 90%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-20deg); transition: left 0.7s ease; }
+  .btn-primary:hover, .btn-primary-lg:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 16px 40px rgba(90,63,255,0.5); }
+  .btn-primary:hover::before, .btn-primary-lg:hover::before { left: 140%; }
+
+  .icon, .icon-sm, .icon-xs, .icon-md { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; flex-shrink: 0; }
+  .icon svg, .icon-sm svg, .icon-xs svg, .icon-md svg { width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .icon { width: 1.15rem; height: 1.15rem; }
+  .icon-sm { width: 1rem; height: 1rem; }
+  .icon-xs { width: 0.9rem; height: 0.9rem; }
+  .icon-md { width: 1.35rem; height: 1.35rem; }
+  .icon-badge { width: 1.1rem; height: 1.1rem; color: var(--purple); }
+  .icon-muted { color: #888; }
+  .icon-success { color: var(--green); }
+  .icon-accent { color: var(--pink); }
+
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; border-radius: 12px; border: 1px solid rgba(13,13,18,0.1); background: rgba(255,255,255,0.6); transition: all 0.25s ease; z-index: 200; }
+  .hamburger:hover { background: rgba(255,255,255,0.9); }
+  .hamburger span { width: 22px; height: 2px; background: var(--black); border-radius: 2px; display: block; transition: all 0.3s ease; transform-origin: center; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile menu overlay */
+  .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 150; }
+  .mobile-menu.open { display: block; }
+  .mobile-menu-backdrop { position: absolute; inset: 0; background: rgba(13,13,18,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); animation: fadeInBackdrop 0.3s ease; }
+  .mobile-menu-panel { position: absolute; top: 14px; left: 16px; right: 16px; background: rgba(255,255,255,0.97); border: 1px solid rgba(255,255,255,0.9); border-radius: 28px; padding: 100px 28px 36px; box-shadow: 0 30px 80px rgba(13,13,18,0.2); animation: slideDownPanel 0.35s cubic-bezier(0.2,0.8,0.2,1); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+  .mobile-menu-nav { list-style: none; margin-bottom: 24px; }
+  .mobile-menu-nav li { border-bottom: 1px solid rgba(13,13,18,0.06); }
+  .mobile-menu-nav a { display: block; padding: 16px 4px; font-size: 1.15rem; font-weight: 700; color: var(--black); text-decoration: none; transition: color 0.2s ease; }
+  .mobile-menu-nav a:hover { color: var(--purple); }
+  .mobile-menu-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .mobile-menu-actions .btn-login { text-align: center; border: 1.5px solid rgba(13,13,18,0.12); border-radius: 16px; padding: 14px; font-size: 1rem; }
+  .mobile-menu-actions .btn-primary-lg { text-align: center; border-radius: 16px; padding: 16px; font-size: 1rem; width: 100%; }
+
+  @keyframes fadeInBackdrop { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideDownPanel { from { opacity: 0; transform: translateY(-20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  /* ===== HERO ===== */
+  .hero { min-height: 100vh; padding-top: 80px; position: relative; overflow: hidden; display: flex; align-items: center; }
+  .hero-grid-overlay { position: absolute; inset: 0; background-image: radial-gradient(rgba(90, 63, 255, 0.15) 1.5px, transparent 1.5px); background-size: 32px 32px; opacity: 0.7; z-index: 0; }
+  .hero-glow-orb { position: absolute; border-radius: 50%; filter: blur(100px); z-index: 0; opacity: 0.6; animation: pulseFloat 10s ease-in-out infinite alternate; }
+  .orb-1 { width: 650px; height: 650px; background: var(--purple); top: -200px; right: -150px; }
+  .orb-2 { width: 500px; height: 500px; background: var(--green); bottom: -150px; left: 0%; animation-delay: -3s; }
+  .orb-3 { width: 400px; height: 400px; background: var(--pink); top: 30%; left: 30%; opacity: 0.3; animation-delay: -5s; }
+
+  .hero-inner { max-width: 1200px; margin: 0 auto; padding: 80px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; width: 100%; }
+
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+  .badge-glass { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: var(--black); padding: 8px 18px; border-radius: 100px; font-size: 0.85rem; font-weight: 800; box-shadow: 0 8px 20px rgba(90, 63, 255, 0.08); display: flex; align-items: center; gap: 8px; }
+  
+  .hero-left h1 { font-size: clamp(2.5rem, 4.5vw, 4rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.03em; color: var(--black); margin-bottom: 24px; text-shadow: 0 10px 30px rgba(255,255,255,0.5); }
+  .text-gradient { background: linear-gradient(135deg, var(--purple), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  .hero-left p { font-size: 1.15rem; color: var(--text-gray); margin-bottom: 40px; line-height: 1.7; max-width: 540px; font-weight: 500; }
+  .hero-cta { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  
+  .btn-glow { box-shadow: 0 15px 35px rgba(90, 63, 255, 0.4); background: linear-gradient(135deg, var(--black), #1A1A24); }
+  .btn-glow:hover { box-shadow: 0 20px 45px rgba(90, 63, 255, 0.55); }
+
+  .no-cc { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 700; color: var(--text-gray); }
+  
+  .hero-stars { display: flex; align-items: center; gap: 16px; margin-top: 40px; }
+  .avatars-group { display: flex; }
+  .avatars-group .av { width: 40px; height: 40px; border-radius: 50%; background: var(--purple); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; border: 3px solid #fff; margin-left: -14px; box-shadow: 0 6px 15px rgba(0,0,0,0.12); transition: transform 0.3s; }
+  .avatars-group .av:hover { transform: translateY(-4px); z-index: 10; }
+  .stars-text { display: flex; flex-direction: column; font-size: 0.85rem; font-weight: 700; color: var(--text-gray); }
+  .stars { color: var(--orange); font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 2px;}
+
+  /* ===== HERO RIGHT (HEATMAP) ===== */
+  .hero-right { position: relative; min-height: 560px; display: flex; align-items: center; justify-content: center; isolation: isolate; }
+
+  .heatmap-card { 
+    width: 100%; max-width: 560px;
+    background: rgba(255,255,255,0.82);
+    border: 1px solid rgba(255,255,255,0.95);
+    border-radius: 32px;
+    padding: 28px 28px 22px;
+    box-shadow: 0 30px 80px rgba(90,63,255,0.13), 0 8px 30px rgba(13,13,18,0.09);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    position: relative;
+    overflow: hidden;
+  }
+  .heatmap-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(90,63,255,0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .hm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .hm-title { font-size: 0.95rem; font-weight: 900; color: var(--black); letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+  .hm-week-badge { font-size: 0.75rem; font-weight: 800; color: var(--purple); background: rgba(90,63,255,0.1); border: 1px solid rgba(90,63,255,0.18); padding: 5px 12px; border-radius: 999px; }
+  .hm-legend { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 700; color: var(--text-gray); }
+  .hm-legend-strip { display: flex; gap: 3px; }
+  .hm-legend-dot { width: 14px; height: 14px; border-radius: 4px; }
+
+  .hm-days { display: grid; grid-template-columns: 52px repeat(5, 1fr); gap: 5px; margin-bottom: 6px; }
+  .hm-day-label { font-size: 0.72rem; font-weight: 800; color: var(--text-gray); text-align: center; padding: 4px 0; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .hm-grid { display: flex; flex-direction: column; gap: 5px; }
+  .hm-row { display: grid; grid-template-columns: 52px repeat(5, 1fr); gap: 5px; align-items: center; }
+  .hm-time { font-size: 0.7rem; font-weight: 800; color: #aaa; text-align: right; padding-right: 10px; white-space: nowrap; }
+  
+  .hm-cell {
+    border-radius: 10px;
+    padding: 7px 8px;
+    min-height: 46px;
+    display: flex; flex-direction: column; justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .hm-cell:hover { transform: scale(1.06); z-index: 5; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  .hm-cell.empty { background: rgba(13,13,18,0.04); border: 1px dashed rgba(13,13,18,0.08); min-height: 46px; }
+  .hm-cell-subj { font-size: 0.7rem; font-weight: 800; line-height: 1.25; color: inherit; }
+  .hm-cell-room { font-size: 0.62rem; font-weight: 700; opacity: 0.7; margin-top: 2px; }
+
+  .load-0 { background: rgba(13,13,18,0.04); border: 1px dashed rgba(13,13,18,0.08); }
+  .load-1 { background: rgba(90,63,255,0.10); color: #4a3ab0; border: 1px solid rgba(90,63,255,0.15); }
+  .load-2 { background: rgba(90,63,255,0.22); color: #3d2e99; border: 1px solid rgba(90,63,255,0.28); }
+  .load-3 { background: rgba(130,63,255,0.38); color: #fff; border: 1px solid rgba(130,63,255,0.45); }
+  .load-4 { background: rgba(200,63,255,0.52); color: #fff; border: 1px solid rgba(200,63,255,0.55); }
+  .load-5 { background: linear-gradient(135deg, #7c3aed, #c026d3); color: #fff; border: none; box-shadow: 0 4px 16px rgba(180,50,255,0.35); }
+  .load-warn { background: linear-gradient(135deg, #ff2d55, #ff6b35); color: #fff; border: none; box-shadow: 0 4px 16px rgba(255,45,85,0.35); }
+
+  .hm-cell .conflict-dot { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: #ff2d55; box-shadow: 0 0 6px rgba(255,45,85,0.7); animation: pulseDot 1.8s ease-out infinite; }
+
+  .hm-summary { display: flex; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(13,13,18,0.07); }
+  .hm-sum-chip { flex: 1; background: rgba(13,13,18,0.04); border-radius: 12px; padding: 10px 12px; text-align: center; }
+  .hm-sum-chip strong { display: block; font-size: 1rem; font-weight: 900; color: var(--black); letter-spacing: -0.03em; }
+  .hm-sum-chip span { font-size: 0.68rem; font-weight: 700; color: var(--text-gray); }
+  .hm-sum-chip.ok strong { color: #00a354; }
+  .hm-sum-chip.warn strong { color: #ff2d55; }
+  .hm-sum-chip.purple strong { color: var(--purple); }
+  
+  .hero-floating-ui { position: absolute; inset: 0; pointer-events: none; }
+  .hero-chip, .hero-kpi, .hero-mini-card { position: absolute; background: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(13,13,18,0.12), inset 0 1px 0 rgba(255,255,255,0.8); color: var(--black); }
+  .hero-chip { top: 8%; left: 2%; padding: 14px 20px; border-radius: 999px; display: inline-flex; align-items: center; gap: 12px; font-size: 0.85rem; font-weight: 800; transform: translateZ(60px); animation: glassFloatA 7s ease-in-out infinite; }
+  .hero-chip .chip-dot { width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(135deg, var(--green-bright), var(--green)); box-shadow: 0 0 15px rgba(0, 230, 118, 0.6); animation: pulseDot 2s ease-out infinite; }
+  
+  .hero-kpi { top: 12%; right: -2%; width: 165px; padding: 20px; border-radius: 28px; transform: translateZ(75px); animation: glassFloatB 9s ease-in-out infinite; }
+  .hero-kpi strong { display: block; font-size: 1.6rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 6px; color: var(--purple); }
+  .hero-kpi span { display: block; font-size: 0.8rem; line-height: 1.4; color: var(--text-gray); font-weight: 700; }
+  
+  .hero-mini-card { bottom: 12%; left: -2%; width: 190px; padding: 18px; border-radius: 26px; transform: translateZ(55px); animation: glassFloatC 8.5s ease-in-out infinite; }
+  .hero-mini-card.right { left: auto; right: 2%; bottom: 18%; width: 180px; animation: glassFloatD 10s ease-in-out infinite; }
+  .hero-mini-title { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: var(--black); }
+  .hero-mini-card p { font-size: 0.75rem; line-height: 1.5; color: var(--text-gray); font-weight: 600; }
+  
+  .hero-bottom-plate { position: absolute; left: 50%; bottom: 4%; width: min(88%, 440px); transform: translateX(-50%) translateZ(40px); padding: 20px 24px; border-radius: 30px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 25px 55px rgba(13,13,18,0.15); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .hero-bottom-plate .plate-cell strong { display: block; font-size: 1.1rem; font-weight: 900; letter-spacing: -0.03em; color: var(--black); }
+  .hero-bottom-plate .plate-cell span { display: block; margin-top: 4px; font-size: 0.75rem; font-weight: 700; color: var(--text-gray); line-height: 1.4; }
+
+  /* ===== FEATURES ===== */
+  .features { padding: 100px 40px; max-width: 1200px; margin: 0 auto; position: relative; }
+  .section-tag { display: inline-block; background: rgba(255,255,255,0.8); border: 2px solid var(--purple); border-radius: 50px; padding: 6px 18px; font-size: 0.85rem; font-weight: 800; margin-bottom: 24px; color: var(--purple); box-shadow: 0 10px 24px rgba(90, 63, 255, 0.15); }
+  .section-title { font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 900; margin-bottom: 56px; letter-spacing: -0.04em; color: var(--black); }
+  
+  .tabs { width: fit-content; max-width: 100%; margin-left: auto; margin-right: auto; padding: 10px; border: 1px solid var(--glass-border); border-radius: 999px; background: var(--glass-white); backdrop-filter: blur(20px); box-shadow: var(--shadow-premium); display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; margin-bottom: 48px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 14px 24px; font-size: 0.9rem; font-weight: 800; cursor: pointer; border: none; background: transparent; color: var(--text-gray); border-radius: 999px; white-space: nowrap; transition: all 0.3s ease; }
+  .tab.active { background: linear-gradient(135deg, var(--purple), var(--pink)); color: #fff; box-shadow: 0 8px 20px rgba(255, 45, 85, 0.25); }
+  .tab:hover:not(.active) { color: var(--black); background: rgba(255,255,255,0.8); }
+
+  .feature-panel { background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240, 237, 255, 0.95)); border: 1px solid var(--glass-border); border-radius: 36px; padding: 56px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 50px; align-items: center; box-shadow: var(--shadow-premium-hover); backdrop-filter: blur(24px); position: relative; overflow: hidden; }
+  .feature-panel-left h3 { font-size: 1.8rem; font-weight: 900; margin-bottom: 20px; line-height: 1.25; color: var(--black); }
+  .feature-panel-left p { color: var(--text-gray); line-height: 1.8; margin-bottom: 28px; font-size: 1rem; font-weight: 500; }
+  .feature-detail { background: rgba(255,255,255,0.8); border: 1px solid rgba(90, 63, 255, 0.15); border-left: 4px solid var(--purple); padding: 16px 20px; border-radius: 16px; font-size: 0.9rem; font-weight: 600; color: var(--black); margin-bottom: 16px; line-height: 1.6; box-shadow: 0 12px 30px rgba(90, 63, 255, 0.08); transition: transform 0.3s; }
+  .feature-detail:hover { transform: translateX(8px); background: rgba(232, 229, 255, 0.9); }
+  
+  .testimonial-inline { display: flex; gap: 16px; align-items: flex-start; margin-top: 32px; padding: 20px; border-radius: 24px; background: rgba(255,255,255,0.7); border: 1px solid var(--glass-border); backdrop-filter: blur(16px); }
+  .testimonial-inline .avt { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--purple)); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 1rem; box-shadow: 0 8px 20px rgba(255, 45, 85, 0.3); }
+  .testimonial-inline blockquote { font-size: 0.9rem; line-height: 1.7; color: var(--black); font-weight: 600; border: none; padding: 0; }
+  .testimonial-inline cite { display: block; font-style: normal; font-weight: 800; font-size: 0.85rem; margin-top: 10px; color: var(--purple); }
+
+  /* Schedule mock (остался похожим, но с улучшенными цветами) */
+  .schedule-mock { background: rgba(255,255,255,0.9); border: 1px solid var(--glass-border); border-radius: 24px; padding: 28px; box-shadow: var(--shadow-premium); backdrop-filter: blur(20px); transition: transform 0.4s; }
+  .schedule-mock:hover { transform: translateY(-8px); }
+  .schedule-mock-header { font-size: 0.9rem; font-weight: 900; margin-bottom: 20px; color: var(--black); display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(13,13,18,0.05); padding-bottom: 16px; }
+  .sched-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.95); border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(13,13,18,0.08); box-shadow: 0 8px 20px rgba(13,13,18,0.04); transition: transform 0.3s; }
+  .sched-row:hover { transform: translateX(6px); }
+  .sched-day { font-size: 0.8rem; font-weight: 900; color: #fff; background: var(--purple); border-radius: 8px; padding: 6px 10px; flex-shrink: 0; }
+  .sched-subject { font-size: 0.9rem; font-weight: 800; flex: 1; }
+  .sched-load { font-size: 0.75rem; color: var(--text-gray); font-weight: 700; }
+  .sched-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .status-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 230, 118, 0.15); color: #00A354; font-size: 0.85rem; font-weight: 800; border-radius: 12px; padding: 12px 18px; margin-top: 16px; border: 1px solid rgba(0, 230, 118, 0.3); box-shadow: 0 10px 25px rgba(0, 230, 118, 0.1); }
+  
+  /* ===== STATS ===== */
+  .stats-strip { margin: 40px 40px 80px; padding: 40px 60px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 40px; background: rgba(255,255,255,0.7); border: 1px solid var(--glass-border); border-radius: 32px; backdrop-filter: blur(24px); box-shadow: var(--shadow-premium); }
+  .stat-item { text-align: center; position: relative; }
+  .stat-num { font-size: 2.5rem; font-weight: 900; display: block; background: linear-gradient(135deg, var(--black), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.04em; margin-bottom: 8px; }
+  .stat-desc { font-size: 0.95rem; font-weight: 700; color: var(--text-gray); }
+
+  /* ===== OLD VS NEW ===== */
+  .old-new { padding: 100px 40px; position: relative; text-align: center; }
+  .old-new h2 { font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 900; margin-bottom: 56px; color: var(--black); letter-spacing: -0.04em; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; max-width: 1000px; margin: 0 auto; border-radius: 36px; overflow: hidden; box-shadow: var(--shadow-premium-hover); border: 1px solid var(--glass-border); }
+  .old-col { background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(240,240,245,0.95)); padding: 48px; text-align: left; position: relative; }
+  .new-col { background: linear-gradient(180deg, rgba(20, 255, 0, 0.85), rgba(0, 230, 118, 0.95)); padding: 48px; text-align: left; position: relative; }
+  .col-header { display: flex; align-items: center; gap: 16px; font-size: 1.3rem; font-weight: 900; margin-bottom: 36px; color: var(--black); }
+  .compare-list { list-style: none; }
+  .compare-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 0.95rem; padding: 12px 0; font-weight: 600; color: var(--black); line-height: 1.6; }
+
+  /* ===== TRUST CARDS ===== */
+  .trust-section { padding: 100px 40px; position: relative; }
+  .trust-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1200px; margin: 0 auto; }
+  .trust-card { position: relative; overflow: hidden; background: rgba(255,255,255,0.75); border: 1px solid var(--glass-border); backdrop-filter: blur(24px); border-radius: 32px; padding: 40px; box-shadow: var(--shadow-premium); transition: transform 0.4s ease; }
+  .trust-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-premium-hover); }
+  .trust-card .tc-icon { width: 64px; height: 64px; display: inline-flex; align-items: center; justify-content: center; border-radius: 20px; background: rgba(90, 63, 255, 0.1); border: 1px solid rgba(90, 63, 255, 0.2); color: var(--purple); margin-bottom: 24px; box-shadow: 0 12px 30px rgba(90, 63, 255, 0.15); }
+  .trust-card h4 { font-size: 1.2rem; font-weight: 900; margin-bottom: 12px; color: var(--black); }
+  .trust-card .tc-role { display: inline-block; font-size: 0.8rem; font-weight: 800; color: var(--purple); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.08em; background: rgba(90, 63, 255, 0.1); padding: 8px 14px; border-radius: 999px; }
+  .trust-card p { font-size: 0.95rem; color: var(--text-gray); line-height: 1.7; font-weight: 500; }
+
+  /* ===== ATTRACT BAND ===== */
+  /* ===== ATTRACT BAND (redesigned) ===== */
+  .attract-band {
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #0D0D12 0%, #13103a 55%, #0a0a1a 100%);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 40px;
+    margin: 0 40px 100px;
+    padding: 72px 72px 72px 80px;
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 72px; align-items: center;
+    box-shadow: 0 40px 100px rgba(13,13,18,0.4), 0 0 0 1px rgba(90,63,255,0.12);
+  }
+  /* Neon glow orbs inside the band */
+  .attract-band::before {
+    content: ''; position: absolute; top: -80px; left: -80px;
+    width: 340px; height: 340px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(90,63,255,0.22), transparent 65%);
+    pointer-events: none;
+  }
+  .attract-band::after {
+    content: ''; position: absolute; bottom: -60px; right: 20%;
+    width: 260px; height: 260px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,230,118,0.12), transparent 65%);
+    pointer-events: none;
+  }
+
+  .attract-band h2 { font-size: clamp(1.8rem, 2.8vw, 2.4rem); font-weight: 900; margin-bottom: 20px; line-height: 1.18; color: #fff; letter-spacing: -0.03em; }
+  .attract-band h2 .ab-accent { background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .attract-band p { font-size: 1rem; color: rgba(255,255,255,0.55); line-height: 1.8; margin-bottom: 36px; font-weight: 500; }
+
+  .tech-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 28px; }
+  .tech-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(13,13,18,0.1);
+    border-radius: 999px; padding: 7px 14px;
+    font-size: 0.8rem; font-weight: 800; color: rgba(255,255,255,0.75);
+    transition: all 0.25s ease;
+  }
+  .tech-badge:hover { background: rgba(90,63,255,0.2); border-color: rgba(90,63,255,0.4); color: #fff; }
+  .tech-badge .tb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px rgba(0,230,118,0.7); }
+
+  /* ── Architecture card ── */
+  .arch-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(13,13,18,0.1);
+    border-radius: 28px;
+    padding: 28px;
+    position: relative;
+  }
+  .arch-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 22px; padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .arch-card-title {
+    font-size: 0.88rem; font-weight: 900; color: rgba(255,255,255,0.9);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em;
+  }
+  .arch-card-title svg { color: var(--purple); }
+  .arch-live-dot {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.72rem; font-weight: 800; color: var(--green);
+  }
+  .arch-live-dot::before {
+    content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 8px rgba(0,230,118,0.8);
+    animation: pulseDot 2s ease-out infinite;
+  }
+
+  /* Service rows */
+  .arch-services { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .arch-svc {
+    display: grid; grid-template-columns: 36px 1fr auto auto;
+    align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 13px 16px;
+    transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    cursor: default;
+  }
+  .arch-svc:hover { background: rgba(90,63,255,0.14); border-color: rgba(90,63,255,0.3); transform: translateX(4px); }
+  .arch-svc-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .arch-svc-icon svg { width: 18px; height: 18px; }
+  .arch-svc-name { font-size: 0.88rem; font-weight: 800; color: rgba(255,255,255,0.9); line-height: 1.2; }
+  .arch-svc-sub { font-size: 0.7rem; font-weight: 600; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  .arch-svc-latency { font-size: 0.72rem; font-weight: 800; color: rgba(255,255,255,0.35); white-space: nowrap; }
+  .arch-badge {
+    font-size: 0.68rem; font-weight: 900; padding: 4px 10px; border-radius: 999px;
+    white-space: nowrap; letter-spacing: 0.02em;
+  }
+  .badge-active { color: #34d399; background: rgba(0,230,118,0.12); border: 1px solid rgba(0,230,118,0.25); }
+  .badge-stable { color: #60a5fa; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.25); }
+
+  /* Mini metrics row */
+  .arch-metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .arch-metric {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px; padding: 12px 14px; text-align: center;
+  }
+  .arch-metric strong { display: block; font-size: 1rem; font-weight: 900; color: #fff; letter-spacing: -0.03em; }
+  .arch-metric span { font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.35); }
+  .arch-metric.green strong { color: #34d399; }
+  .arch-metric.blue strong { color: #60a5fa; }
+  .arch-metric.purple strong { color: var(--purple); }
+
+  /* ===== CTA BAND ===== */
+  .cta-band { background: linear-gradient(135deg, var(--black), #1A1A24); padding: 100px 40px; text-align: center; color: #fff; }
+  .cta-band h2 { font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 900; margin-bottom: 36px; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.2; letter-spacing: -0.03em; }
+
+  /* ===== FOOTER ===== */
+  footer { background: var(--black); color: #fff; padding: 80px 40px 40px; }
+  .footer-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; padding-bottom: 50px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px; }
+  .footer-logo { font-size: 1.8rem; font-weight: 900; margin-bottom: 20px; display: block; letter-spacing: -0.04em; }
+  .footer-logo span { color: var(--purple); }
+  .social-links { display: flex; gap: 12px; margin: 16px 0 24px; }
+  .social-links a { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 0.8rem; font-weight: 700; transition: all 0.3s ease; border: 1px solid rgba(13,13,18,0.1); }
+  .social-links a:hover { background: var(--purple); transform: translateY(-3px); }
+  .footer-col h4 { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 20px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul li a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.25s ease; }
+  .footer-col ul li a:hover { color: var(--green-bright); }
+  .footer-bottom { text-align: center; font-size: 0.85rem; color: rgba(255,255,255,0.4); font-weight: 500; }
+
+  /* ===== АНИМАЦИИ ===== */
+  @keyframes pulseFloat { 0%,100% { transform: scale(1) translateY(0); opacity: 0.6; } 50% { transform: scale(1.1) translateY(-15px); opacity: 0.4; } }
+  @keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.5); } 70% { box-shadow: 0 0 0 12px rgba(0, 230, 118, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); } }
+  @keyframes orbitSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes glassFloatA { 0%,100% { transform: translate3d(0,0,60px) rotate(-3deg); } 50% { transform: translate3d(15px,-15px,60px) rotate(-1deg); } }
+  @keyframes glassFloatB { 0%,100% { transform: translate3d(0,0,75px) rotate(4deg); } 50% { transform: translate3d(-12px,16px,75px) rotate(2deg); } }
+  @keyframes glassFloatC { 0%,100% { transform: translate3d(0,0,55px) rotate(-5deg); } 50% { transform: translate3d(12px,-16px,55px) rotate(-2deg); } }
+  @keyframes glassFloatD { 0%,100% { transform: translate3d(0,0,50px) rotate(5deg); } 50% { transform: translate3d(-10px,-12px,50px) rotate(2deg); } }
+
+  [data-reveal] { opacity: 0; transform: translateY(40px) scale(0.98); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.2,.7,.2,1); will-change: transform, opacity; }
+  [data-reveal].is-visible { opacity: 1; transform: translateY(0) scale(1); }
+  
+  @media (max-width: 768px) {
+    /* Nav mobile */
+    .nav-links, .nav-actions { display: none; }
+    .hamburger { display: flex; }
+    nav { padding: 0 16px 0 20px; height: 62px; left: 12px; right: 12px; top: 10px; }
+
+    /* Hero mobile */
+    .hero { padding-top: 72px; align-items: flex-start; min-height: auto; }
+    .hero-inner { grid-template-columns: 1fr; padding: 32px 20px 56px; gap: 0; }
+    .hero-right { display: none; }
+
+    /* Приглушаем орбы */
+    .hero-glow-orb { opacity: 0.25 !important; }
+    .orb-1 { width: 350px; height: 350px; top: -100px; right: -120px; }
+    .orb-2 { width: 300px; height: 300px; bottom: -80px; left: -80px; }
+    .orb-3 { display: none; }
+    .hero-grid-overlay { opacity: 0.3; }
+
+    /* Полупрозрачная подложка под текст */
+    .hero-left { background: rgba(255,255,255,0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-radius: 28px; padding: 28px 24px; border: 1px solid rgba(255,255,255,0.85); box-shadow: 0 20px 50px rgba(13,13,18,0.08); }
+    .hero-left h1 { font-size: 2.2rem; margin-bottom: 16px; }
+    .hero-left p { font-size: 1rem; margin-bottom: 28px; color: #3A3A4A; }
+    .hero-badges { gap: 8px; margin-bottom: 20px; }
+    .badge-glass { font-size: 0.8rem; padding: 7px 14px; }
+    .hero-cta { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .btn-primary-lg { width: 100%; text-align: center; padding: 16px 24px; }
+    .hero-stars { margin-top: 24px; }
+
+    /* Sections */
+    .feature-panel, .compare-grid, .attract-band { grid-template-columns: 1fr; padding: 32px 24px; }
+    .trust-cards { 
+      display: flex !important; 
+      flex-wrap: nowrap !important; 
+      overflow-x: auto !important; 
+      scroll-snap-type: x mandatory; 
+      padding-bottom: 24px !important; 
+      gap: 16px !important; 
+      margin: 0 -16px !important; /* Убираем отступы по краям для красивого вылета */
+      padding-left: 16px !important; 
+      padding-right: 16px !important;
+      scrollbar-width: none; 
+      -webkit-overflow-scrolling: touch;
+    }
+    .trust-cards::-webkit-scrollbar { display: none; }
+    .trust-card { 
+      min-width: 290px !important; 
+      scroll-snap-align: center; 
+      border-radius: 32px !important; 
+      padding: 32px 24px !important; 
+      transform: none !important; /* Отключаем hover эффект для мобилок */
+    }
+    .stats-strip { margin: 20px 20px 40px; gap: 30px; padding: 32px 28px; }
+  .features { padding: 60px 16px; }
+    .section-title { font-size: 1.8rem; margin-bottom: 32px; }
+    
+    .feature-panel { 
+      padding: 32px 20px; 
+      border-radius: 28px; 
+      gap: 32px;
+    }
+    .feature-panel-left h3 { font-size: 1.4rem; margin-bottom: 16px; }
+    .feature-panel-left p { font-size: 0.95rem; margin-bottom: 24px; }
+    .feature-detail { padding: 14px 16px; font-size: 0.85rem; }
+
+    .schedule-mock { padding: 20px 16px; border-radius: 20px; }
+    .schedule-mock-header { 
+      flex-direction: column; 
+      align-items: flex-start; 
+      gap: 12px; 
+      font-size: 0.85rem; 
+    }
+    .sched-row { padding: 12px; gap: 10px; }
+    .sched-day { padding: 4px 8px; font-size: 0.75rem; }
+    .sched-subject { font-size: 0.8rem; line-height: 1.3; word-break: break-word; }
+    .sched-load { font-size: 0.7rem; }
+    
+    .status-badge { 
+      font-size: 0.8rem; 
+      padding: 12px; 
+      align-items: flex-start;
+      line-height: 1.4;
+    }
+    .status-badge .icon { margin-top: 2px; flex-shrink: 0; }
+    .old-new, .trust-section { padding: 60px 20px; }
+    /* ===== АДАПТАЦИЯ ATTRACT BAND (Тёмный блок) ===== */
+  .attract-band { 
+    margin: 0 16px 60px !important; 
+    padding: 40px 24px !important; 
+    grid-template-columns: 1fr !important; /* В одну колонку */
+    gap: 40px !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+  }
+  
+  .attract-band h2 { 
+    font-size: 1.8rem !important; 
+    word-wrap: break-word !important; /* Чтобы длинные слова переносились */
+    margin-bottom: 16px !important;
+  }
+
+  /* Адаптируем правую карточку внутри тёмного блока */
+  .arch-card {
+    padding: 20px !important;
+  }
+  .arch-svc {
+    grid-template-columns: 36px 1fr auto !important; /* Убираем latency на телефоне, чтобы влезло */
+    gap: 12px !important;
+    padding: 12px !important;
+  }
+  .arch-svc-latency { 
+    display: none !important; /* Скрываем миллисекунды на мобилке для экономии места */
+  }
+  .arch-metrics {
+    gap: 4px !important;
+  }
+  .arch-metric {
+    padding: 10px 8px !important;
+  }
+    .cta-band { 
+    padding: 60px 20px !important; 
+  }
+    
+    .cta-band h2 { 
+      font-size: 1.4rem !important;
+      line-height: 1.35 !important;
+      margin-bottom: 32px !important; 
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+    
+    .cta-band .btn-primary-lg { 
+      display: block !important; 
+      width: 100% !important; 
+      box-sizing: border-box !important;
+      padding: 16px !important; 
+      font-size: 1.05rem !important; 
+      margin: 0 auto !important;
+    }
+    footer { padding: 60px 24px 32px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ===== PHONE MOCKUP ===== */
+  .phone-wrap {
+    position: relative;
+    width: 280px;
+    margin: 40px auto;
+  }
+  .phone-shell {
+    width: 280px;
+    background: #0f0f14;
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.12),
+      0 0 0 3px #1a1a24,
+      0 0 0 4px rgba(255,255,255,0.06),
+      0 40px 100px rgba(13,13,18,0.5),
+      0 20px 40px rgba(90,63,255,0.2);
+    position: relative;
+    z-index: 2;
+    animation: phoneFloat 6s ease-in-out infinite;
+  }
+  @keyframes phoneFloat {
+    0%,100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  .phone-shell::before {
+    content: '';
+    position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+    width: 90px; height: 30px;
+    background: #0f0f14;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+  .phone-screen {
+    background: #f8f8ff;
+    border-radius: 34px;
+    overflow: hidden;
+    height: 560px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .ph-statusbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 6px;
+    background: #fff;
+    font-size: 0.72rem; font-weight: 800; color: var(--black);
+    flex-shrink: 0;
+  }
+  .ph-time { font-size: 0.8rem; font-weight: 900; }
+  .ph-icons { display: flex; align-items: center; gap: 5px; color: var(--black); }
+  .ph-appbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 18px 10px;
+    background: #fff; flex-shrink: 0;
+    border-bottom: 1px solid rgba(13,13,18,0.06);
+  }
+  .ph-appbar-title {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 0.95rem; font-weight: 900; color: var(--black); letter-spacing: -0.03em;
+  }
+  .ph-logo-dot {
+    width: 20px; height: 20px; border-radius: 7px;
+    background: linear-gradient(135deg, var(--purple), #4f46e5);
+    box-shadow: 0 4px 10px rgba(90,63,255,0.4);
+    flex-shrink: 0;
+  }
+  .ph-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: #fff; font-size: 0.6rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ph-week-strip {
+    display: flex; gap: 4px; padding: 10px 14px;
+    background: #fff; flex-shrink: 0;
+  }
+  .ph-week-day {
+    flex: 1; text-align: center; padding: 6px 4px; border-radius: 10px;
+    font-size: 0.65rem; font-weight: 800; color: var(--text-gray); cursor: pointer;
+  }
+  .ph-week-day span { display: block; font-size: 0.7rem; font-weight: 900; color: var(--black); margin-top: 2px; }
+  .ph-week-day.active { background: linear-gradient(135deg, var(--purple), #4f46e5); color: rgba(255,255,255,0.8); }
+  .ph-week-day.active span { color: #fff; }
+  .ph-schedule {
+    flex: 1; overflow: hidden; padding: 8px 12px;
+    display: flex; flex-direction: column; gap: 7px;
+    background: #f4f4fa;
+  }
+  .ph-pair {
+    display: flex; align-items: center;
+    background: #fff; border-radius: 14px; overflow: hidden;
+    border: 1px solid rgba(13,13,18,0.06);
+    box-shadow: 0 2px 8px rgba(13,13,18,0.04);
+    flex-shrink: 0;
+  }
+  .ph-pair-bar { width: 4px; align-self: stretch; flex-shrink: 0; }
+  .ph-pair-body { flex: 1; padding: 9px 10px; }
+  .ph-pair-time { font-size: 0.6rem; font-weight: 700; color: var(--text-gray); margin-bottom: 2px; }
+  .ph-pair-subj { font-size: 0.75rem; font-weight: 800; color: var(--black); line-height: 1.2; margin-bottom: 3px; }
+  .ph-pair-meta { display: flex; gap: 5px; font-size: 0.62rem; font-weight: 600; color: #aaa; }
+  .ph-pair-badge {
+    font-size: 0.6rem; font-weight: 800; padding: 3px 8px; border-radius: 999px;
+    margin-right: 8px; white-space: nowrap; flex-shrink: 0;
+    background: rgba(90,63,255,0.1); color: var(--purple);
+  }
+  .ph-badge-orange { background: rgba(255,107,0,0.1); color: var(--orange); }
+  .ph-badge-green { background: rgba(0,163,84,0.1); color: #00a354; }
+  .ph-pair-purple .ph-pair-bar { background: var(--purple); }
+  .ph-pair-orange .ph-pair-bar { background: var(--orange); }
+  .ph-pair-green .ph-pair-bar { background: #00a354; }
+  .ph-push {
+    display: flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, rgba(90,63,255,0.08), rgba(79,70,229,0.06));
+    border: 1px solid rgba(90,63,255,0.15);
+    border-radius: 12px; padding: 8px 10px; flex-shrink: 0;
+  }
+  .ph-push-icon {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--purple), #4f46e5);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ph-push-text { flex: 1; }
+  .ph-push-text strong { display: block; font-size: 0.68rem; font-weight: 800; color: var(--black); }
+  .ph-push-text span { font-size: 0.6rem; font-weight: 600; color: var(--text-gray); }
+  .ph-push-time { font-size: 0.58rem; font-weight: 700; color: var(--text-gray); flex-shrink: 0; }
+  .ph-navbar {
+    display: flex; align-items: center;
+    background: rgba(255,255,255,0.97);
+    border-top: 1px solid rgba(13,13,18,0.06);
+    padding: 10px 0 14px; flex-shrink: 0;
+  }
+  .ph-nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: #bbb; font-size: 0.55rem; font-weight: 700; cursor: pointer;
+  }
+  .ph-nav-active { color: var(--purple); }
+
+  /* Floating cards */
+  .phone-notif {
+    position: absolute; z-index: 10;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(255,255,255,0.95);
+    border-radius: 16px; padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 12px 40px rgba(13,13,18,0.14);
+    white-space: nowrap;
+  }
+  .notif-a { top: -18px; left: -60px; animation: glassFloatA 7s ease-in-out infinite; }
+  .notif-b { top: 50px; right: -52px; animation: glassFloatB 9s ease-in-out infinite; padding: 14px 18px; }
+  .notif-c { bottom: 60px; left: -56px; animation: glassFloatC 8s ease-in-out infinite; }
+  .notif-icon {
+    width: 28px; height: 28px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .notif-icon-green { background: linear-gradient(135deg, #00e676, #00a354); }
+  .notif-icon-red { background: linear-gradient(135deg, #ff2d55, #ff6b35); }
+  .notif-text strong { display: block; font-size: 0.72rem; font-weight: 900; color: var(--black); }
+  .notif-text span { font-size: 0.62rem; font-weight: 600; color: var(--text-gray); }
+  .notif-kpi strong { display: block; font-size: 1.2rem; font-weight: 900; color: var(--purple); letter-spacing: -0.04em; }
+  .notif-kpi span { font-size: 0.62rem; font-weight: 700; color: var(--text-gray); }
+</style>
+</head>
+<body>
+
+<nav>
+    <a href="{% url 'index' %}" class="nav-logo">Go<span>Shiet</span></a>
+  <div class="nav-actions">
+    <a href="{% url 'auth' %}" class="btn-login">Войти</a>
+    <a href="{% url 'schedule' %}" class="btn-primary">Расписание</a>
+  </div>
+  <button class="hamburger" id="hamburgerBtn" aria-label="Меню">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-backdrop" id="mobileBackdrop"></div>
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-actions">
+      <a href="auth.html" class="btn-login">Войти</a>
+      <a href="schedule.html" class="btn-primary-lg btn-glow">Расписание</a>
+    </div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-glow-orb orb-1"></div>
+  <div class="hero-glow-orb orb-2"></div>
+  <div class="hero-glow-orb orb-3"></div>
+
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badges">
+        <span class="badge-glass">
+          <span class="icon icon-badge">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" stroke-width="2"></polygon><line x1="12" y1="22" x2="12" y2="12"></line><line x1="22" y1="8.5" x2="12" y2="12"></line><line x1="2" y1="8.5" x2="12" y2="12"></line></svg>
+          </span> 
+          Интеллектуальный контроль
+        </span>
+        <span class="badge-glass">
+          <span class="icon icon-badge">
+            <svg viewBox="0 0 24 24"><path d="M4 12v8h16v-8M12 4v8M8 8l4-4 4 4" stroke-width="2"></path></svg>
+          </span> 
+          Умное распределение
+        </span>
+      </div>
+      
+      <h1>Расписание, которое работает на <span class="text-gradient">людей</span></h1>
+      <p>Интеллектуальная система автоматизированного сбора пожеланий, алгоритм распределения ресурсов без накладок и мгновенные пуш-уведомления прямо в смартфоны преподавателей и студентов. GoShiet берет на себя всю рутину, освобождая ваше время для более важных задач образовательного процесса.</p>
+      
+      <div class="hero-cta">
+        <a href="#" class="btn-primary-lg btn-glow">Погнали</a>
+        <div class="no-cc">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green-bright)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          Развертывание за 1 клик
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="phone-wrap">
+
+        <div class="phone-notif notif-a">
+          <div class="notif-icon notif-icon-green">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="notif-text">
+            <strong>Расписание обновлено</strong>
+            <span>Пн · А-204 → Алгоритмы</span>
+          </div>
+        </div>
+
+        <div class="phone-notif notif-b">
+          <div class="notif-kpi">
+            <strong>+41%</strong>
+            <span>скорость сборки</span>
+          </div>
+        </div>
+
+        <div class="phone-shell">
+          <div class="phone-screen">
+
+            <div class="ph-statusbar">
+              <span class="ph-time">09:41</span>
+              <div class="ph-icons">
+                <svg width="13" height="11" viewBox="0 0 24 18" fill="currentColor"><path d="M12 3C7 3 2.5 5.5 0 9.5L2.5 12C4.5 8.5 8 6 12 6s7.5 2.5 9.5 6L24 9.5C21.5 5.5 17 3 12 3z"/><path d="M12 9c-3 0-5.5 1.5-7 4l2.5 2.5C8.5 13.5 10 12 12 12s3.5 1.5 4.5 3.5L19 13c-1.5-2.5-4-4-7-4z"/><circle cx="12" cy="17" r="2"/></svg>
+                <svg width="22" height="12" viewBox="0 0 22 12" fill="none"><rect x="0.5" y="0.5" width="18" height="11" rx="2.5" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><path d="M19.5 4v4a2 2 0 0 0 0-4z" fill="currentColor"/></svg>
+              </div>
+            </div>
+
+            <div class="ph-appbar">
+              <div class="ph-appbar-title">
+                <div class="ph-logo-dot"></div>
+                GoShiet
+              </div>
+              <div class="ph-avatar">АБ</div>
+            </div>
+
+            <div class="ph-week-strip">
+              <div class="ph-week-day">Пн<span>5</span></div>
+              <div class="ph-week-day active">Вт<span>4</span></div>
+              <div class="ph-week-day">Ср<span>6</span></div>
+              <div class="ph-week-day">Чт<span>3</span></div>
+              <div class="ph-week-day">Пт<span>5</span></div>
+            </div>
+
+            <div class="ph-schedule">
+              <div class="ph-pair ph-pair-purple">
+                <div class="ph-pair-bar"></div>
+                <div class="ph-pair-body">
+                  <div class="ph-pair-time">08:00 – 09:30</div>
+                  <div class="ph-pair-subj">Математический анализ</div>
+                  <div class="ph-pair-meta"><span>А-204</span><span>·</span><span>Абдуллаев Р.К.</span></div>
+                </div>
+                <div class="ph-pair-badge">Лекция</div>
+              </div>
+
+              <div class="ph-pair ph-pair-orange">
+                <div class="ph-pair-bar"></div>
+                <div class="ph-pair-body">
+                  <div class="ph-pair-time">09:50 – 11:20</div>
+                  <div class="ph-pair-subj">Алгоритмы и структуры данных</div>
+                  <div class="ph-pair-meta"><span>Б-112</span><span>·</span><span>Ким С.А.</span></div>
+                </div>
+                <div class="ph-pair-badge ph-badge-orange">Практика</div>
+              </div>
+
+              <div class="ph-push">
+                <div class="ph-push-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </div>
+                <div class="ph-push-text">
+                  <strong>Пара перенесена</strong>
+                  <span>Физика · 13:30 → 15:10, ауд. В-201</span>
+                </div>
+                <span class="ph-push-time">сейчас</span>
+              </div>
+
+              <div class="ph-pair ph-pair-green">
+                <div class="ph-pair-bar"></div>
+                <div class="ph-pair-body">
+                  <div class="ph-pair-time">11:40 – 13:10</div>
+                  <div class="ph-pair-subj">Английский язык B2</div>
+                  <div class="ph-pair-meta"><span>В-305</span><span>·</span><span>Иванова М.П.</span></div>
+                </div>
+                <div class="ph-pair-badge ph-badge-green">Семинар</div>
+              </div>
+
+              <div class="ph-pair ph-pair-purple" style="opacity:0.4;">
+                <div class="ph-pair-bar"></div>
+                <div class="ph-pair-body">
+                  <div class="ph-pair-time">15:10 – 16:40</div>
+                  <div class="ph-pair-subj">Физика</div>
+                  <div class="ph-pair-meta"><span>В-201</span><span>·</span><span>Петров А.В.</span></div>
+                </div>
+                <div class="ph-pair-badge">Лекция</div>
+              </div>
+            </div>
+
+            <div class="ph-navbar">
+              <div class="ph-nav-item ph-nav-active">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>Расписание</span>
+              </div>
+              <div class="ph-nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span>Уведомления</span>
+              </div>
+              <div class="ph-nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Профиль</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="phone-notif notif-c">
+          <div class="notif-icon notif-icon-red">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="notif-text">
+            <strong>1 конфликт найден</strong>
+            <span>AI готов исправить →</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div style="text-align:center;">
+    <span class="section-tag" data-reveal="up">Уникальные возможности</span>
+    <h2 class="section-title" data-reveal="up">Мощные алгоритмы для безупречного расписания</h2>
+  </div>
+
+  <div class="feature-panel" data-reveal="up">
+    <div class="feature-panel-left">
+      <h3>Продвинутая аналитика и тепловые карты когнитивной нагрузки</h3>
+      <p>Мы переосмыслили подход к планированию учебного процесса. Наш алгоритм не просто заполняет слоты, он строит многомерные тепловые карты когнитивной нагрузки для каждой отдельной академической группы. Интеллектуальное ядро системы автоматически анализирует сложность дисциплин, предотвращая постановку энергозатратных предметов (таких как высшая математика, физика или разработка архитектуры ПО) друг за другом. Это радикально снижает уровень стресса и повышает общую успеваемость.</p>
+      
+      <div class="feature-detail">
+        <span class="icon icon-sm" style="margin-right:10px; color: var(--purple);"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
+        Автоматическая блокировка кластеризации более двух дисциплин с высокой когнитивной нагрузкой в рамках одного учебного дня.
+      </div>
+      <div class="feature-detail">
+        <span class="icon icon-sm" style="margin-right:10px; color: var(--purple);"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></span>
+        Визуальные тепловые карты позволяют кураторам моментально идентифицировать перегруженные сегменты недели еще до финального утверждения сетки.
+      </div>
+    </div>
+    
+    <div>
+      <div class="schedule-mock">
+        <div class="schedule-mock-header">
+          <span>Сводка нагрузки: Группа ПМИ-204</span>
+          <span style="font-size:0.75rem; color:var(--purple); font-weight:800; background:rgba(90, 63, 255, 0.1); padding: 4px 10px; border-radius: 999px;">Баланс: Оптимальный</span>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Пн</div>
+          <div class="sched-subject">Архитектура вычислительных систем</div>
+          <div class="sched-dot" style="background:var(--pink);"></div>
+          <div class="sched-load" style="color:var(--pink);">Высокая</div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Ср</div>
+          <div class="sched-subject">Разработка веб-приложений (Python)</div>
+          <div class="sched-dot" style="background:var(--orange);"></div>
+          <div class="sched-load">Средняя</div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Пт</div>
+          <div class="sched-subject">Английский язык (B2 Level)</div>
+          <div class="sched-dot" style="background:var(--green);"></div>
+          <div class="sched-load">Низкая</div>
+        </div>
+        <div class="status-badge">
+          <span class="icon icon-sm icon-success"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span>
+          Перегрузок не обнаружено. Студенты готовы к обучению.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats-strip" data-reveal="up">
+  <div class="stat-item">
+    <span class="stat-num">1.5M+</span>
+    <span class="stat-desc">Оцениваемых графов в секунду</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">100%</span>
+    <span class="stat-desc">Исключение аудиторных накладок</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">&lt; 2 сек</span>
+    <span class="stat-desc">Среднее время перерасчета сетки</span>
+  </div>
+</div>
+
+<section class="trust-section">
+  <div style="text-align:center; margin-bottom:50px; max-width:800px; margin: 0 auto 50px;">
+    <h2 style="font-size:clamp(2rem,3.5vw,3rem); font-weight:900; margin-bottom:16px; color: var(--black); letter-spacing:-0.04em;">Молниеносно. Надежно. Элегантно.</h2>
+  </div>
+  <div class="trust-cards">
+    <div class="trust-card" data-reveal="zoom">
+      <div class="tc-icon">
+        <!-- Иконка: оптимизация/сеть нагрузки -->
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="3.5" stroke="#5A3FFF" stroke-width="2" fill="rgba(90,63,255,0.12)"/>
+          <circle cx="6" cy="8" r="2.5" stroke="#5A3FFF" stroke-width="1.5" fill="rgba(90,63,255,0.08)"/>
+          <circle cx="26" cy="8" r="2.5" stroke="#5A3FFF" stroke-width="1.5" fill="rgba(90,63,255,0.08)"/>
+          <circle cx="6" cy="24" r="2.5" stroke="#5A3FFF" stroke-width="1.5" fill="rgba(90,63,255,0.08)"/>
+          <circle cx="26" cy="24" r="2.5" stroke="#5A3FFF" stroke-width="1.5" fill="rgba(90,63,255,0.08)"/>
+          <line x1="8.2" y1="9.5" x2="13.2" y2="14.5" stroke="#5A3FFF" stroke-width="1.5" stroke-dasharray="2 1.5"/>
+          <line x1="23.8" y1="9.5" x2="18.8" y2="14.5" stroke="#5A3FFF" stroke-width="1.5" stroke-dasharray="2 1.5"/>
+          <line x1="8.2" y1="22.5" x2="13.2" y2="17.5" stroke="#5A3FFF" stroke-width="1.5" stroke-dasharray="2 1.5"/>
+          <line x1="23.8" y1="22.5" x2="18.8" y2="17.5" stroke="#5A3FFF" stroke-width="1.5" stroke-dasharray="2 1.5"/>
+          <path d="M6 10.5 L6 21.5" stroke="#5A3FFF" stroke-width="1" stroke-opacity="0.4"/>
+          <path d="M26 10.5 L26 21.5" stroke="#5A3FFF" stroke-width="1" stroke-opacity="0.4"/>
+          <circle cx="16" cy="16" r="7" stroke="#5A3FFF" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="3 2"/>
+        </svg>
+      </div>
+      <br>
+      <div class="tc-role">Для Учебной части</div>
+      <h4>Оптимизация операционных издержек</h4>
+      <p>GoShiet берет на себя самую ресурсоемкую часть управления академическим процессом. Полный контроль фонда аудиторий, динамическое распределение нагрузки и криптографически защищенный экспорт итоговых документов. Забудьте о неделях изнурительной работы — система формирует готовый к публикации результат всего за несколько итераций алгоритма.</p>
+    </div>
+    <div class="trust-card" data-reveal="zoom">
+      <div class="tc-icon">
+        <!-- Иконка: адаптивный календарь/интерфейс -->
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="7" width="24" height="20" rx="4" stroke="#5A3FFF" stroke-width="2" fill="rgba(90,63,255,0.08)"/>
+          <path d="M4 13H28" stroke="#5A3FFF" stroke-width="1.5"/>
+          <line x1="10" y1="5" x2="10" y2="9" stroke="#5A3FFF" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="5" x2="22" y2="9" stroke="#5A3FFF" stroke-width="2" stroke-linecap="round"/>
+          <!-- cells -->
+          <rect x="8" y="17" width="4" height="3" rx="1" fill="#5A3FFF" fill-opacity="0.8"/>
+          <rect x="14" y="17" width="4" height="3" rx="1" fill="#5A3FFF" fill-opacity="0.35"/>
+          <rect x="20" y="17" width="4" height="3" rx="1" fill="#5A3FFF" fill-opacity="0.15"/>
+          <rect x="8" y="22" width="4" height="3" rx="1" fill="#5A3FFF" fill-opacity="0.15"/>
+          <rect x="14" y="22" width="4" height="3" rx="1" fill="#FF2D55" fill-opacity="0.5"/>
+          <rect x="20" y="22" width="4" height="3" rx="1" fill="#5A3FFF" fill-opacity="0.5"/>
+          <!-- sparkle check -->
+          <circle cx="24" cy="10" r="5" fill="#00E676" fill-opacity="0.15" stroke="#00A354" stroke-width="1.5"/>
+          <polyline points="21.5,10 23.5,12 26.5,8" stroke="#00A354" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="tc-role">Для Преподавательского состава</div>
+      <h4>Интуитивный интерфейс без бюрократии</h4>
+      <p>Создание идеального графика работы теперь сводится к нескольким кликам в интерактивном, адаптивном календаре. Больше никаких бумажных служебных записок, долгих согласований с деканатом и ожиданий подтверждения. Ваш персональный график формируется с учетом ваших личных предпочтений и профессиональных приоритетов в режиме реального времени.</p>
+    </div>
+    <div class="trust-card" data-reveal="zoom">
+      <div class="tc-icon">
+        <!-- Иконка: мгновенные уведомления/синхронизация -->
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Phone shape -->
+          <rect x="10" y="4" width="12" height="20" rx="3" stroke="#5A3FFF" stroke-width="2" fill="rgba(90,63,255,0.08)"/>
+          <line x1="14" y1="21" x2="18" y2="21" stroke="#5A3FFF" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Signal waves -->
+          <path d="M23 10 C25 12, 25 16, 23 18" stroke="#5A3FFF" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <path d="M25.5 8 C28.5 11, 28.5 17, 25.5 20" stroke="#5A3FFF" stroke-width="1.5" stroke-linecap="round" fill="none" stroke-opacity="0.5"/>
+          <!-- Notification dot -->
+          <circle cx="21" cy="8" r="4" fill="#FF2D55" stroke="white" stroke-width="1.5"/>
+          <text x="21" y="11.5" text-anchor="middle" fill="white" font-size="5.5" font-weight="900" font-family="system-ui">!</text>
+          <!-- Mini message bubbles in phone -->
+          <rect x="13" y="10" width="7" height="2.5" rx="1.2" fill="#5A3FFF" fill-opacity="0.6"/>
+          <rect x="13" y="14" width="5" height="2.5" rx="1.2" fill="#5A3FFF" fill-opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="tc-role">Для Студенческого сообщества</div>
+      <h4>Синхронизация с ритмом жизни</h4>
+      <p>Персональное расписание интегрируется непосредственно в экосистему студента. Высокоскоростные пуш-уведомления об отменах, вынужденных переносах или заменах дисциплин доставляются прямо в мессенджер. Это исключает информационный вакуум и гарантирует, что студент всегда владеет актуальным контекстом образовательного процесса.</p>
+    </div>
+  </div>
+</section>
+
+<div class="attract-band" data-reveal="up">
+  <!-- LEFT: copy -->
+  <div style="position:relative;z-index:1;">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);border-radius:999px;padding:6px 14px;margin-bottom:22px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:#a78bfa;box-shadow:0 0 8px rgba(167,139,250,0.8);animation:pulseDot 2s ease-out infinite;display:inline-block;"></span>
+      <span style="font-size:0.78rem;font-weight:800;color:#a78bfa;letter-spacing:0.04em;">ENTERPRISE READY</span>
+    </div>
+    <h2>Мотивируйте команду <span class="ab-accent">прозрачностью</span> процессов</h2>
+    <p>Внедрение платформы в инфраструктуру учебного заведения занимает считанные минуты. Гибкий график, прозрачное распределение нагрузки и мгновенная обратная связь — всё без единого сбоя.</p>
+    <a href="#" class="btn-primary-lg" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);box-shadow:0 12px 30px rgba(90,63,255,0.4);">Развернуть инфраструктуру</a>
+    <div class="tech-badges">
+      <span class="tech-badge"><span class="tb-dot"></span>Python Core</span>
+      <span class="tech-badge"><span class="tb-dot"></span>FastAPI</span>
+      <span class="tech-badge"><span class="tb-dot"></span>PostgreSQL</span>
+      <span class="tech-badge"><span class="tb-dot"></span>Docker</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: architecture card -->
+  <div style="position:relative;z-index:1;">
+    <div class="arch-card">
+      <div class="arch-card-header">
+        <div class="arch-card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          Стек и интеграции
+        </div>
+        <div class="arch-live-dot">Все сервисы онлайн</div>
+      </div>
+
+      <div class="arch-services">
+        <!-- PostgreSQL -->
+        <div class="arch-svc">
+          <div class="arch-svc-icon" style="background:rgba(96,165,250,0.15);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <div>
+            <div class="arch-svc-name">PostgreSQL</div>
+            <div class="arch-svc-sub">Primary Storage · v16.2</div>
+          </div>
+          <div class="arch-svc-latency">2 ms</div>
+          <div class="arch-badge badge-active">Active</div>
+        </div>
+
+        <!-- FastAPI -->
+        <div class="arch-svc">
+          <div class="arch-svc-icon" style="background:rgba(52,211,153,0.15);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div>
+            <div class="arch-svc-name">FastAPI Backend</div>
+            <div class="arch-svc-sub">REST + WebSocket · Python 3.12</div>
+          </div>
+          <div class="arch-svc-latency">18 ms</div>
+          <div class="arch-badge badge-active">Active</div>
+        </div>
+
+        <!-- Telegram -->
+        <div class="arch-svc">
+          <div class="arch-svc-icon" style="background:rgba(167,139,250,0.15);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+          </div>
+          <div>
+            <div class="arch-svc-name">Telegram Bot</div>
+            <div class="arch-svc-sub">Push-уведомления · Polling</div>
+          </div>
+          <div class="arch-svc-latency">340 ms</div>
+          <div class="arch-badge badge-stable">Stable</div>
+        </div>
+
+        <!-- Docker -->
+        <div class="arch-svc">
+          <div class="arch-svc-icon" style="background:rgba(96,165,250,0.1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><rect x="2" y="9" width="4" height="4" rx="1"/><rect x="7" y="9" width="4" height="4" rx="1"/><rect x="12" y="9" width="4" height="4" rx="1"/><rect x="7" y="4" width="4" height="4" rx="1"/><path d="M21 12c0 2-1.5 4-5 4H4a2 2 0 0 1-2-2v-1"/><path d="M21 12c1-3-1-5-4-4"/></svg>
+          </div>
+          <div>
+            <div class="arch-svc-name">Docker / Compose</div>
+            <div class="arch-svc-sub">Контейнеризация · Авто-деплой</div>
+          </div>
+          <div class="arch-svc-latency">—</div>
+          <div class="arch-badge badge-stable">Stable</div>
+        </div>
+      </div>
+
+      <!-- Mini metrics -->
+      <div class="arch-metrics">
+        <div class="arch-metric green">
+          <strong>99.9%</strong>
+          <span>Аптайм</span>
+        </div>
+        <div class="arch-metric blue">
+          <strong>&lt;20ms</strong>
+          <span>Среднее API</span>
+        </div>
+        <div class="arch-metric purple">
+          <strong>1 клик</strong>
+          <span>Деплой</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="cta-band">
+  <h2 data-reveal="zoom">Управление академическим временем не должно быть проблемой. Начните работу с GoShiet сегодня!</h2>
+  <a href="#" class="btn-primary-lg" data-reveal="up" style="background: linear-gradient(135deg, var(--purple), var(--pink)); box-shadow: 0 15px 35px rgba(255, 45, 85, 0.4);">Вперед</a>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <span class="footer-logo">Go<span>Shiet</span></span>
+      <div style="font-size:0.9rem; color:rgba(255,255,255,0.6); margin-bottom:16px; line-height: 1.5; font-weight: 500;">Интеллектуальная платформа управления расписанием нового поколения.</div>
+    </div>
+    <div class="footer-col">
+      <h4>Продукт</h4>
+      <ul>
+        <li><a href="#">Умные анкеты</a></li>
+        <li><a href="#">Ядро алгоритма</a></li>
+        <li><a href="#">Аналитика и графы</a></li>
+        <li><a href="#">Безопасность</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Технологии</h4>
+      <ul>
+        <li><a href="#">Python Backend</a></li>
+        <li><a href="#">Структуры данных БД</a></li>
+        <li><a href="#">Frontend Архитектура</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Для клиентов</h4>
+      <ul>
+        <li><a href="#">Интеграция в ВУЗы</a></li>
+        <li><a href="#">Обучение персонала</a></li>
+        <li><a href="#">Техническая поддержка</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Правовая информация</h4>
+      <ul>
+        <li><a href="#">API Документация</a></li>
+        <li><a href="#">Политика конфиденциальности</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 · GoShiet — Разработано для оптимизации образовательных процессов.</div>
+</footer>
+
+<script>
+function setupHamburgerMenu() {
+  const btn = document.getElementById('hamburgerBtn');
+  const menu = document.getElementById('mobileMenu');
+  const backdrop = document.getElementById('mobileBackdrop');
+  if (!btn || !menu) return;
+
+  function openMenu() {
+    menu.classList.add('open');
+    btn.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', () => {
+    menu.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  backdrop.addEventListener('click', closeMenu);
+  menu.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('click', closeMenu);
+  });
+}
+
+function setupRevealOnScroll() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el));
+}
+
+function setupNavbarEffect() {
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupHamburgerMenu();
+  setupNavbarEffect();
+  setupRevealOnScroll();
+});
+</script>
+
+<!-- 3D removed -->
+</body>
+</html>

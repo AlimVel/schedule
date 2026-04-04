@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Расписание — GoShiet</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #5A3FFF;
+      --purple-light: #E8E5FF;
+      --purple-bg: #8870FF;
+      --green: #00E676;
+      --green-bright: #14FF00;
+      --blue: #0084FF;
+      --blue-light: #D0EBFF;
+      --yellow: #FFD600;
+      --pink: #FF2D55;
+      --black: #0D0D12;
+      --white: #FFFFFF;
+      --gray: #F0F0F5;
+      --text-gray: #4A4A5A;
+      --orange: #FF6B00;
+      --glass-white: rgba(255,255,255,0.7);
+      --glass-strong: rgba(255,255,255,0.86);
+      --glass-border: rgba(255,255,255,0.78);
+      --surface-border: rgba(13,13,18,0.08);
+      --shadow-premium: 0 20px 60px rgba(90,63,255,0.15), 0 8px 24px rgba(13,13,18,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--black);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(90, 63, 255, 0.12), transparent 35%),
+        radial-gradient(circle at 100% 15%, rgba(0, 230, 118, 0.12), transparent 30%),
+        radial-gradient(circle at 50% 100%, rgba(255, 45, 85, 0.08), transparent 40%),
+        linear-gradient(180deg, #FAFAFF 0%, #F0F2FF 48%, #FAFAFF 100%);
+    }
+
+    .hero-grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(90, 63, 255, 0.12) 1.2px, transparent 1.2px);
+      background-size: 30px 30px;
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: 0;
+      opacity: 0.55;
+      pointer-events: none;
+      animation: pulseFloat 10s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 540px; height: 540px; background: var(--purple); top: -160px; right: -140px; }
+    .orb-2 { width: 420px; height: 420px; background: var(--green); bottom: -120px; left: -100px; animation-delay: -2.5s; }
+    .orb-3 { width: 320px; height: 320px; background: var(--pink); top: 35%; left: 42%; opacity: 0.2; animation-delay: -4s; }
+
+    /* НАВИГАЦИЯ */
+    nav {
+      position: fixed;
+      top: 14px;
+      left: 24px;
+      right: 24px;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 26px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(90,63,255,0.08), 0 2px 8px rgba(13,13,18,0.06);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      transition: all 0.3s ease;
+    }
+
+    .nav-logo {
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--black);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--purple); }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 20px; /* Больше воздуха между элементами меню */
+      margin-left: auto;
+    }
+
+    .nav-selectors {
+      display: flex;
+      align-items: center;
+      gap: 16px; /* Больше пространства между фильтрами */
+      background: rgba(255, 255, 255, 0.4);
+      padding: 8px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .nav-select {
+      display: flex;
+      align-items: center;
+      gap: 8px; /* Отступ между надписью и списком */
+      background: rgba(255, 255, 255, 0.8);
+      padding: 8px 14px 8px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-select:hover {
+      background: #fff;
+      border-color: rgba(90,63,255,0.15);
+      box-shadow: 0 4px 12px rgba(13,13,18,0.04);
+    }
+
+    .nav-select span {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-select select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-color: transparent;
+      border: none;
+      color: var(--black);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      padding-right: 22px;
+      outline: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%230D0D12' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-position: right center;
+      background-repeat: no-repeat;
+    }
+
+    /* Гамбургер кнопка */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      color: var(--black);
+    }
+    .hamburger svg {
+      width: 26px;
+      height: 26px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.3s ease;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 120px 24px 40px;
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ (карточки, сетка) */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .summary-card, .schedule-shell, .mobile-schedule {
+      background: var(--glass-strong);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-premium);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+    }
+
+    .summary-card {
+      border-radius: 34px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .summary-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+    .summary-head h2 {
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+    .summary-badge {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #00A354;
+      background: rgba(0,230,118,0.14);
+      border: 1px solid rgba(0,230,118,0.25);
+      border-radius: 999px;
+      padding: 7px 10px;
+      white-space: nowrap;
+    }
+    .summary-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .metric-box {
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(13,13,18,0.08);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .metric-box strong {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      margin-bottom: 2px;
+    }
+    .metric-box span {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-gray);
+    }
+
+    .schedule-shell {
+      border-radius: 32px;
+      padding: 22px;
+      overflow: hidden;
+    }
+
+    .schedule-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      padding: 0 2px;
+    }
+    .schedule-title h2 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .schedule-title p {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      font-weight: 600;
+    }
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--text-gray);
+      font-weight: 800;
+      background: rgba(255,255,255,0.66);
+      border: 1px solid rgba(13,13,18,0.06);
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+    .legend-color {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .desktop-schedule {
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(90,63,255,0.35) transparent;
+    }
+
+    .schedule-grid {
+      min-width: 980px;
+      display: grid;
+      grid-template-columns: 96px repeat(5, minmax(160px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .grid-cell {
+      border-radius: 18px;
+      background: rgba(255,255,255,0.66);
+      border: 1px solid rgba(13,13,18,0.06);
+      min-height: 86px;
+      padding: 12px;
+      position: relative;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .grid-cell:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(13,13,18,0.08);
+      z-index: 2;
+    }
+
+    .time-cell,
+    .day-cell {
+      min-height: auto;
+      padding: 14px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: rgba(255,255,255,0.82);
+    }
+    .time-cell {
+      font-size: 0.8rem;
+      font-weight: 900;
+      color: var(--text-gray);
+      position: sticky;
+      left: 0;
+      z-index: 3;
+    }
+    .day-cell {
+      flex-direction: column;
+      gap: 2px;
+    }
+    .day-cell strong {
+      font-size: 0.9rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .day-cell span {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-gray);
+    }
+
+    .slot-empty {
+      background: rgba(13,13,18,0.04);
+      border: 1px dashed rgba(13,13,18,0.08);
+    }
+
+    .lesson {
+      color: #fff;
+      border: none;
+      overflow: hidden;
+    }
+    .lesson::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
+      pointer-events: none;
+    }
+    .lesson-purple { background: linear-gradient(135deg, #7c3aed, #5A3FFF); box-shadow: 0 10px 25px rgba(90,63,255,0.24); }
+    .lesson-pink { background: linear-gradient(135deg, #FF2D55, #FF6B00); box-shadow: 0 10px 25px rgba(255,45,85,0.24); }
+    .lesson-blue { background: linear-gradient(135deg, #2563eb, #0084FF); box-shadow: 0 10px 25px rgba(0,132,255,0.22); }
+    .lesson-green { background: linear-gradient(135deg, #00B86B, #00E676); color: #08351f; box-shadow: 0 10px 25px rgba(0,230,118,0.22); }
+    .lesson-yellow { background: linear-gradient(135deg, #FFD600, #FFB300); color: #4a3400; box-shadow: 0 10px 25px rgba(255,214,0,0.22); }
+
+    .lesson-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      width: fit-content;
+      margin-bottom: 10px;
+    }
+    .lesson-title {
+      font-size: 0.95rem;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 7px;
+      letter-spacing: -0.02em;
+    }
+    .lesson-meta {
+      display: grid;
+      gap: 4px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      opacity: 0.92;
+    }
+    .lesson-meta span { display: flex; align-items: center; gap: 7px; }
+    .lesson-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.12);
+    }
+
+    .mobile-schedule {
+      display: none;
+      border-radius: 28px;
+      padding: 16px;
+      margin-top: 18px;
+      gap: 14px;
+    }
+    .mobile-day {
+      background: rgba(255,255,255,0.76);
+      border: 1px solid rgba(13,13,18,0.08);
+      border-radius: 22px;
+      padding: 16px;
+    }
+    .mobile-day-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .mobile-day-head strong {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .mobile-day-head span {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: var(--purple);
+      background: rgba(90,63,255,0.1);
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+    .mobile-lesson-list {
+      display: grid;
+      gap: 12px;
+    }
+    .mobile-lesson {
+      border-radius: 18px;
+      padding: 15px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .mobile-lesson small {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.92;
+      margin-bottom: 8px;
+    }
+    .mobile-lesson strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 900;
+      margin-bottom: 7px;
+      letter-spacing: -0.02em;
+    }
+    .mobile-lesson p {
+      font-size: 0.82rem;
+      line-height: 1.5;
+      font-weight: 700;
+      opacity: 0.95;
+    }
+
+    @keyframes pulseFloat {
+      0%,100% { transform: scale(1) translateY(0); opacity: 0.55; }
+      50% { transform: scale(1.08) translateY(-12px); opacity: 0.38; }
+    }
+
+    /* АДАПТИВ */
+    @media (max-width: 1100px) {
+      .hero { grid-template-columns: 1fr; }
+      .summary-card { order: -1; }
+      .summary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 860px) {
+      nav {
+        left: 12px;
+        right: 12px;
+        top: 10px;
+        padding: 14px 20px;
+      }
+      .hamburger {
+        display: block;
+      }
+      .nav-menu {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 0;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+      }
+      
+      /* Класс для открытого меню */
+      .nav-menu.active {
+        max-height: 400px;
+        opacity: 1;
+        margin-top: 16px;
+      }
+      
+      .nav-selectors {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+      }
+      .nav-select { 
+        justify-content: space-between; 
+        padding: 12px 16px; 
+      }
+      
+      .page { padding: 110px 14px 28px; }
+      .summary-card, .schedule-shell, .mobile-schedule { border-radius: 26px; }
+      .summary-card { padding: 22px; }
+      .summary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .desktop-schedule { display: none; }
+      .mobile-schedule { display: grid; }
+    }
+
+    @media (max-width: 520px) {
+      .summary-metrics { grid-template-columns: 1fr 1fr; }
+      .metric-box strong { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-glow-orb orb-1"></div>
+  <div class="hero-glow-orb orb-2"></div>
+  <div class="hero-glow-orb orb-3"></div>
+
+  <nav>
+    <a href="{% url 'index' %}" class="nav-logo">Go<span>Shiet</span></a>
+    
+    <button class="hamburger" id="hamburger-btn" aria-label="Открыть меню">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+
+    <div class="nav-menu" id="nav-menu">
+      <div class="nav-selectors">
+        <label class="nav-select">
+          <span>Универ:</span>
+          <select>
+            <option>ТУИТ</option>
+            <option>INHA</option>
+            <option>WIUT</option>
+          </select>
+        </label>
+
+        <label class="nav-select">
+          <span>Факультет:</span>
+          <select>
+            <option>Программная инженерия</option>
+            <option>Кибербезопасность</option>
+            <option>Бизнес-информатика</option>
+          </select>
+        </label>
+
+        <label class="nav-select nav-select-sm">
+          <span>Курс:</span>
+          <select>
+            <option>1</option>
+            <option>2</option>
+            <option selected>3</option>
+            <option>4</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page">
+    <section class="schedule-shell">
+      <div class="schedule-head">
+        <div class="schedule-title">
+          <h2>Расписание на неделю</h2>
+          <p>Десктоп показывает полноценную таблицу, на телефоне автоматически включаются удобные карточки по дням.</p>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-color" style="background:#7c3aed"></span> Лекция</div>
+          <div class="legend-item"><span class="legend-color" style="background:#FF2D55"></span> Практика</div>
+          <div class="legend-item"><span class="legend-color" style="background:#0084FF"></span> Лабораторная</div>
+          <div class="legend-item"><span class="legend-color" style="background:#00E676"></span> Онлайн</div>
+        </div>
+      </div>
+
+      <div class="desktop-schedule">
+        <div class="schedule-grid">
+          <div class="grid-cell time-cell">Время</div>
+          <div class="grid-cell day-cell"><strong>Понедельник</strong><span>06 апр</span></div>
+          <div class="grid-cell day-cell"><strong>Вторник</strong><span>07 апр</span></div>
+          <div class="grid-cell day-cell"><strong>Среда</strong><span>08 апр</span></div>
+          <div class="grid-cell day-cell"><strong>Четверг</strong><span>09 апр</span></div>
+          <div class="grid-cell day-cell"><strong>Пятница</strong><span>10 апр</span></div>
+
+          <div class="grid-cell time-cell">08:30</div>
+          <div class="grid-cell lesson lesson-purple">
+            <div class="lesson-badge"></div>
+            <div class="lesson-type">Лекция</div>
+            <div class="lesson-title">Алгоритмы и структуры данных</div>
+            <div class="lesson-meta">
+              <span>Ауд. B-204</span>
+              <span>Преп. Иванов И.И.</span>
+            </div>
+          </div>
+          <div class="grid-cell lesson lesson-blue">
+            <div class="lesson-type">Лаба</div>
+            <div class="lesson-title">Web-разработка</div>
+            <div class="lesson-meta">
+              <span>Lab 3 / корпус C</span>
+              <span>Подгруппа 1</span>
+            </div>
+          </div>
+          <div class="grid-cell lesson lesson-pink">
+            <div class="lesson-type">Практика</div>
+            <div class="lesson-title">Базы данных</div>
+            <div class="lesson-meta">
+              <span>Ауд. A-112</span>
+              <span>Группа целиком</span>
+            </div>
+          </div>
+          <div class="grid-cell slot-empty"></div>
+          <div class="grid-cell lesson lesson-green">
+            <div class="lesson-type">Онлайн</div>
+            <div class="lesson-title">Английский для IT</div>
+            <div class="lesson-meta">
+              <span>Meet / Zoom</span>
+              <span>Ссылка-заглушка</span>
+            </div>
+          </div>
+
+          <div class="grid-cell time-cell">10:15</div>
+          <div class="grid-cell lesson lesson-yellow">
+            <div class="lesson-type">Семинар</div>
+            <div class="lesson-title">Высшая математика</div>
+            <div class="lesson-meta">
+              <span>Ауд. D-101</span>
+              <span>Поток 2</span>
+            </div>
+          </div>
+          <div class="grid-cell slot-empty"></div>
+          <div class="grid-cell lesson lesson-purple">
+            <div class="lesson-badge"></div>
+            <div class="lesson-type">Лекция</div>
+            <div class="lesson-title">Компьютерные сети</div>
+            <div class="lesson-meta">
+              <span>Ауд. C-201</span>
+              <span>Проф. Садыков</span>
+            </div>
+          </div>
+          <div class="grid-cell lesson lesson-blue">
+            <div class="lesson-type">Лабa</div>
+            <div class="lesson-title">Операционные системы</div>
+            <div class="lesson-meta">
+              <span>Lab 1</span>
+              <span>Подгруппа 2</span>
+            </div>
+          </div>
+          <div class="grid-cell slot-empty"></div>
+
+          <div class="grid-cell time-cell">12:00</div>
+          <div class="grid-cell slot-empty"></div>
+          <div class="grid-cell lesson lesson-pink">
+            <div class="lesson-type">Практика</div>
+            <div class="lesson-title">UI/UX основы</div>
+            <div class="lesson-meta">
+              <span>Studio 5</span>
+              <span>Проектная работа</span>
+            </div>
+          </div>
+          <div class="grid-cell lesson lesson-blue">
+            <div class="lesson-type">Лабa</div>
+            <div class="lesson-title">Python Automation</div>
+            <div class="lesson-meta">
+              <span>Lab 4</span>
+              <span>Практикум</span>
+            </div>
+          </div>
+          <div class="grid-cell slot-empty"></div>
+          <div class="grid-cell lesson lesson-purple">
+            <div class="lesson-type">Лекция</div>
+            <div class="lesson-title">Информационная безопасность</div>
+            <div class="lesson-meta">
+              <span>Ауд. B-308</span>
+              <span>Поток</span>
+            </div>
+          </div>
+
+          <div class="grid-cell time-cell">13:45</div>
+          <div class="grid-cell lesson lesson-blue">
+            <div class="lesson-type">Лабa</div>
+            <div class="lesson-title">Frontend практика</div>
+            <div class="lesson-meta">
+              <span>Lab 2</span>
+              <span>React / HTML / CSS</span>
+            </div>
+          </div>
+          <div class="grid-cell lesson lesson-purple">
+            <div class="lesson-type">Лекция</div>
+            <div class="lesson-title">Архитектура ЭВМ</div>
+            <div class="lesson-meta">
+              <span>Ауд. C-114</span>
+              <span>Поток 1</span>
+            </div>
+          </div>
+          <div class="grid-cell lesson lesson-pink">
+            <div class="lesson-type">Практика</div>
+            <div class="lesson-title">Проектный менеджмент</div>
+            <div class="lesson-meta">
+              <span>Коворкинг зал</span>
+              <span>Командная работа</span>
+            </div>
+          </div>
+          <div class="grid-cell slot-empty"></div>
+          <div class="grid-cell lesson lesson-yellow">
+            <div class="lesson-type">Семинар</div>
+            <div class="lesson-title">Философия</div>
+            <div class="lesson-meta">
+              <span>Ауд. A-210</span>
+              <span>Общий поток</span>
+            </div>
+          </div>
+
+          <div class="grid-cell time-cell">15:30</div>
+          <div class="grid-cell slot-empty"></div>
+          <div class="grid-cell lesson lesson-green">
+            <div class="lesson-type">Онлайн</div>
+            <div class="lesson-title">Разбор домашних заданий</div>
+            <div class="lesson-meta">
+              <span>Discord / Meet</span>
+              <span>Вечерняя сессия</span>
+            </div>
+          </div>
+          <div class="grid-cell lesson lesson-purple">
+            <div class="lesson-type">Лекция</div>
+            <div class="lesson-title">Машинное обучение</div>
+            <div class="lesson-meta">
+              <span>Ауд. B-401</span>
+              <span>Демо-блок</span>
+            </div>
+          </div>
+          <div class="grid-cell lesson lesson-blue">
+            <div class="lesson-type">Лабa</div>
+            <div class="lesson-title">SQL Workshop</div>
+            <div class="lesson-meta">
+              <span>Lab 6</span>
+              <span>Практика с данными</span>
+            </div>
+          </div>
+          <div class="grid-cell slot-empty"></div>
+
+          <div class="grid-cell time-cell">17:15</div>
+          <div class="grid-cell lesson lesson-pink">
+            <div class="lesson-type">Практика</div>
+            <div class="lesson-title">Коммуникации в команде</div>
+            <div class="lesson-meta">
+              <span>Ауд. D-303</span>
+              <span>Вечерний блок</span>
+            </div>
+          </div>
+          <div class="grid-cell slot-empty"></div>
+          <div class="grid-cell lesson lesson-yellow">
+            <div class="lesson-type">Семинар</div>
+            <div class="lesson-title">Экономика IT-продуктов</div>
+            <div class="lesson-meta">
+              <span>Ауд. A-305</span>
+              <span>Факультатив</span>
+            </div>
+          </div>
+          <div class="grid-cell slot-empty"></div>
+          <div class="grid-cell lesson lesson-purple">
+            <div class="lesson-type">Лекция</div>
+            <div class="lesson-title">Подготовка к защите проекта</div>
+            <div class="lesson-meta">
+              <span>Конференц-зал</span>
+              <span>Финальный слот</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobile-schedule" id="mobile">
+        <article class="mobile-day">
+          <div class="mobile-day-head"><strong>Понедельник</strong><span>3 пары</span></div>
+          <div class="mobile-lesson-list">
+            <div class="mobile-lesson lesson-purple"><small>08:30 · Лекция</small><strong>Алгоритмы и структуры данных</strong><p>Ауд. B-204 · Иванов И.И.</p></div>
+            <div class="mobile-lesson lesson-yellow"><small>10:15 · Семинар</small><strong>Высшая математика</strong><p>Ауд. D-101 · Поток 2</p></div>
+            <div class="mobile-lesson lesson-blue"><small>13:45 · Лаба</small><strong>Frontend практика</strong><p>Lab 2 · React / HTML / CSS</p></div>
+          </div>
+        </article>
+
+        <article class="mobile-day">
+          <div class="mobile-day-head"><strong>Вторник</strong><span>3 пары</span></div>
+          <div class="mobile-lesson-list">
+            <div class="mobile-lesson lesson-blue"><small>08:30 · Лаба</small><strong>Web-разработка</strong><p>Lab 3 · Подгруппа 1</p></div>
+            <div class="mobile-lesson lesson-pink"><small>12:00 · Практика</small><strong>UI/UX основы</strong><p>Studio 5 · Проектная работа</p></div>
+            <div class="mobile-lesson lesson-green"><small>15:30 · Онлайн</small><strong>Разбор домашних заданий</strong><p>Discord / Meet · Вечерняя сессия</p></div>
+          </div>
+        </article>
+
+        <article class="mobile-day">
+          <div class="mobile-day-head"><strong>Среда</strong><span>6 пар</span></div>
+          <div class="mobile-lesson-list">
+            <div class="mobile-lesson lesson-pink"><small>08:30 · Практика</small><strong>Базы данных</strong><p>Ауд. A-112 · Группа целиком</p></div>
+            <div class="mobile-lesson lesson-purple"><small>10:15 · Лекция</small><strong>Компьютерные сети</strong><p>Ауд. C-201 · Проф. Садыков</p></div>
+            <div class="mobile-lesson lesson-blue"><small>12:00 · Лаба</small><strong>Python Automation</strong><p>Lab 4 · Практикум</p></div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <br><br>
+    <section class="hero">
+      <aside class="summary-card">
+        <div class="summary-head">
+          <div>
+            <h2>Числовая статистика</h2>
+            <p style="font-size:0.86rem;color:var(--text-gray);font-weight:600;margin-top:4px;">Быстрый срез по учебной неделе</p>
+          </div>
+          <div class="summary-badge">Актуально</div>
+        </div>
+
+        <div class="summary-metrics">
+          <div class="metric-box"><strong>18</strong><span>всего занятий</span></div>
+          <div class="metric-box"><strong>32</strong><span>учебных часа</span></div>
+          <div class="metric-box"><strong>5</strong><span>учебных дней</span></div>
+          <div class="metric-box"><strong>3</strong><span>свободных окна</span></div>
+          <div class="metric-box"><strong>6</strong><span>лекций</span></div>
+          <div class="metric-box"><strong>4</strong><span>практики</span></div>
+          <div class="metric-box"><strong>5</strong><span>лабораторных</span></div>
+          <div class="metric-box"><strong>3</strong><span>онлайн/семинаров</span></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    // Скрипт для работы бургер-меню на мобильных
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const navMenu = document.getElementById('nav-menu');
+
+    hamburgerBtn.addEventListener('click', () => {
+      // Добавляем или убираем класс active, который плавно раскрывает меню
+      navMenu.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация преподавателя — GoShiet</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --purple: #5A3FFF; --pink: #FF2D55; --black: #0D0D12; --text-gray: #4A4A5A;
+      --glass-strong: rgba(255,255,255,0.9); --glass-border: rgba(255,255,255,0.8);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif; color: var(--black); min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at 0% 0%, rgba(90, 63, 255, 0.12), transparent 35%),
+                  radial-gradient(circle at 100% 100%, rgba(255, 45, 85, 0.08), transparent 40%),
+                  linear-gradient(180deg, #FAFAFF 0%, #F0F2FF 48%, #FAFAFF 100%);
+    }
+
+    /* Фоны */
+    .hero-grid-overlay { position: fixed; inset: 0; background-image: radial-gradient(rgba(90, 63, 255, 0.12) 1.2px, transparent 1.2px); background-size: 30px 30px; opacity: 0.55; z-index: 0; }
+    .hero-glow-orb { position: fixed; border-radius: 50%; filter: blur(100px); z-index: 0; opacity: 0.4; }
+    .orb-1 { width: 500px; height: 500px; background: var(--purple); top: -100px; right: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: var(--pink); bottom: -100px; left: -100px; }
+
+    /* Форма */
+    .auth-wrapper { position: relative; z-index: 10; width: 100%; max-width: 640px; padding: 40px 20px; }
+    .auth-card { background: var(--glass-strong); border: 1px solid var(--glass-border); border-radius: 36px; padding: 48px 40px; box-shadow: 0 20px 60px rgba(90, 63, 255, 0.15); backdrop-filter: blur(24px); }
+    
+    .auth-header { text-align: center; margin-bottom: 32px; }
+    .uni-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 800; color: var(--purple); background: rgba(90,63,255,0.1); padding: 6px 16px; border-radius: 999px; margin-bottom: 16px; border: 1px solid rgba(90,63,255,0.15); }
+    .auth-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .auth-subtitle { font-size: 0.95rem; font-weight: 600; color: var(--text-gray); }
+
+    /* Сетка инпутов */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .full-width { grid-column: 1 / -1; }
+
+    .input-group label { display: block; font-size: 0.8rem; font-weight: 800; margin-bottom: 8px; margin-left: 4px; color: var(--black); }
+    .input-field { width: 100%; background: #fff; border: 1px solid rgba(13,13,18,0.1); border-radius: 16px; padding: 14px 18px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600; transition: all 0.3s ease; box-shadow: inset 0 2px 6px rgba(13,13,18,0.02); }
+    .input-field:focus { border-color: var(--purple); outline: none; box-shadow: 0 0 0 4px rgba(90,63,255,0.15); }
+
+    /* Кастомный select */
+    select.input-field { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' fill='none' stroke='%230D0D12' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 18px center; padding-right: 40px; }
+
+    .divider { height: 1px; background: rgba(13,13,18,0.08); margin: 24px 0; }
+    
+    .btn-submit { width: 100%; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; border: none; border-radius: 16px; padding: 16px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; box-shadow: 0 8px 24px rgba(90,63,255,0.3); transition: all 0.2s; margin-top: 10px; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(90,63,255,0.4); }
+
+    .error-box { background: rgba(255, 45, 85, 0.1); border: 1px solid rgba(255, 45, 85, 0.2); color: var(--pink); padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; margin-bottom: 20px; text-align: center; }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .auth-card { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-glow-orb orb-1"></div>
+  <div class="hero-glow-orb orb-2"></div>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      
+      <div class="auth-header">
+        <div class="uni-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+          {{ university.name }}
+        </div>
+        <h2 class="auth-title">Профиль преподавателя</h2>
+        <p class="auth-subtitle">Заполните данные для доступа к расписанию</p>
+      </div>
+
+      <form method="POST" action="">
+        {% csrf_token %}
+        
+        {% if error %}
+          <div class="error-box">{{ error }}</div>
+        {% endif %}
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Фамилия *</label>
+            <input type="text" name="last_name" class="input-field" placeholder="Иванов" required>
+          </div>
+          <div class="input-group">
+            <label>Имя *</label>
+            <input type="text" name="first_name" class="input-field" placeholder="Иван" required>
+          </div>
+          <div class="input-group">
+            <label>Отчество</label>
+            <input type="text" name="middle_name" class="input-field" placeholder="Иванович">
+          </div>
+
+          <div class="input-group">
+            <label>Научное звание</label>
+            <select name="academic_title" class="input-field">
+              <option value="Без звания" selected>Без звания</option>
+              <option value="Ассистент">Ассистент</option>
+              <option value="Старший преподаватель">Старший преподаватель</option>
+              <option value="Доцент">Доцент</option>
+              <option value="Профессор">Профессор</option>
+            </select>
+          </div>
+          
+          <div class="input-group full-width">
+            <label>Рабочая почта *</label>
+            <input type="email" name="email" class="input-field" placeholder="ivanov@university.edu" required>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="form-grid">
+          <div class="input-group full-width">
+            <label>Придумайте Логин *</label>
+            <input type="text" name="username" class="input-field" placeholder="ivanov_i" required>
+          </div>
+          <div class="input-group full-width">
+            <label>Придумайте Пароль *</label>
+            <input type="password" name="password" class="input-field" placeholder="••••••••" required minlength="6">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Создать профиль</button>
+      </form>
+      
+    </div>
+  </div>
+</body>
+</html>

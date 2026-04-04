@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ссылка создана — GoShiet</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --purple: #5A3FFF; --green: #00E676; --pink: #FF2D55;
+      --black: #0D0D12; --text-gray: #4A4A5A;
+      --glass-strong: rgba(255,255,255,0.86); --glass-border: rgba(255,255,255,0.78);
+    }
+    body {
+      font-family: 'DM Sans', sans-serif; color: var(--black); min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      background: radial-gradient(circle at 0% 0%, rgba(90, 63, 255, 0.12), transparent 35%),
+                  linear-gradient(180deg, #FAFAFF 0%, #F0F2FF 48%, #FAFAFF 100%);
+    }
+    
+    /* Фоны */
+    .hero-grid-overlay { position: fixed; inset: 0; background-image: radial-gradient(rgba(90, 63, 255, 0.12) 1.2px, transparent 1.2px); background-size: 30px 30px; opacity: 0.55; z-index: 0; }
+    .hero-glow-orb { position: fixed; border-radius: 50%; filter: blur(100px); z-index: 0; opacity: 0.5; animation: pulse 8s infinite alternate; }
+    .orb-1 { width: 500px; height: 500px; background: var(--purple); top: -100px; right: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: var(--green); bottom: -100px; left: -100px; }
+
+    /* Карточка */
+    .card {
+      position: relative; z-index: 10; background: var(--glass-strong); border: 1px solid var(--glass-border);
+      border-radius: 32px; padding: 48px 40px; box-shadow: 0 20px 60px rgba(90, 63, 255, 0.15);
+      backdrop-filter: blur(24px); max-width: 540px; width: 100%; text-align: center; margin: 20px;
+    }
+    
+    .icon-wrapper { width: 80px; height: 80px; background: rgba(0,230,118,0.15); color: #00A354; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
+    .title { font-size: 1.8rem; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.02em; }
+    .subtitle { font-size: 1rem; font-weight: 600; color: var(--text-gray); margin-bottom: 32px; line-height: 1.5; }
+
+    /* Поле с ссылкой */
+    .link-box { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; /* Добавили отступ между текстом и кнопкой */
+      background: #fff; 
+      border: 1px solid rgba(13,13,18,0.1); 
+      border-radius: 16px; 
+      padding: 8px 8px 8px 20px; 
+      margin-bottom: 32px; 
+      box-shadow: 0 4px 12px rgba(13,13,18,0.03); 
+    }
+    
+    .link-box input { 
+      flex: 1; 
+      min-width: 0; /* ВАЖНО: разрешаем инпуту сжиматься */
+      text-overflow: ellipsis; /* Добавляем красивые ... в конце длинной ссылки */
+      white-space: nowrap;
+      overflow: hidden;
+      border: none; 
+      outline: none; 
+      font-family: 'DM Sans', sans-serif; 
+      font-size: 0.95rem; 
+      font-weight: 600; 
+      color: var(--purple); 
+      background: transparent; 
+    }
+    
+    /* Кнопки */
+    .btn { 
+      display: inline-flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 8px; 
+      border-radius: 12px; 
+      font-family: 'DM Sans', sans-serif; 
+      font-weight: 800; 
+      font-size: 0.95rem; 
+      padding: 12px 24px; 
+      border: none; 
+      cursor: pointer; 
+      transition: all 0.2s; 
+      text-decoration: none; 
+      flex-shrink: 0; /* ВАЖНО: запрещаем кнопке сплющиваться */
+    }
+    
+    .btn-copy { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; box-shadow: 0 8px 20px rgba(90,63,255,0.3); }
+    .btn-copy:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(90,63,255,0.4); }
+    .btn-back { background: transparent; color: var(--text-gray); border: 1px solid rgba(13,13,18,0.1); margin-top: 16px; width: 100%; }
+    .btn-back:hover { background: #fff; color: var(--black); }
+
+    /* Адаптив для маленьких телефонов */
+    @media (max-width: 480px) {
+      .card { padding: 32px 24px; }
+      .link-box { flex-direction: column; padding: 12px; }
+      .link-box input { text-align: center; width: 100%; padding: 8px 0; }
+      .btn-copy { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-glow-orb orb-1"></div>
+  <div class="hero-glow-orb orb-2"></div>
+
+  <div class="card">
+    <div class="icon-wrapper">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+    </div>
+    <h1 class="title">Ссылка успешно создана!</h1>
+    <p class="subtitle">Отправьте эту защищенную ссылку преподавателям <b>{{ university.name }}</b>. По ней они смогут создать свой профиль в системе.</p>
+
+    <div class="link-box">
+      <input type="text" id="inviteUrl" value="{{ invite_url }}" readonly>
+      
+      <button class="btn btn-copy" onclick="copyLink()" id="copyBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Копировать
+      </button>
+    </div>
+
+    <a href="{% url 'dashboard' %}" class="btn btn-back">Вернуться в Панель управления</a>
+  </div>
+
+  <script>
+    function copyLink() {
+      const linkInput = document.getElementById('inviteUrl');
+      const copyBtn = document.getElementById('copyBtn');
+      
+      linkInput.select();
+      linkInput.setSelectionRange(0, 99999); // Для мобильных
+      navigator.clipboard.writeText(linkInput.value);
+      
+      // Визуальный отклик
+      copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Скопировано!';
+      copyBtn.style.background = '#00A354';
+      
+      setTimeout(() => {
+        copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Копировать';
+        copyBtn.style.background = 'linear-gradient(135deg, #7c3aed, #4f46e5)';
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
