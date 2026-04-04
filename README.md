@@ -1,22 +1,18 @@
 <div align="center">
 
-<svg width="600" height="120" viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f5f3ff"/>
-      <stop offset="100%" style="stop-color:#ede9fe"/>
-    </linearGradient>
-    <linearGradient id="purple" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#7c3aed"/>
-      <stop offset="100%" style="stop-color:#a78bfa"/>
-    </linearGradient>
-  </defs>
-  <rect width="600" height="120" rx="16" fill="url(#bg)"/>
-  <rect x="0" y="0" width="600" height="3" rx="2" fill="url(#purple)"/>
-  <text x="300" y="72" font-family="monospace" font-size="58" font-weight="700" text-anchor="middle">
+<svg width="680" height="200" viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+  <rect x="40" y="20" width="600" height="160" rx="16" fill="#f5f3ff"/>
+  <rect x="40" y="20" width="600" height="4" rx="2" fill="#7c3aed"/>
+  <rect x="40" y="20" width="4" height="160" rx="2" fill="#7c3aed"/>
+  <rect x="636" y="20" width="4" height="160" rx="2" fill="#c4b5fd"/>
+  <rect x="44" y="176" width="596" height="4" rx="2" fill="#c4b5fd"/>
+  <circle cx="68" cy="44" r="6" fill="#ff5f57"/>
+  <circle cx="88" cy="44" r="6" fill="#ffbd2e"/>
+  <circle cx="108" cy="44" r="6" fill="#28ca41"/>
+  <text x="340" y="128" font-family="'Courier New', monospace" font-size="80" font-weight="700" text-anchor="middle" letter-spacing="-2">
     <tspan fill="#1a1625">Go</tspan><tspan fill="#7c3aed">Shiet</tspan>
   </text>
-  <text x="300" y="100" font-family="monospace" font-size="12" fill="#8b5cf6" text-anchor="middle" letter-spacing="4">СИСТЕМА АВТОМАТИЧЕСКОГО РАСПИСАНИЯ</text>
+  <text x="340" y="163" font-family="'Courier New', monospace" font-size="11" fill="#8b5cf6" text-anchor="middle" letter-spacing="5">СИСТЕМА АВТОМАТИЧЕСКОГО РАСПИСАНИЯ</text>
 </svg>
 
 <br/>
@@ -44,7 +40,7 @@
 
 <table>
   <tr>
-    <td align="center" width="25%"><b>👑 Короли</b></td>
+    <td align="center" width="25%"><b>👑 Superusers</b></td>
     <td align="center" width="25%"><b>🛡️ Администраторы</b></td>
     <td align="center" width="25%"><b>🎓 Преподаватели</b></td>
     <td align="center" width="25%"><b>👀 Студенты</b></td>
