@@ -22,13 +22,17 @@
     </linearGradient>
   </defs>
 
-  <g transform="translate(4, 9)">
-    <rect x="0" y="0" width="16" height="16" rx="5" fill="url(#icon-grad-purple)" />
-    <rect x="12" y="12" width="16" height="16" rx="5" fill="url(#icon-grad-green)" opacity="0.95" />
-    <circle cx="20" cy="4" r="3.5" fill="#FF2D55" />
+  <rect width="100%" height="100%" fill="#FFFFFF" />
+
+  <g transform="translate(25, 0)">
+    <g transform="translate(4, 9)">
+      <rect x="0" y="0" width="16" height="16" rx="5" fill="url(#icon-grad-purple)" />
+      <rect x="12" y="12" width="16" height="16" rx="5" fill="url(#icon-grad-green)" opacity="0.95" />
+      <circle cx="20" cy="4" r="3.5" fill="#FF2D55" />
+    </g>
+    
+    <text x="44" y="34" class="logo-text">
+      <tspan class="color-dark">Go</tspan><tspan class="color-purple">Shiet</tspan>
+    </text>
   </g>
-  
-  <text x="44" y="34" class="logo-text">
-    <tspan class="color-dark">Go</tspan><tspan class="color-purple">Shiet</tspan>
-  </text>
 </svg>
