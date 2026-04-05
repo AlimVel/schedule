@@ -106,8 +106,6 @@ def logout_view(request):
     logout(request)
     return redirect('index')
 
-
-@login_required(login_url='auth')
 def schedule(request):
     return render(request, 'schedule.html')
 
@@ -591,6 +589,8 @@ def admin_teacher_view(request, pk):
     }
     return render(request, 'admin_teacher_view.html', context)
 
+def dbinfo(request):
+    return render(request, 'dbinfo.html')
 
 # ──────────────────────────────────────────────────────────────
 #  ADMIN API — Группы

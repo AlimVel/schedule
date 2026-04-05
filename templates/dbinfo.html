@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoShiet — Схема базы данных</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0D0D12;
+    color: #e0dfd8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .topbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    background: #18181f;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .logo-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .logo-mark svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2; }
+  .topbar-title { font-size: 1rem; font-weight: 700; color: #e0dfd8; letter-spacing: -0.02em; }
+  .topbar-sub { font-size: 0.75rem; color: #6a6a7a; margin-top: 1px; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .badge {
+    padding: 5px 12px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
+    background: rgba(90,63,255,0.18); color: #a78bfa;
+    border: 1px solid rgba(90,63,255,0.3);
+  }
+  .hint { font-size: 0.72rem; color: #6a6a7a; display: flex; align-items: center; gap: 6px; }
+  .hint svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+  .btn-reset {
+    padding: 6px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05); color: #9c9a92; font-size: 0.75rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .btn-reset:hover { background: rgba(255,255,255,0.1); color: #e0dfd8; }
+  .logo-link {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; transition: opacity 0.2s;
+  }
+  .logo-link:hover { opacity: 0.8; }
+  .logo-text {
+    font-size: 1.35rem; font-weight: 900; letter-spacing: -0.04em;
+    color: #e0dfd8;
+  }
+  .logo-text span { color: #7c6ff0; }
+  #canvas-wrap {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    user-select: none;
+    background: #0D0D12;
+  }
+  #canvas-wrap.dragging { cursor: grabbing; }
+  #canvas {
+    position: absolute;
+    top: 0; left: 0;
+    transform-origin: 0 0;
+    padding: 48px;
+  }
+ 
+  .legend {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 24px;
+    background: #18181f;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    flex-wrap: wrap;
+  }
+  .leg { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #6a6a7a; }
+  .leg-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="{% url 'schedule' %}" class="logo-link">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      </div>
+      <div class="logo-text">Go<span>Shiet</span></div>
+    </a>
+    <div>
+      <div class="topbar-title">Схема базы данных</div>
+      <div class="topbar-sub">10 таблиц · PostgreSQL · Django ORM</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="hint">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Колёсико — зум · Перетащить — перемещение
+    </div>
+    <button class="btn-reset" onclick="resetView()">Сбросить вид</button>
+    <div class="badge">ERD</div>
+  </div>
+</div>
+
+<div id="canvas-wrap"><div id="canvas"><div id="erd"></div></div></div>
+
+<div class="legend">
+  <div class="leg"><svg width="20" height="8" viewBox="0 0 20 8"><line x1="0" y1="4" x2="20" y2="4" stroke="#6d5fe6" stroke-width="1.5"/></svg> один-ко-многим</div>
+  <div class="leg"><svg width="20" height="8" viewBox="0 0 20 8"><line x1="0" y1="4" x2="20" y2="4" stroke="#5dcaa5" stroke-width="1.5" stroke-dasharray="4 2"/></svg> один-к-одному</div>
+</div>
+
+<script>
+const TW = 270, RH = 32, HH = 44;
+
+/*
+  НОВАЯ СЕТКА:
+  Верхний ряд: InviteLink (col0) | University (col1) | Classroom (col2)
+  Второй ряд:  Direction (col0)  | User (col1)       | (пусто)
+  Центр:       ScheduleEntry (col1)
+  Нижний пояс: Course, Group, Subject, TeacherPreference
+*/
+
+const tables = {
+  // ВЕРХНИЙ РЯД (Симметрично по бокам)
+  InviteLink:        { x: 0,   y: 60,   fields: [['bigint','id','PK'],['bigint','university_id','FK'],['uuid','token',''],['bool','is_active',''],['timestamp','created_at','']] },
+  University:        { x: 760,  y: 0,   fields: [['bigint','id','PK'],['varchar','name',''],['timestamp','created_at','']] },
+  Classroom:         { x: 1850, y: 60,   fields: [['bigint','id','PK'],['bigint','university_id','FK'],['varchar','name',''],['int','capacity','']] },
+
+  // ВТОРОЙ РЯД
+  Direction:         { x: 80,   y: 450,  fields: [['bigint','id','PK'],['bigint','university_id','FK'],['varchar','name','']] },
+  User:              { x: 1450, y: 450,  fields: [['bigint','id','PK'],['bigint','university_id','FK'],['varchar','username',''],['varchar','first_name',''],['varchar','last_name',''],['varchar','middle_name',''],['varchar','email',''],['varchar','academic_title',''],['bool','is_admin',''],['bool','is_teacher',''],['bool','is_superuser','']] },
+
+  // ЦЕНТР
+  ScheduleEntry:     { x: 760,  y: 950,  fields: [['bigint','id','PK'],['bigint','university_id','FK'],['bigint','subject_id','FK'],['bigint','teacher_id','FK'],['bigint','classroom_id','FK'],['bigint','course_id','FK'],['smallint','weekday',''],['smallint','slot_number',''],['varchar','lesson_type',''],['bool','is_approved',''],['timestamp','created_at',''],['timestamp','updated_at','']] },
+
+  // НИЖНИЙ РЯД
+  Course:            { x: 80,   y: 1450, fields: [['bigint','id','PK'],['bigint','direction_id','FK'],['smallint','number','']] },
+  Subject:           { x: 1450, y: 1450, fields: [['bigint','id','PK'],['bigint','university_id','FK'],['bigint','teacher_id','FK'],['bigint','course_id','FK'],['varchar','name',''],['smallint','difficulty_points',''],['smallint','hours_per_semester','']] },
+  Group:             { x: 80,   y: 1850, fields: [['bigint','id','PK'],['bigint','course_id','FK'],['varchar','name','']] },
+  TeacherPreference: { x: 1450, y: 1850, fields: [['bigint','id','PK'],['bigint','teacher_id','FK'],['smallint','max_lessons_per_day',''],['smallint','max_consecutive_lessons',''],['json','blocked_slots',''],['json','preferred_slots',''],['timestamp','updated_at','']] },
+};
+
+const links = [
+  // Прямые связи от University к соседям по бокам
+  { f:'University',  fs:'L', t:'InviteLink',    ts:'R', o:false },
+  { f:'University',  fs:'R', t:'Classroom',     ts:'L', o:false },
+  
+  // University к остальным
+  { f:'University',  fs:'B', t:'ScheduleEntry', ts:'T', o:false },
+  { f:'University',  fs:'L', t:'Direction',     ts:'T', o:false, via:[{x:600,y:250},{x:300,y:250}] },
+  { f:'University',  fs:'R', t:'User',          ts:'T', o:false, via:[{x:1140,y:250},{x:1380,y:250}] },
+
+  // Левая колонка
+  { f:'Direction',   fs:'B', t:'Course',        ts:'T', o:false },
+  { f:'Course',      fs:'B', t:'Group',         ts:'T', o:false },
+  { f:'Direction',   fs:'R', t:'ScheduleEntry', ts:'L', o:false, via:[{x:460,y:572},{x:620,y:572}] },
+  { f:'Course',      fs:'R', t:'ScheduleEntry', ts:'L', o:false, via:[{x:460,y:1580},{x:620,y:1580},{x:620,y:1350}] },
+
+  // Правая колонка
+  { f:'User',        fs:'B', t:'Subject',       ts:'T', o:false },
+  { f:'Subject',     fs:'B', t:'TeacherPreference', ts:'T', o:false },
+  { f:'User',        fs:'L', t:'ScheduleEntry', ts:'R', o:false, via:[{x:1340,y:650},{x:1170,y:650}] },
+  { f:'Classroom',   fs:'B', t:'ScheduleEntry', ts:'R', o:false, via:[{x:1585,y:1150},{x:1170,y:1150}] },
+  { f:'Subject',     fs:'L', t:'ScheduleEntry', ts:'R', o:false, via:[{x:1340,y:1580},{x:1170,y:1580},{x:1170,y:1350}] },
+
+  // 1:1 связь
+  { f:'User',        fs:'R', t:'TeacherPreference', ts:'R', o:true, via:[{x:1860,y:650},{x:1860,y:1950}] },
+];
+
+const C = {
+  bg:'#0D0D12', border:'#6d5fe6', borderSE:'#f59e0b',
+  cell1:'#0f0e1a', cell2:'#0c0b16',
+  header:'#1a1830', headerSE:'#1f1810',
+  text:'#ffffff', muted:'#a78bfa', line:'#6d5fe6', line1:'#5dcaa5',
+};
+
+function th(t) { return HH + t.fields.length * RH; }
+
+function pt(name, side) {
+  const t = tables[name], h = th(t);
+  if (side==='T') return [t.x+TW/2, t.y];
+  if (side==='B') return [t.x+TW/2, t.y+h];
+  if (side==='L') return [t.x,      t.y+h/2];
+  if (side==='R') return [t.x+TW,   t.y+h/2];
+}
+
+function buildPath(link) {
+  const [x1,y1] = pt(link.f, link.fs);
+  const [x2,y2] = pt(link.t, link.ts);
+  if (link.via && link.via.length > 0) {
+    let d = `M ${x1} ${y1}`;
+    for (const v of link.via) d += ` L ${v.x} ${v.y}`;
+    d += ` L ${x2} ${y2}`;
+    return d;
+  }
+  const dx = x2-x1, dy = y2-y1;
+  const str = Math.min(Math.abs(dy)*0.45, 180);
+  const offY = (s, v) => s==='T'?-v : s==='B'?v : 0;
+  const offX = (s, v) => s==='L'?-v : s==='R'?v : 0;
+  return `M ${x1} ${y1} C ${x1+offX(link.fs,str)} ${y1+offY(link.fs,str)} ${x2+offX(link.ts,str)} ${y2+offY(link.ts,str)} ${x2} ${y2}`;
+}
+
+function renderTable(name) {
+  const t = tables[name], h = th(t), isSE = name==='ScheduleEntry';
+  const bdr = isSE ? C.borderSE : C.border;
+  const rows = t.fields.map((f,i) => {
+    const y = t.y+HH+i*RH, fill = i%2===0 ? C.cell1 : C.cell2;
+    const tc = f[2]==='PK'?'#f59e0b':f[2]==='FK'?'#60a5fa':'transparent';
+    return `<rect x="${t.x+1}" y="${y}" width="${TW-2}" height="${RH}" fill="${fill}"/>
+      <text x="${t.x+10}" y="${y+20}" fill="${C.muted}" font-size="10" font-family="sans-serif">${f[0]}</text>
+      <text x="${t.x+TW/2}" y="${y+20}" text-anchor="middle" fill="${C.text}" font-size="12" font-family="sans-serif" font-weight="500">${f[1]}</text>
+      ${f[2]?`<rect x="${t.x+TW-40}" y="${y+7}" width="26" height="14" rx="4" fill="${tc}" opacity="0.18"/>
+      <text x="${t.x+TW-27}" y="${y+18}" text-anchor="middle" fill="${tc}" font-size="10" font-family="sans-serif" font-weight="700">${f[2]}</text>`:''}`;
+  }).join('');
+  return `<g>
+    <rect x="${t.x}" y="${t.y}" width="${TW}" height="${h}" rx="10" fill="${isSE?C.headerSE:C.header}" stroke="${bdr}" stroke-width="${isSE?2.5:1.5}"/>
+    <text x="${t.x+TW/2}" y="${t.y+HH/2+6}" text-anchor="middle" fill="#fff" font-size="13" font-family="sans-serif" font-weight="700">${name.toUpperCase()}</text>
+    <line x1="${t.x+1}" y1="${t.y+HH}" x2="${t.x+TW-1}" y2="${t.y+HH}" stroke="${bdr}" stroke-width="1" opacity="0.35"/>
+    ${rows}
+    <rect x="${t.x}" y="${t.y}" width="${TW}" height="${h}" rx="10" fill="none" stroke="${bdr}" stroke-width="${isSE?2.5:1.5}"/>
+  </g>`;
+}
+
+function renderAll() {
+  const W=2200, H=2400;
+  const lsvg = links.map(l => {
+    const color = l.o ? C.line1 : C.line;
+    const dash  = l.o ? 'stroke-dasharray="6 3"' : '';
+    return `<path d="${buildPath(l)}" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.7" ${dash}/>`;
+  }).join('');
+  const tsvg = Object.keys(tables).map(renderTable).join('');
+  document.getElementById('erd').innerHTML = `
+    <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${W}" height="${H}" fill="${C.bg}"/>
+      ${lsvg}
+      ${tsvg}
+    </svg>`;
+  centerView();
+}
+
+const wrap=document.getElementById('canvas-wrap'), canvas=document.getElementById('canvas');
+window.__t={s:0.5,x:0,y:0};
+function applyT(){canvas.style.transform=`translate(${window.__t.x}px,${window.__t.y}px) scale(${window.__t.s})`;}
+function centerView(){
+  const r=wrap.getBoundingClientRect();
+  const s=Math.min(r.width/2300,r.height/2500,0.5);
+  window.__t={s,x:(r.width-2200*s)/2,y:(r.height-2400*s)/2};
+  applyT();
+}
+window.resetView=centerView;
+
+wrap.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=wrap.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  const ns=Math.min(Math.max(window.__t.s*(e.deltaY>0?0.9:1.1),0.1),4);
+  window.__t.x=mx-(mx-window.__t.x)*(ns/window.__t.s);
+  window.__t.y=my-(my-window.__t.y)*(ns/window.__t.s);
+  window.__t.s=ns; applyT();
+},{passive:false});
+
+let drag=false,sx=0,sy=0,ox=0,oy=0;
+wrap.addEventListener('mousedown',e=>{if(e.button!==0)return;drag=true;sx=e.clientX;sy=e.clientY;ox=window.__t.x;oy=window.__t.y;wrap.classList.add('dragging');});
+window.addEventListener('mousemove',e=>{if(!drag)return;window.__t.x=ox+(e.clientX-sx);window.__t.y=oy+(e.clientY-sy);applyT();});
+window.addEventListener('mouseup',()=>{drag=false;wrap.classList.remove('dragging');});
+
+window.addEventListener('load',renderAll);
+window.addEventListener('resize',centerView);   
+</script>
+</body>
+</html>

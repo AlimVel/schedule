@@ -41,4 +41,7 @@ urlpatterns = [
 
     # ── Страница управления преподавателем (от имени админа) ──
     path('admin/teacher/<int:pk>/', views.admin_teacher_view, name='admin_teacher_view'),
+    # ── Страница информации о базе данных ───────────────────────
+    path('dbinfo/', views.dbinfo, name='dbinfo'),
+
 ]
