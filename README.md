@@ -83,17 +83,17 @@
 <table>
   <tr>
     <td align="center">🗄️</td>
-    <td><b>Проектирование и создание БД</b></td>
+    <td><b>Проектирование и создание БД. Выкладка на хостинг.</b></td>
     <td align="center">Ризаев Амирхан</td>
   </tr>
   <tr>
     <td align="center">⚙️</td>
-    <td><b>Backend сайта</b></td>
+    <td><b>Backend сайта. Подключение backend к frontend</b></td>
     <td align="center">Гайратов Амирхон</td>
   </tr>
   <tr>
     <td align="center">🎨</td>
-    <td><b>Frontend сайта</b></td>
+    <td><b>Frontend сайта. Подключение backend к frontend</b></td>
     <td align="center">Ибрахимова Севинч</td>
   </tr>
   <tr>
