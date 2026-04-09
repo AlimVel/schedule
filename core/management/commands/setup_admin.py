@@ -20,7 +20,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR('Пользователь с таким логином уже существует!'))
             return
 
-        # 3. Создаем суперпользователя и привязываем к универу
         user = User.objects.create_superuser(username=username, email='', password=password)
         user.university = uni
         user.is_admin = True

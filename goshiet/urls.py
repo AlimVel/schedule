@@ -44,4 +44,18 @@ urlpatterns = [
     # ── Страница информации о базе данных ───────────────────────
     path('dbinfo/', views.dbinfo, name='dbinfo'),
 
+    path('api/public/universities/', views.public_universities, name='public_universities'),
+    path('api/public/directions/',   views.public_directions,   name='public_directions'),
+    path('api/public/courses/',      views.public_courses,      name='public_courses'),
+    path('api/public/groups/',       views.public_groups,       name='public_groups'),
+    path('api/public/teachers/',     views.public_teachers,     name='public_teachers'),
+    path('api/public/classrooms/',   views.public_classrooms,   name='public_classrooms'),
+    path('api/public/schedule/',     views.public_schedule,     name='public_schedule'),
+
+    path('api/subject-configs/',         views.subject_configs_api,    name='subject_configs'),
+    path('api/subject-configs/<int:pk>/',views.subject_config_detail,  name='subject_config_detail'),
+    path('api/schedule/generate/',       views.generate_schedule_api,  name='generate_schedule'),
+    path('api/schedule/status/',         views.generation_status_api,  name='generation_status'),
+    path('api/schedule/clear/',          views.clear_schedule_api,     name='clear_schedule'),
+    path('api/schedule/reset-semester/', views.reset_semester_api,     name='reset_semester'),
 ]

@@ -7,548 +7,480 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --purple: #5A3FFF;
-      --purple-light: #E8E5FF;
-      --purple-bg: #8870FF;
-      --green: #00E676;
-      --green-bright: #14FF00;
-      --blue: #0084FF;
-      --blue-light: #D0EBFF;
-      --yellow: #FFD600;
-      --pink: #FF2D55;
-      --black: #0D0D12;
-      --white: #FFFFFF;
-      --gray: #F0F0F5;
-      --text-gray: #4A4A5A;
-      --orange: #FF6B00;
-      --glass-white: rgba(255,255,255,0.7);
-      --glass-strong: rgba(255,255,255,0.86);
-      --glass-border: rgba(255,255,255,0.78);
-      --surface-border: rgba(13,13,18,0.08);
-      --shadow-premium: 0 20px 60px rgba(90,63,255,0.15), 0 8px 24px rgba(13,13,18,0.08);
+      --purple: #5A3FFF; --purple-dim: rgba(90,63,255,0.10);
+      --green: #00E676; --green-dim: rgba(0,230,118,0.12);
+      --blue: #0084FF; --blue-dim: rgba(0,132,255,0.10);
+      --pink: #FF2D55; --pink-dim: rgba(255,45,85,0.10);
+      --orange: #FF6B00; --orange-dim: rgba(255,107,0,0.10);
+      --yellow: #FFD600; --yellow-dim: rgba(255,214,0,0.12);
+      --black: #0D0D12; --text-gray: #4A4A5A;
+      --border: rgba(13,13,18,0.08);
+      --glass: rgba(255,255,255,0.88); --glass-b: rgba(255,255,255,0.8);
+      --shadow: 0 16px 48px rgba(90,63,255,0.12), 0 4px 16px rgba(13,13,18,0.06);
     }
-
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'DM Sans', sans-serif;
-      color: var(--black);
-      min-height: 100vh;
-      overflow-x: hidden;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(90, 63, 255, 0.12), transparent 35%),
-        radial-gradient(circle at 100% 15%, rgba(0, 230, 118, 0.12), transparent 30%),
-        radial-gradient(circle at 50% 100%, rgba(255, 45, 85, 0.08), transparent 40%),
-        linear-gradient(180deg, #FAFAFF 0%, #F0F2FF 48%, #FAFAFF 100%);
+      font-family: 'DM Sans', sans-serif; color: var(--black); min-height: 100vh; overflow-x: hidden;
+      background: radial-gradient(circle at 0% 0%, rgba(90,63,255,0.12), transparent 35%),
+                  radial-gradient(circle at 100% 15%, rgba(0,230,118,0.12), transparent 30%),
+                  linear-gradient(180deg, #FAFAFF 0%, #F0F2FF 48%, #FAFAFF 100%);
     }
+    .bg-grid { position:fixed; inset:0; background-image:radial-gradient(rgba(90,63,255,0.12) 1.2px, transparent 1.2px); background-size:30px 30px; opacity:.5; pointer-events:none; z-index:0; }
+    .orb { position:fixed; border-radius:50%; filter:blur(100px); z-index:0; pointer-events:none; animation:pf 10s ease-in-out infinite alternate; }
+    .o1 { width:520px; height:520px; background:var(--purple); opacity:.4; top:-160px; right:-140px; }
+    .o2 { width:400px; height:400px; background:var(--green); opacity:.35; bottom:-120px; left:-100px; animation-delay:-3s; }
+    @keyframes pf { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
 
-    .hero-grid-overlay {
-      position: fixed; inset: 0;
-      background-image: radial-gradient(rgba(90, 63, 255, 0.12) 1.2px, transparent 1.2px);
-      background-size: 30px 30px; opacity: 0.55;
-      pointer-events: none; z-index: 0;
-    }
-
-    .hero-glow-orb {
-      position: fixed; border-radius: 50%; filter: blur(100px);
-      z-index: 0; opacity: 0.55; pointer-events: none;
-      animation: pulseFloat 10s ease-in-out infinite alternate;
-    }
-    .orb-1 { width: 540px; height: 540px; background: var(--purple); top: -160px; right: -140px; }
-    .orb-2 { width: 420px; height: 420px; background: var(--green); bottom: -120px; left: -100px; animation-delay: -2.5s; }
-    .orb-3 { width: 320px; height: 320px; background: var(--pink); top: 35%; left: 42%; opacity: 0.2; animation-delay: -4s; }
-
-    /* НАВИГАЦИЯ */
     nav {
-      position: fixed; top: 14px; left: 24px; right: 24px; z-index: 50;
-      display: flex; flex-wrap: wrap; align-items: center;
-      justify-content: space-between; padding: 12px 26px;
-      background: rgba(255,255,255,0.75);
-      border: 1px solid rgba(255,255,255,0.9); border-radius: 22px;
-      box-shadow: 0 8px 32px rgba(90,63,255,0.08), 0 2px 8px rgba(13,13,18,0.06);
-      backdrop-filter: blur(24px) saturate(160%);
-      -webkit-backdrop-filter: blur(24px) saturate(160%);
-      transition: all 0.3s ease;
+      position:fixed; top:14px; left:24px; right:24px; z-index:50;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:10px 20px; background:rgba(255,255,255,0.84); border:1px solid rgba(255,255,255,0.92);
+      border-radius:22px; box-shadow:0 8px 32px rgba(90,63,255,0.08); backdrop-filter:blur(24px);
     }
+    .nav-logo { font-size:1.5rem; font-weight:900; letter-spacing:-.04em; text-decoration:none; color:var(--black); }
+    .nav-logo span { color:var(--purple); }
+    .btn-sm { padding:9px 18px; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:800; text-decoration:none; transition:all .2s; }
+    .btn-o { border:1.5px solid rgba(13,13,18,0.12); color:var(--black); background:#fff; }
+    .btn-o:hover { border-color:var(--purple); color:var(--purple); }
+    .btn-f { color:#fff; background:linear-gradient(135deg,#7c3aed,#4f46e5); box-shadow:0 6px 16px rgba(90,63,255,0.3); }
 
-    .nav-logo { font-size: 1.55rem; font-weight: 900; letter-spacing: -0.04em; color: var(--black); text-decoration: none; }
-    .nav-logo span { color: var(--purple); }
+    .page { position:relative; z-index:1; max-width:1400px; margin:0 auto; padding:100px 24px 48px; }
 
-    .nav-right { display: flex; align-items: center; gap: 16px; }
+    /* MODE SWITCHER */
+    .mode-bar { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+    .mBtn {
+      display:flex; align-items:center; gap:8px; padding:11px 20px;
+      border-radius:16px; border:2px solid var(--border); background:var(--glass);
+      font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:800;
+      color:var(--text-gray); cursor:pointer; transition:all .22s; backdrop-filter:blur(16px);
+    }
+    .mBtn svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:2.3; flex-shrink:0; }
+    .mBtn:hover { border-color:rgba(90,63,255,0.3); color:var(--purple); }
+    .mBtn.act-s { background:var(--purple); border-color:var(--purple); color:#fff; box-shadow:0 8px 24px rgba(90,63,255,0.3); }
+    .mBtn.act-t { background:#0084FF; border-color:#0084FF; color:#fff; box-shadow:0 8px 24px rgba(0,132,255,0.3); }
+    .mBtn.act-c { background:#059669; border-color:#059669; color:#fff; box-shadow:0 8px 24px rgba(5,150,105,0.3); }
 
-    .nav-selectors {
-      display: flex; align-items: center; gap: 16px;
-      background: rgba(255,255,255,0.4); padding: 8px 12px;
-      border-radius: 16px; border: 1px solid rgba(255,255,255,0.6);
+    /* FILTER BAR */
+    .fbar {
+      background:var(--glass); border:1px solid var(--glass-b); border-radius:22px;
+      padding:16px 20px; margin-bottom:14px; box-shadow:var(--shadow); backdrop-filter:blur(20px);
+      display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;
     }
+    .fg { display:flex; flex-direction:column; gap:5px; flex:1; min-width:130px; }
+    .fg label { font-size:.66rem; font-weight:900; text-transform:uppercase; letter-spacing:.07em; color:var(--text-gray); }
+    .fsel {
+      appearance:none; -webkit-appearance:none;
+      background:#fff url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%230D0D12' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+      border:1.5px solid var(--border); border-radius:12px;
+      padding:10px 34px 10px 13px; font-family:'DM Sans',sans-serif;
+      font-size:.88rem; font-weight:700; color:var(--black); cursor:pointer;
+      transition:border-color .2s, box-shadow .2s; outline:none;
+    }
+    .fsel:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(90,63,255,0.1); }
+    .fsel:disabled { opacity:.45; cursor:default; background-color:rgba(244,244,248,.7); }
+    .fsep { width:1px; background:var(--border); height:44px; align-self:flex-end; flex-shrink:0; }
 
-    .nav-select {
-      display: flex; align-items: center; gap: 8px;
-      background: rgba(255,255,255,0.8); padding: 8px 14px 8px 16px;
-      border-radius: 12px; cursor: pointer; transition: all 0.2s ease;
-      border: 1px solid transparent;
-    }
-    .nav-select:hover { background: #fff; border-color: rgba(90,63,255,0.15); box-shadow: 0 4px 12px rgba(13,13,18,0.04); }
-    .nav-select span { font-size: 0.75rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.04em; }
-    .nav-select select {
-      appearance: none; -webkit-appearance: none; background-color: transparent;
-      border: none; color: var(--black); font-family: 'DM Sans', sans-serif;
-      font-size: 0.9rem; font-weight: 800; padding-right: 22px; outline: none; cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%230D0D12' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-position: right center; background-repeat: no-repeat;
-    }
+    .vtabs { display:flex; gap:6px; align-self:flex-end; flex-shrink:0; }
+    .vtab { display:flex; align-items:center; gap:6px; padding:10px 14px; border-radius:11px; border:1.5px solid var(--border); background:#fff; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:800; color:var(--text-gray); cursor:pointer; transition:all .2s; }
+    .vtab svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.3; }
+    .vtab.on { background:var(--black); border-color:var(--black); color:#fff; }
 
-    .nav-auth-links { display: flex; align-items: center; gap: 8px; }
-    .btn-login-sm {
-      padding: 9px 18px; border-radius: 12px; font-family: 'DM Sans', sans-serif;
-      font-size: 0.88rem; font-weight: 800; text-decoration: none;
-      border: 1.5px solid rgba(13,13,18,0.12); color: var(--black); background: #fff;
-      transition: all 0.2s;
-    }
-    .btn-login-sm:hover { border-color: var(--purple); color: var(--purple); }
-    .btn-dash-sm {
-      padding: 9px 18px; border-radius: 12px; font-family: 'DM Sans', sans-serif;
-      font-size: 0.88rem; font-weight: 800; text-decoration: none; color: #fff;
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
-      box-shadow: 0 6px 16px rgba(90,63,255,0.3); transition: all 0.2s;
-    }
-    .btn-dash-sm:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(90,63,255,0.4); }
+    /* SCHEDULE */
+    .shell { background:var(--glass); border:1px solid var(--glass-b); border-radius:24px; box-shadow:var(--shadow); backdrop-filter:blur(24px); overflow:hidden; position:relative; }
+    .ldr { display:none; position:absolute; inset:0; z-index:10; background:rgba(255,255,255,0.65); align-items:center; justify-content:center; backdrop-filter:blur(3px); }
+    .ldr.on { display:flex; }
+    .spin { width:34px; height:34px; border:3px solid var(--purple-dim); border-top-color:var(--purple); border-radius:50%; animation:sp .65s linear infinite; }
+    @keyframes sp { to { transform:rotate(360deg); } }
 
-    /* Гамбургер */
-    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--black); }
-    .hamburger svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+    .shd { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:18px 22px 0; flex-wrap:wrap; }
+    .shd h2 { font-size:1.1rem; font-weight:900; letter-spacing:-.03em; margin-bottom:2px; }
+    .shd p  { font-size:.82rem; color:var(--text-gray); font-weight:600; }
+    .leg { display:flex; gap:6px; flex-wrap:wrap; }
+    .li { display:inline-flex; align-items:center; gap:5px; font-size:.72rem; font-weight:800; color:var(--text-gray); background:rgba(255,255,255,0.7); border:1px solid rgba(13,13,18,0.06); padding:5px 9px; border-radius:999px; }
+    .ld { width:8px; height:8px; border-radius:50%; }
 
-    .page {
-      position: relative; z-index: 1;
-      max-width: 1380px; margin: 0 auto;
-      padding: 120px 24px 40px;
-    }
+    .gv { padding:14px; }
+    .lv { display:none; }
+    .ss { overflow-x:auto; scrollbar-width:thin; scrollbar-color:rgba(90,63,255,.3) transparent; }
+    .sg { display:grid; grid-template-columns:96px repeat(6,minmax(118px,1fr)); gap:7px; align-items:stretch; min-width:840px; }
+    .gc { border-radius:14px; background:rgba(255,255,255,0.7); border:1px solid rgba(13,13,18,0.06); min-height:76px; padding:9px; position:relative; transition:transform .18s, box-shadow .18s; }
+    .gc:hover:not(.es):not(.hc) { transform:translateY(-2px); box-shadow:0 10px 22px rgba(13,13,18,0.08); z-index:2; }
+    .hc { min-height:auto; padding:10px 8px; display:flex; align-items:center; justify-content:center; text-align:center; background:rgba(255,255,255,0.85); }
+    .tc { flex-direction:column; gap:1px; font-size:.66rem; font-weight:900; color:var(--text-gray); position:sticky; left:0; z-index:3; }
+    .tc .sn { font-size:.9rem; font-weight:900; color:var(--black); }
+    .dc { flex-direction:column; gap:2px; }
+    .dc strong { font-size:.82rem; font-weight:900; }
+    .dc span { font-size:.64rem; font-weight:700; color:var(--text-gray); }
+    .es { background:rgba(13,13,18,0.025); border:1px dashed rgba(13,13,18,0.06); }
+    .lc { border:none; overflow:hidden; cursor:default; }
+    .lc::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,0.14),transparent); pointer-events:none; }
+    .ll { background:linear-gradient(135deg,#7c3aed,#5A3FFF); color:#fff; box-shadow:0 6px 18px rgba(90,63,255,0.22); }
+    .lp { background:linear-gradient(135deg,#FF2D55,#FF6B00); color:#fff; box-shadow:0 6px 18px rgba(255,45,85,0.22); }
+    .lb { background:linear-gradient(135deg,#2563eb,#0084FF); color:#fff; box-shadow:0 6px 18px rgba(0,132,255,0.20); }
+    .ls { background:linear-gradient(135deg,#d97706,#f59e0b); color:#fff; box-shadow:0 6px 18px rgba(217,119,6,0.20); }
+    .lo { background:linear-gradient(135deg,#059669,#10b981); color:#fff; box-shadow:0 6px 18px rgba(5,150,105,0.20); }
+    .lbg { display:inline-flex; font-size:.56rem; font-weight:900; text-transform:uppercase; letter-spacing:.06em; padding:3px 7px; border-radius:999px; background:rgba(255,255,255,0.2); margin-bottom:4px; }
+    .lt2 { font-size:.8rem; font-weight:900; line-height:1.2; margin-bottom:3px; }
+    .lm  { font-size:.68rem; font-weight:700; opacity:.9; display:grid; gap:1px; }
 
-    /* РАСПИСАНИЕ */
-    .schedule-shell {
-      background: var(--glass-strong);
-      border: 1px solid var(--glass-border);
-      box-shadow: var(--shadow-premium);
-      backdrop-filter: blur(24px) saturate(160%);
-      -webkit-backdrop-filter: blur(24px) saturate(160%);
-      border-radius: 32px; padding: 22px; overflow: hidden;
-    }
+    table.lt { width:100%; border-collapse:collapse; }
+    table.lt th { text-align:left; padding:11px 16px; font-size:.68rem; font-weight:900; text-transform:uppercase; letter-spacing:.07em; color:var(--text-gray); border-bottom:1px solid var(--border); background:rgba(244,244,248,0.6); }
+    table.lt td { padding:12px 16px; font-size:.85rem; font-weight:600; border-bottom:1px solid var(--border); }
+    table.lt tr:last-child td { border:none; }
+    table.lt tr:hover td { background:var(--purple-dim); }
+    .tp { display:inline-block; padding:3px 9px; border-radius:999px; font-size:.68rem; font-weight:800; }
+    .tpl { background:var(--purple-dim); color:var(--purple); }
+    .tpp { background:var(--pink-dim); color:var(--pink); }
+    .tpb { background:var(--blue-dim); color:var(--blue); }
+    .tps { background:var(--yellow-dim); color:#7a5c00; }
+    .tpo { background:var(--green-dim); color:#006b3a; }
 
-    .schedule-head {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 16px; margin-bottom: 18px; padding: 0 2px;
-    }
-    .schedule-title h2 { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 4px; }
-    .schedule-title p { font-size: 0.9rem; color: var(--text-gray); font-weight: 600; }
-    .legend { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .legend-item {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.78rem; color: var(--text-gray); font-weight: 800;
-      background: rgba(255,255,255,0.66); border: 1px solid rgba(13,13,18,0.06);
-      padding: 8px 10px; border-radius: 999px;
-    }
-    .legend-color { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .empty { text-align:center; padding:56px 24px; color:var(--text-gray); }
+    .empty svg { width:44px; height:44px; stroke:rgba(13,13,18,0.18); fill:none; stroke-width:1.5; display:block; margin:0 auto 14px; }
+    .empty h3 { font-size:1rem; font-weight:900; margin-bottom:5px; color:var(--black); }
 
-    .desktop-schedule {
-      overflow-x: auto; padding-bottom: 4px;
-      scrollbar-width: thin; scrollbar-color: rgba(90,63,255,0.35) transparent;
-    }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px; }
+    .sc { background:var(--glass); border:1px solid var(--glass-b); border-radius:16px; padding:14px 16px; box-shadow:var(--shadow); backdrop-filter:blur(16px); }
+    .sc .n { font-size:1.5rem; font-weight:900; letter-spacing:-.04em; }
+    .sc .l { font-size:.72rem; font-weight:700; color:var(--text-gray); margin-top:2px; }
 
-    .schedule-grid {
-      min-width: 980px;
-      display: grid; grid-template-columns: 96px repeat(5, minmax(160px, 1fr));
-      gap: 10px; align-items: stretch;
-    }
-
-    .grid-cell {
-      border-radius: 18px; background: rgba(255,255,255,0.66);
-      border: 1px solid rgba(13,13,18,0.06); min-height: 86px; padding: 12px;
-      position: relative; transition: transform 0.22s ease, box-shadow 0.22s ease;
-    }
-    .grid-cell:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(13,13,18,0.08); z-index: 2; }
-
-    .time-cell, .day-cell {
-      min-height: auto; padding: 14px 12px;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center; background: rgba(255,255,255,0.82);
-    }
-    .time-cell { font-size: 0.8rem; font-weight: 900; color: var(--text-gray); position: sticky; left: 0; z-index: 3; }
-    .day-cell { flex-direction: column; gap: 2px; }
-    .day-cell strong { font-size: 0.9rem; font-weight: 900; letter-spacing: -0.02em; }
-    .day-cell span { font-size: 0.76rem; font-weight: 700; color: var(--text-gray); }
-
-    .slot-empty { background: rgba(13,13,18,0.04); border: 1px dashed rgba(13,13,18,0.08); }
-
-    .lesson { color: #fff; border: none; overflow: hidden; }
-    .lesson::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent); pointer-events: none;
-    }
-    .lesson-purple { background: linear-gradient(135deg, #7c3aed, #5A3FFF); box-shadow: 0 10px 25px rgba(90,63,255,0.24); }
-    .lesson-pink   { background: linear-gradient(135deg, #FF2D55, #FF6B00); box-shadow: 0 10px 25px rgba(255,45,85,0.24); }
-    .lesson-blue   { background: linear-gradient(135deg, #2563eb, #0084FF); box-shadow: 0 10px 25px rgba(0,132,255,0.22); }
-    .lesson-green  { background: linear-gradient(135deg, #00B86B, #00E676); color: #08351f; box-shadow: 0 10px 25px rgba(0,230,118,0.22); }
-    .lesson-yellow { background: linear-gradient(135deg, #FFD600, #FFB300); color: #4a3400; box-shadow: 0 10px 25px rgba(255,214,0,0.22); }
-
-    .lesson-type {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.68rem; font-weight: 900; text-transform: uppercase;
-      letter-spacing: 0.06em; padding: 5px 8px; border-radius: 999px;
-      background: rgba(255,255,255,0.16); width: fit-content; margin-bottom: 10px;
-    }
-    .lesson-title { font-size: 0.95rem; font-weight: 900; line-height: 1.2; margin-bottom: 7px; letter-spacing: -0.02em; }
-    .lesson-meta { display: grid; gap: 4px; font-size: 0.78rem; font-weight: 700; opacity: 0.92; }
-    .lesson-meta span { display: flex; align-items: center; gap: 7px; }
-    .lesson-badge {
-      position: absolute; top: 12px; right: 12px;
-      width: 11px; height: 11px; border-radius: 50%;
-      background: rgba(255,255,255,0.92); box-shadow: 0 0 0 6px rgba(255,255,255,0.12);
-    }
-
-    /* Мобильный вид */
-    .mobile-schedule {
-      display: none; border-radius: 28px; padding: 16px; margin-top: 18px; gap: 14px;
-      background: var(--glass-strong); border: 1px solid var(--glass-border);
-      box-shadow: var(--shadow-premium); backdrop-filter: blur(24px);
-    }
-    .mobile-day {
-      background: rgba(255,255,255,0.76); border: 1px solid rgba(13,13,18,0.08);
-      border-radius: 22px; padding: 16px;
-    }
-    .mobile-day-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
-    .mobile-day-head strong { font-size: 1rem; font-weight: 900; letter-spacing: -0.02em; }
-    .mobile-day-head span { font-size: 0.76rem; font-weight: 800; color: var(--purple); background: rgba(90,63,255,0.1); border-radius: 999px; padding: 7px 10px; }
-    .mobile-lesson-list { display: grid; gap: 12px; }
-    .mobile-lesson { border-radius: 18px; padding: 15px; color: #fff; position: relative; overflow: hidden; }
-    .mobile-lesson small { display: block; font-size: 0.76rem; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.92; margin-bottom: 8px; }
-    .mobile-lesson strong { display: block; font-size: 1rem; font-weight: 900; margin-bottom: 7px; letter-spacing: -0.02em; }
-    .mobile-lesson p { font-size: 0.82rem; line-height: 1.5; font-weight: 700; opacity: 0.95; }
-
-    /* Статистика */
-    .summary-section { margin-top: 24px; }
-    .summary-card {
-      background: var(--glass-strong); border: 1px solid var(--glass-border);
-      box-shadow: var(--shadow-premium); backdrop-filter: blur(24px);
-      border-radius: 34px; padding: 28px; display: flex; flex-direction: column; gap: 16px;
-    }
-    .summary-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 4px; }
-    .summary-head h2 { font-size: 1.1rem; font-weight: 900; letter-spacing: -0.03em; }
-    .summary-badge {
-      font-size: 0.74rem; font-weight: 800; color: #00A354;
-      background: rgba(0,230,118,0.14); border: 1px solid rgba(0,230,118,0.25);
-      border-radius: 999px; padding: 7px 10px; white-space: nowrap;
-    }
-    .summary-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-    .metric-box {
-      background: rgba(255,255,255,0.7); border: 1px solid rgba(13,13,18,0.08);
-      border-radius: 18px; padding: 16px;
-    }
-    .metric-box strong { display: block; font-size: 1.5rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 2px; }
-    .metric-box span { font-size: 0.78rem; font-weight: 700; color: var(--text-gray); }
-
-    @keyframes pulseFloat {
-      0%,100% { transform: scale(1) translateY(0); opacity: 0.55; }
-      50% { transform: scale(1.08) translateY(-12px); opacity: 0.38; }
-    }
-
-    @media (max-width: 860px) {
-      nav { left: 12px; right: 12px; top: 10px; padding: 14px 20px; }
-      .hamburger { display: block; }
-      .nav-right { width: 100%; flex-direction: column; align-items: stretch; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.3s, opacity 0.3s, margin-top 0.3s; }
-      .nav-right.active { max-height: 500px; opacity: 1; margin-top: 16px; }
-      .nav-selectors { width: 100%; flex-direction: column; gap: 8px; padding: 10px; }
-      .nav-select { justify-content: space-between; padding: 12px 16px; }
-      .nav-auth-links { justify-content: center; }
-      .page { padding: 110px 14px 28px; }
-      .desktop-schedule { display: none; }
-      .mobile-schedule { display: grid; }
-      .summary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    @media (max-width: 520px) {
-      .summary-metrics { grid-template-columns: 1fr 1fr; }
-      .metric-box strong { font-size: 1.25rem; }
+    @media(max-width:860px){
+      nav{left:12px;right:12px;top:10px;padding:10px 16px;}
+      .page{padding:88px 14px 32px;}
+      .stats{grid-template-columns:1fr 1fr;}
+      .fsep{display:none;}
+      .fg{min-width:110px;}
+      .mBtn{padding:9px 14px;font-size:.82rem;}
     }
   </style>
 </head>
 <body>
-  <div class="hero-grid-overlay"></div>
-  <div class="hero-glow-orb orb-1"></div>
-  <div class="hero-glow-orb orb-2"></div>
-  <div class="hero-glow-orb orb-3"></div>
+<div class="bg-grid"></div>
+<div class="orb o1"></div><div class="orb o2"></div>
 
-  <nav>
-    <a href="{% url 'index' %}" class="nav-logo">Go<span>Shiet</span></a>
+<nav>
+  <a href="{% url 'index' %}" class="nav-logo">Go<span>Shiet</span></a>
+  <div style="display:flex;gap:8px;">
+    {% if user.is_authenticated %}
+      {% if user.is_admin %}<a href="{% url 'dashboard' %}" class="btn-sm btn-f">Панель управления</a>
+      {% elif user.is_teacher %}<a href="{% url 'teacher_dashboard' %}" class="btn-sm btn-f">Мой дашборд</a>{% endif %}
+    {% else %}<a href="{% url 'auth' %}" class="btn-sm btn-o">Войти</a>{% endif %}
+  </div>
+</nav>
 
-    <button class="hamburger" id="hamburger-btn" aria-label="Открыть меню">
-      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+<div class="page">
+
+  <!-- MODE SWITCHER -->
+  <div class="mode-bar">
+    <button class="mBtn act-s" id="mb-s" onclick="setMode('students')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Студенты
     </button>
+    <button class="mBtn" id="mb-t" onclick="setMode('teachers')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Преподаватели
+    </button>
+    <button class="mBtn" id="mb-c" onclick="setMode('classrooms')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Аудитории
+    </button>
+  </div>
 
-    <div class="nav-right" id="nav-menu">
-      <div class="nav-selectors">
-        <label class="nav-select">
-          <span>Универ:</span>
-          <select>
-            <option>ТУИТ</option>
-            <option>INHA</option>
-            <option>WIUT</option>
-          </select>
-        </label>
-        <label class="nav-select">
-          <span>Факультет:</span>
-          <select>
-            <option>Программная инженерия</option>
-            <option>Кибербезопасность</option>
-            <option>Бизнес-информатика</option>
-          </select>
-        </label>
-        <label class="nav-select">
-          <span>Курс:</span>
-          <select>
-            <option>1</option>
-            <option>2</option>
-            <option selected>3</option>
-            <option>4</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="nav-auth-links">
-        {% if user.is_authenticated %}
-          {% if user.is_admin %}
-            <a href="{% url 'dashboard' %}" class="btn-dash-sm">Панель управления</a>
-          {% elif user.is_teacher %}
-            <a href="{% url 'teacher_dashboard' %}" class="btn-dash-sm">Мой дашборд</a>
-          {% endif %}
-        {% else %}
-          <a href="{% url 'auth' %}" class="btn-login-sm">Войти</a>
-        {% endif %}
-      </div>
+  <!-- FILTER BAR -->
+  <div class="fbar">
+    <!-- общий -->
+    <div class="fg">
+      <label>Университет</label>
+      <select class="fsel" id="f-uni"><option value="">Все</option></select>
     </div>
-  </nav>
 
-  <main class="page">
-
-    <!-- Сетка расписания -->
-    <section class="schedule-shell">
-      <div class="schedule-head">
-        <div class="schedule-title">
-          <h2>Расписание на неделю</h2>
-          <p>Выберите университет, факультет и курс выше для фильтрации.</p>
-        </div>
-        <div class="legend">
-          <div class="legend-item"><span class="legend-color" style="background:#7c3aed"></span> Лекция</div>
-          <div class="legend-item"><span class="legend-color" style="background:#FF2D55"></span> Практика</div>
-          <div class="legend-item"><span class="legend-color" style="background:#0084FF"></span> Лабораторная</div>
-          <div class="legend-item"><span class="legend-color" style="background:#00E676"></span> Онлайн</div>
-        </div>
+    <!-- students-only -->
+    <div id="fs-s" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;flex:1;">
+      <div class="fg">
+        <label>Направление</label>
+        <select class="fsel" id="f-dir" disabled><option value="">Все</option></select>
       </div>
-
-      <!-- Десктоп таблица -->
-      <div class="desktop-schedule">
-        <div class="schedule-grid">
-          <div class="grid-cell time-cell">Время</div>
-          <div class="grid-cell day-cell"><strong>Понедельник</strong><span>06 апр</span></div>
-          <div class="grid-cell day-cell"><strong>Вторник</strong><span>07 апр</span></div>
-          <div class="grid-cell day-cell"><strong>Среда</strong><span>08 апр</span></div>
-          <div class="grid-cell day-cell"><strong>Четверг</strong><span>09 апр</span></div>
-          <div class="grid-cell day-cell"><strong>Пятница</strong><span>10 апр</span></div>
-
-          <div class="grid-cell time-cell">08:30</div>
-          <div class="grid-cell lesson lesson-purple">
-            <div class="lesson-badge"></div>
-            <div class="lesson-type">Лекция</div>
-            <div class="lesson-title">Алгоритмы и структуры данных</div>
-            <div class="lesson-meta"><span>Ауд. B-204</span><span>Иванов И.И.</span></div>
-          </div>
-          <div class="grid-cell lesson lesson-blue">
-            <div class="lesson-type">Лаба</div>
-            <div class="lesson-title">Web-разработка</div>
-            <div class="lesson-meta"><span>Lab 3 / корпус C</span><span>Подгруппа 1</span></div>
-          </div>
-          <div class="grid-cell lesson lesson-pink">
-            <div class="lesson-type">Практика</div>
-            <div class="lesson-title">Базы данных</div>
-            <div class="lesson-meta"><span>Ауд. A-112</span><span>Группа целиком</span></div>
-          </div>
-          <div class="grid-cell slot-empty"></div>
-          <div class="grid-cell lesson lesson-green">
-            <div class="lesson-type">Онлайн</div>
-            <div class="lesson-title">Английский для IT</div>
-            <div class="lesson-meta"><span>Meet / Zoom</span><span>Ссылка в чате</span></div>
-          </div>
-
-          <div class="grid-cell time-cell">10:15</div>
-          <div class="grid-cell lesson lesson-yellow">
-            <div class="lesson-type">Семинар</div>
-            <div class="lesson-title">Высшая математика</div>
-            <div class="lesson-meta"><span>Ауд. D-101</span><span>Поток 2</span></div>
-          </div>
-          <div class="grid-cell slot-empty"></div>
-          <div class="grid-cell lesson lesson-purple">
-            <div class="lesson-badge"></div>
-            <div class="lesson-type">Лекция</div>
-            <div class="lesson-title">Компьютерные сети</div>
-            <div class="lesson-meta"><span>Ауд. C-201</span><span>Проф. Садыков</span></div>
-          </div>
-          <div class="grid-cell lesson lesson-blue">
-            <div class="lesson-type">Лаба</div>
-            <div class="lesson-title">Операционные системы</div>
-            <div class="lesson-meta"><span>Lab 1</span><span>Подгруппа 2</span></div>
-          </div>
-          <div class="grid-cell slot-empty"></div>
-
-          <div class="grid-cell time-cell">12:00</div>
-          <div class="grid-cell slot-empty"></div>
-          <div class="grid-cell lesson lesson-pink">
-            <div class="lesson-type">Практика</div>
-            <div class="lesson-title">UI/UX основы</div>
-            <div class="lesson-meta"><span>Studio 5</span><span>Проектная работа</span></div>
-          </div>
-          <div class="grid-cell lesson lesson-blue">
-            <div class="lesson-type">Лаба</div>
-            <div class="lesson-title">Python Automation</div>
-            <div class="lesson-meta"><span>Lab 4</span><span>Практикум</span></div>
-          </div>
-          <div class="grid-cell slot-empty"></div>
-          <div class="grid-cell lesson lesson-purple">
-            <div class="lesson-type">Лекция</div>
-            <div class="lesson-title">Информационная безопасность</div>
-            <div class="lesson-meta"><span>Ауд. B-308</span><span>Поток</span></div>
-          </div>
-
-          <div class="grid-cell time-cell">13:45</div>
-          <div class="grid-cell lesson lesson-blue">
-            <div class="lesson-type">Лаба</div>
-            <div class="lesson-title">Frontend практика</div>
-            <div class="lesson-meta"><span>Lab 2</span><span>React / HTML / CSS</span></div>
-          </div>
-          <div class="grid-cell lesson lesson-purple">
-            <div class="lesson-type">Лекция</div>
-            <div class="lesson-title">Архитектура ЭВМ</div>
-            <div class="lesson-meta"><span>Ауд. C-114</span><span>Поток 1</span></div>
-          </div>
-          <div class="grid-cell lesson lesson-pink">
-            <div class="lesson-type">Практика</div>
-            <div class="lesson-title">Проектный менеджмент</div>
-            <div class="lesson-meta"><span>Коворкинг зал</span><span>Командная работа</span></div>
-          </div>
-          <div class="grid-cell slot-empty"></div>
-          <div class="grid-cell lesson lesson-yellow">
-            <div class="lesson-type">Семинар</div>
-            <div class="lesson-title">Философия</div>
-            <div class="lesson-meta"><span>Ауд. A-210</span><span>Общий поток</span></div>
-          </div>
-
-          <div class="grid-cell time-cell">15:30</div>
-          <div class="grid-cell slot-empty"></div>
-          <div class="grid-cell lesson lesson-green">
-            <div class="lesson-type">Онлайн</div>
-            <div class="lesson-title">Разбор домашних заданий</div>
-            <div class="lesson-meta"><span>Discord / Meet</span><span>Вечерняя сессия</span></div>
-          </div>
-          <div class="grid-cell lesson lesson-purple">
-            <div class="lesson-type">Лекция</div>
-            <div class="lesson-title">Машинное обучение</div>
-            <div class="lesson-meta"><span>Ауд. B-401</span><span>Демо-блок</span></div>
-          </div>
-          <div class="grid-cell lesson lesson-blue">
-            <div class="lesson-type">Лаба</div>
-            <div class="lesson-title">SQL Workshop</div>
-            <div class="lesson-meta"><span>Lab 6</span><span>Практика с данными</span></div>
-          </div>
-          <div class="grid-cell slot-empty"></div>
-
-          <div class="grid-cell time-cell">17:15</div>
-          <div class="grid-cell lesson lesson-pink">
-            <div class="lesson-type">Практика</div>
-            <div class="lesson-title">Коммуникации в команде</div>
-            <div class="lesson-meta"><span>Ауд. D-303</span><span>Вечерний блок</span></div>
-          </div>
-          <div class="grid-cell slot-empty"></div>
-          <div class="grid-cell lesson lesson-yellow">
-            <div class="lesson-type">Семинар</div>
-            <div class="lesson-title">Экономика IT-продуктов</div>
-            <div class="lesson-meta"><span>Ауд. A-305</span><span>Факультатив</span></div>
-          </div>
-          <div class="grid-cell slot-empty"></div>
-          <div class="grid-cell lesson lesson-purple">
-            <div class="lesson-type">Лекция</div>
-            <div class="lesson-title">Подготовка к защите проекта</div>
-            <div class="lesson-meta"><span>Конференц-зал</span><span>Финальный слот</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Мобильные карточки -->
-      <div class="mobile-schedule" id="mobile">
-        <article class="mobile-day">
-          <div class="mobile-day-head"><strong>Понедельник</strong><span>3 пары</span></div>
-          <div class="mobile-lesson-list">
-            <div class="mobile-lesson lesson-purple"><small>08:30 · Лекция</small><strong>Алгоритмы и структуры данных</strong><p>Ауд. B-204 · Иванов И.И.</p></div>
-            <div class="mobile-lesson lesson-yellow"><small>10:15 · Семинар</small><strong>Высшая математика</strong><p>Ауд. D-101 · Поток 2</p></div>
-            <div class="mobile-lesson lesson-blue"><small>13:45 · Лаба</small><strong>Frontend практика</strong><p>Lab 2 · React / HTML / CSS</p></div>
-          </div>
-        </article>
-        <article class="mobile-day">
-          <div class="mobile-day-head"><strong>Вторник</strong><span>3 пары</span></div>
-          <div class="mobile-lesson-list">
-            <div class="mobile-lesson lesson-blue"><small>08:30 · Лаба</small><strong>Web-разработка</strong><p>Lab 3 · Подгруппа 1</p></div>
-            <div class="mobile-lesson lesson-pink"><small>12:00 · Практика</small><strong>UI/UX основы</strong><p>Studio 5 · Проектная работа</p></div>
-            <div class="mobile-lesson lesson-green"><small>15:30 · Онлайн</small><strong>Разбор домашних заданий</strong><p>Discord / Meet · Вечерняя сессия</p></div>
-          </div>
-        </article>
-        <article class="mobile-day">
-          <div class="mobile-day-head"><strong>Среда</strong><span>3 пары</span></div>
-          <div class="mobile-lesson-list">
-            <div class="mobile-lesson lesson-pink"><small>08:30 · Практика</small><strong>Базы данных</strong><p>Ауд. A-112 · Группа целиком</p></div>
-            <div class="mobile-lesson lesson-purple"><small>10:15 · Лекция</small><strong>Компьютерные сети</strong><p>Ауд. C-201 · Проф. Садыков</p></div>
-            <div class="mobile-lesson lesson-blue"><small>12:00 · Лаба</small><strong>Python Automation</strong><p>Lab 4 · Практикум</p></div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- Статистика -->
-    <div class="summary-section">
-      <div class="summary-card">
-        <div class="summary-head">
-          <div>
-            <h2>Числовая статистика</h2>
-            <p style="font-size:0.86rem;color:var(--text-gray);font-weight:600;margin-top:4px;">Быстрый срез по учебной неделе</p>
-          </div>
-          <div class="summary-badge">Актуально</div>
-        </div>
-        <div class="summary-metrics">
-          <div class="metric-box"><strong>18</strong><span>всего занятий</span></div>
-          <div class="metric-box"><strong>32</strong><span>учебных часа</span></div>
-          <div class="metric-box"><strong>5</strong><span>учебных дней</span></div>
-          <div class="metric-box"><strong>3</strong><span>свободных окна</span></div>
-          <div class="metric-box"><strong>6</strong><span>лекций</span></div>
-          <div class="metric-box"><strong>4</strong><span>практики</span></div>
-          <div class="metric-box"><strong>5</strong><span>лабораторных</span></div>
-          <div class="metric-box"><strong>3</strong><span>онлайн/семинаров</span></div>
-        </div>
+      <div class="fg">
+        <label>Курс / Группа</label>
+        <select class="fsel" id="f-group" disabled><option value="">Все</option></select>
       </div>
     </div>
 
-    <!-- Ссылка на страницу о проекте -->
-    <div style="text-align:center; padding: 24px 0 8px;">
-      <a href="{% url 'schedule' %}" id="about-link" style="display:inline-flex; align-items:center; gap:8px; color:#5A5A6A; text-decoration:none; font-size:0.88rem; font-weight:700; padding:10px 20px; border-radius:12px; border:1px solid rgba(13,13,18,0.1); background:rgba(255,255,255,0.7); backdrop-filter:blur(10px); transition:all 0.2s;">
-        О проекте GoShiet
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
+    <!-- teachers-only -->
+    <div id="fs-t" style="display:none;flex-wrap:wrap;gap:12px;align-items:flex-end;flex:1;">
+      <div class="fg">
+        <label>Преподаватель</label>
+        <select class="fsel" id="f-tch" disabled><option value="">Все</option></select>
+      </div>
     </div>
 
-  </main>
+    <!-- classrooms-only -->
+    <div id="fs-c" style="display:none;flex-wrap:wrap;gap:12px;align-items:flex-end;flex:1;">
+      <div class="fg">
+        <label>Аудитория</label>
+        <select class="fsel" id="f-cls" disabled><option value="">Все</option></select>
+      </div>
+    </div>
 
+    <div class="fsep"></div>
 
+    <div class="vtabs">
+      <button class="vtab on" id="vg" onclick="setView('grid')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Сетка
+      </button>
+      <button class="vtab" id="vl" onclick="setView('list')">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Список
+      </button>
+    </div>
+  </div>
 
-  <script>
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const navMenu = document.getElementById('nav-menu');
-    hamburgerBtn.addEventListener('click', () => navMenu.classList.toggle('active'));
-  </script>
+  <!-- SCHEDULE SHELL -->
+  <div class="shell">
+    <div class="ldr" id="ldr"><div class="spin"></div></div>
+
+    <div class="shd">
+      <div>
+        <h2 id="sTitle">Расписание</h2>
+        <p id="sSub">Выберите фильтры</p>
+      </div>
+      <div class="leg">
+        <div class="li"><span class="ld" style="background:#7c3aed"></span>Лекция</div>
+        <div class="li"><span class="ld" style="background:#FF2D55"></span>Практика</div>
+        <div class="li"><span class="ld" style="background:#0084FF"></span>Лаба</div>
+        <div class="li"><span class="ld" style="background:#d97706"></span>Семинар</div>
+        <div class="li"><span class="ld" style="background:#059669"></span>Онлайн</div>
+      </div>
+    </div>
+
+    <div class="gv" id="gv"><div class="ss"><div class="sg" id="sg"></div></div></div>
+    <div class="lv" id="lv">
+      <table class="lt"><thead><tr>
+        <th>День</th><th>Пара</th><th>Время</th><th>Предмет</th><th>Преподаватель</th><th>Аудитория</th><th>Тип</th>
+      </tr></thead><tbody id="lb"></tbody></table>
+    </div>
+  </div>
+
+  <div class="stats" id="stats" style="display:none;">
+    <div class="sc"><div class="n" id="st0" style="color:var(--purple)">0</div><div class="l">Занятий в неделю</div></div>
+    <div class="sc"><div class="n" id="st1" style="color:#059669">0</div><div class="l">Учебных дней</div></div>
+    <div class="sc"><div class="n" id="st2" style="color:var(--blue)">0</div><div class="l">Преподавателей</div></div>
+    <div class="sc"><div class="n" id="st3" style="color:var(--orange)">0</div><div class="l">Аудиторий</div></div>
+  </div>
+
+</div>
+
+<script>
+const DAYS  = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+const SLOTS = {1:'08:30–10:05',2:'10:15–11:50',3:'12:00–13:35',4:'13:45–15:20',5:'15:30–17:05',6:'17:15–18:50'};
+const TC    = {lecture:'ll',practice:'lp',lab:'lb',seminar:'ls',online:'lo'};
+const TP    = {lecture:'tpl',practice:'tpp',lab:'tpb',seminar:'tps',online:'tpo'};
+const TL    = {lecture:'Лекция',practice:'Практика',lab:'Лаба',seminar:'Семинар',online:'Онлайн'};
+
+let mode='students', view='grid', entries=[];
+const F = {uni:'',dir:'',group:'',tch:'',cls:''};
+
+const api = async url => { const r=await fetch(url); if(!r.ok) throw r.status; return r.json(); };
+
+function fillSel(id, items, vp, lf, ph='Все') {
+  const s=document.getElementById(id);
+  s.innerHTML=`<option value="">${ph}</option>`;
+  items.forEach(i=>{ const o=document.createElement('option'); o.value=i[vp]; o.textContent=lf(i); s.appendChild(o); });
+  s.disabled=!items.length;
+}
+function resetSel(id,ph='Все'){ const s=document.getElementById(id); s.innerHTML=`<option value="">${ph}</option>`; s.disabled=true; }
+const load = v => document.getElementById('ldr').classList.toggle('on',v);
+
+/* ── MODE ── */
+function setMode(m) {
+  mode=m;
+  ['s','t','c'].forEach(x=>document.getElementById('mb-'+x).className='mBtn');
+  const amap={students:'act-s',teachers:'act-t',classrooms:'act-c'};
+  const idmap={students:'mb-s',teachers:'mb-t',classrooms:'mb-c'};
+  document.getElementById(idmap[m]).classList.add(amap[m]);
+
+  document.getElementById('fs-s').style.display = m==='students'   ? 'flex':'none';
+  document.getElementById('fs-t').style.display = m==='teachers'   ? 'flex':'none';
+  document.getElementById('fs-c').style.display = m==='classrooms' ? 'flex':'none';
+
+  F.dir=''; F.group=''; F.tch=''; F.cls='';
+  if(m==='teachers'  && F.uni) loadTch();
+  if(m==='classrooms'&& F.uni) loadCls();
+  if(m==='students'  && F.uni) loadDir();
+  loadSched();
+}
+
+/* ── UNI ── */
+async function init() {
+  try { const d=await api('/api/public/universities/'); fillSel('f-uni',d.universities,'id',u=>u.name,'Все университеты'); document.getElementById('f-uni').disabled=false; } catch(e){}
+  renderGrid();
+}
+document.getElementById('f-uni').addEventListener('change',async function(){
+  F.uni=this.value; F.dir=''; F.group=''; F.tch=''; F.cls='';
+  resetSel('f-dir'); resetSel('f-group'); resetSel('f-tch'); resetSel('f-cls');
+  if(F.uni){ if(mode==='students') await loadDir(); else if(mode==='teachers') await loadTch(); else await loadCls(); }
+  loadSched();
+});
+
+async function loadDir(){ try{ const d=await api(`/api/public/directions/?university_id=${F.uni}`); fillSel('f-dir',d.directions,'id',x=>x.name,'Все направления'); document.getElementById('f-dir').disabled=false; }catch(e){} }
+async function loadTch(){ try{ const d=await api(`/api/public/teachers/?university_id=${F.uni}`); fillSel('f-tch',d.teachers,'id',t=>t.name,'Все преподаватели'); document.getElementById('f-tch').disabled=false; }catch(e){} }
+async function loadCls(){ try{ const d=await api(`/api/public/classrooms/?university_id=${F.uni}`); fillSel('f-cls',d.classrooms,'id',c=>c.name,'Все аудитории'); document.getElementById('f-cls').disabled=false; }catch(e){} }
+
+/* DIR → courses+groups combined */
+document.getElementById('f-dir').addEventListener('change',async function(){
+  F.dir=this.value; F.group='';
+  resetSel('f-group','Все группы');
+  if(!F.dir){ loadSched(); return; }
+  try {
+    const d=await api(`/api/public/courses/?direction_id=${F.dir}`);
+    const gs=document.getElementById('f-group');
+    gs.innerHTML='<option value="">Все группы</option>';
+
+    for(const c of d.courses){
+      const gd=await api(`/api/public/groups/?course_id=${c.id}`);
+      /* курс как опция */
+      const co=document.createElement('option');
+      co.value=`c:${c.id}`; co.textContent=`— ${c.number} курс (все группы)`;
+      co.style.cssText='font-weight:800;color:#5A3FFF;';
+      gs.appendChild(co);
+      /* группы курса */
+      gd.groups.forEach(g=>{
+        const go=document.createElement('option');
+        go.value=`g:${g.id}`; go.textContent=`\u2003${g.name}`;
+        gs.appendChild(go);
+      });
+    }
+    gs.disabled=false;
+  } catch(e){}
+  loadSched();
+});
+
+document.getElementById('f-group').addEventListener('change',function(){ F.group=this.value; loadSched(); });
+document.getElementById('f-tch').addEventListener('change',function()  { F.tch=this.value;   loadSched(); });
+document.getElementById('f-cls').addEventListener('change',function()  { F.cls=this.value;   loadSched(); });
+
+/* ── LOAD SCHEDULE ── */
+async function loadSched(){
+  load(true);
+  try {
+    const p=new URLSearchParams();
+    if(F.uni) p.set('university_id',F.uni);
+    if(mode==='students'){
+      if(F.dir) p.set('direction_id',F.dir);
+      if(F.group){
+        if(F.group.startsWith('g:')) p.set('group_id',F.group.slice(2));
+        else if(F.group.startsWith('c:')) p.set('course_id',F.group.slice(2));
+      }
+    } else if(mode==='teachers'){
+      if(F.tch) p.set('teacher_id',F.tch);
+    } else {
+      if(F.cls) p.set('classroom_id',F.cls);
+    }
+    const d=await api(`/api/public/schedule/?${p}`);
+    entries=d.entries||[];
+  } catch(e){ entries=[]; }
+  load(false);
+  render();
+}
+
+/* ── RENDER ── */
+function render(){ updateHead(); if(view==='grid') renderGrid(); else renderList(); renderStats(); }
+
+function updateHead(){
+  const parts=[];
+  const u=document.getElementById('f-uni');
+  if(F.uni) parts.push(u.options[u.selectedIndex]?.text||'');
+  if(mode==='students'){
+    const dEl=document.getElementById('f-dir');
+    const gEl=document.getElementById('f-group');
+    if(F.dir)   parts.push(dEl.options[dEl.selectedIndex]?.text||'');
+    if(F.group) parts.push((gEl.options[gEl.selectedIndex]?.text||'').trim());
+  } else if(mode==='teachers'){
+    const tEl=document.getElementById('f-tch');
+    if(F.tch) parts.push(tEl.options[tEl.selectedIndex]?.text||'');
+  } else {
+    const cEl=document.getElementById('f-cls');
+    if(F.cls) parts.push(`Ауд. ${cEl.options[cEl.selectedIndex]?.text||''}`);
+  }
+  document.getElementById('sTitle').textContent=parts.length ? parts.join(' · ') : 'Расписание';
+  document.getElementById('sSub').textContent=entries.length
+    ? `Найдено занятий: ${entries.length}`
+    : parts.length ? 'Нет занятий по выбранным фильтрам' : 'Выберите фильтры для отображения данных';
+}
+
+function renderGrid(){
+  const g=document.getElementById('sg'); g.innerHTML='';
+  const hdr=el('div','gc hc tc'); hdr.innerHTML='<span style="font-size:.6rem;color:var(--text-gray)">Пара</span>'; g.appendChild(hdr);
+  DAYS.forEach(d=>{ const c=el('div','gc hc dc'); c.innerHTML=`<strong>${d.slice(0,2)}</strong><span>${d}</span>`; g.appendChild(c); });
+
+  if(!entries.length){ const sp=el('div'); sp.style.cssText='grid-column:1/-1;'; sp.innerHTML=emptyHTML(); g.appendChild(sp); return; }
+
+  const map={}; for(let s=1;s<=6;s++){map[s]={};for(let d=0;d<6;d++)map[s][d]=[];}
+  entries.forEach(e=>{ if(map[e.slot]&&map[e.slot][e.weekday]!==undefined) map[e.slot][e.weekday].push(e); });
+
+  for(let s=1;s<=6;s++){
+    const tc=el('div','gc hc tc'); tc.innerHTML=`<span class="sn">${s}</span><span>${(SLOTS[s]||'').split('–')[0]}</span>`; g.appendChild(tc);
+    for(let d=0;d<6;d++){
+      const items=map[s][d];
+      const cell=el('div', items.length?'gc':'gc es');
+      if(items.length){
+        cell.style.cssText='display:flex;flex-direction:column;gap:5px;';
+        items.forEach(item=>{
+          const card=el('div',`gc lc ${TC[item.lesson_type]||'ll'}`);
+          card.style.cssText='position:relative;min-height:0;flex:1;border-radius:11px;';
+          card.innerHTML=`<div class="lbg">${TL[item.lesson_type]||item.lesson_type}</div>
+            <div class="lt2">${item.subject}</div>
+            <div class="lm"><span>${item.classroom}</span><span>${item.teacher}</span></div>`;
+          cell.appendChild(card);
+        });
+      }
+      g.appendChild(cell);
+    }
+  }
+}
+
+function renderList(){
+  const b=document.getElementById('lb');
+  if(!entries.length){ b.innerHTML=`<tr><td colspan="7">${emptyHTML()}</td></tr>`; return; }
+  const sorted=[...entries].sort((a,b)=>a.weekday-b.weekday||a.slot-b.slot);
+  b.innerHTML=sorted.map(e=>`<tr>
+    <td><strong>${DAYS[e.weekday]||e.weekday}</strong></td>
+    <td>${e.slot}</td>
+    <td style="color:var(--text-gray);font-size:.8rem;">${SLOTS[e.slot]||''}</td>
+    <td><strong>${e.subject}</strong></td>
+    <td>${e.teacher}</td>
+    <td>${e.classroom}</td>
+    <td><span class="tp ${TP[e.lesson_type]||''}">${TL[e.lesson_type]||e.lesson_type}</span></td>
+  </tr>`).join('');
+}
+
+function emptyHTML(){ return `<div class="empty">
+  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+  <h3>Нет данных</h3><p>Нет занятий по выбранным фильтрам</p>
+</div>`; }
+
+function renderStats(){
+  const row=document.getElementById('stats');
+  if(!entries.length){ row.style.display='none'; return; }
+  row.style.display='grid';
+  document.getElementById('st0').textContent=entries.length;
+  document.getElementById('st1').textContent=new Set(entries.map(e=>e.weekday)).size;
+  document.getElementById('st2').textContent=new Set(entries.map(e=>e.teacher_id)).size;
+  document.getElementById('st3').textContent=new Set(entries.map(e=>e.classroom)).size;
+}
+
+function setView(v){
+  view=v;
+  document.getElementById('gv').style.display=v==='grid'?'block':'none';
+  document.getElementById('lv').style.display=v==='list'?'block':'none';
+  document.getElementById('vg').classList.toggle('on',v==='grid');
+  document.getElementById('vl').classList.toggle('on',v==='list');
+  render();
+}
+
+function el(tag,cls){ const e=document.createElement(tag); if(cls) e.className=cls; return e; }
+
+init();
+</script>
 </body>
 </html>

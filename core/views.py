@@ -1,23 +1,3 @@
-"""
-core/views.py — полный файл views для GoShiet.
-
-Содержит:
-  — публичные страницы (index, auth, schedule)
-  — инвайт-система (generate_invite, teacher_register)
-  — дашборд администратора  (dashboard)
-  — CRUD-операции администратора:
-        subjects_api      — список + создание предметов
-        subject_detail    — редактирование / удаление предмета
-        classrooms_api    — список + создание аудиторий
-        classroom_detail  — редактирование / удаление аудитории
-        directions_api    — список + создание направлений
-        courses_api       — список + создание курсов
-        schedule_api      — список записей расписания (фильтрация)
-        schedule_entry    — одна запись: редактировать / удалить / подтвердить
-  — дашборд преподавателя  (teacher_dashboard)
-  — сохранение пожеланий   (save_preferences)
-"""
-
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -659,3 +639,303 @@ def direction_detail(request, pk):
     direction = get_object_or_404(Direction, pk=pk, university=uni)
     direction.delete()
     return JsonResponse({'status': 'deleted'})
+
+@require_http_methods(['GET'])
+def public_universities(request):
+    from .models import University
+    return JsonResponse({'universities': list(University.objects.values('id','name'))})
+ 
+@require_http_methods(['GET'])
+def public_directions(request):
+    qs = Direction.objects.all()
+    if uni := request.GET.get('university_id'):
+        qs = qs.filter(university_id=uni)
+    return JsonResponse({'directions': [{'id':d.id,'name':d.name} for d in qs]})
+ 
+@require_http_methods(['GET'])
+def public_courses(request):
+    from .models import Course as CM
+    qs = CM.objects.all()
+    if did := request.GET.get('direction_id'):
+        qs = qs.filter(direction_id=did)
+    return JsonResponse({'courses': [{'id':c.id,'number':c.number} for c in qs.order_by('number')]})
+ 
+@require_http_methods(['GET'])
+def public_groups(request):
+    from .models import Group as GM
+    qs = GM.objects.all()
+    if cid := request.GET.get('course_id'):
+        qs = qs.filter(course_id=cid)
+    return JsonResponse({'groups': [{'id':g.id,'name':g.name} for g in qs]})
+ 
+@require_http_methods(['GET'])
+def public_teachers(request):
+    qs = User.objects.filter(is_teacher=True)
+    if uni := request.GET.get('university_id'):
+        qs = qs.filter(university_id=uni)
+    return JsonResponse({'teachers': [
+        {'id':t.id,'name':f"{t.last_name} {t.first_name} {t.middle_name or ''}".strip() or t.username}
+        for t in qs
+    ]})
+ 
+@require_http_methods(['GET'])
+def public_classrooms(request):
+    qs = Classroom.objects.all()
+    if uni := request.GET.get('university_id'):
+        qs = qs.filter(university_id=uni)
+    return JsonResponse({'classrooms': [{'id':c.id,'name':c.name} for c in qs]})
+ 
+@require_http_methods(['GET'])
+def public_schedule(request):
+    SLOT_TIMES = {1:'08:30–10:05',2:'10:15–11:50',3:'12:00–13:35',
+                  4:'13:45–15:20',5:'15:30–17:05',6:'17:15–18:50'}
+    qs = ScheduleEntry.objects.select_related(
+        'subject','teacher','classroom','course__direction__university'
+    )
+    if uni := request.GET.get('university_id'):   qs = qs.filter(university_id=uni)
+    if did := request.GET.get('direction_id'):    qs = qs.filter(course__direction_id=did)
+    if cid := request.GET.get('course_id'):       qs = qs.filter(course_id=cid)
+    if tid := request.GET.get('teacher_id'):      qs = qs.filter(teacher_id=tid)
+    if rid := request.GET.get('classroom_id'):    qs = qs.filter(classroom_id=rid)
+    # group_id — фильтрация через Group→Course→ScheduleEntry
+    if gid := request.GET.get('group_id'):
+        from .models import Group as GM
+        try:
+            g = GM.objects.get(pk=gid)
+            qs = qs.filter(course=g.course)
+        except GM.DoesNotExist:
+            qs = qs.none()
+ 
+    return JsonResponse({'entries': [{
+        'id':                  e.id,
+        'weekday':             e.weekday,
+        'slot':                e.slot_number,
+        'slot_time':           SLOT_TIMES.get(e.slot_number,''),
+        'subject':             e.subject.name,
+        'teacher_id':          e.teacher_id,
+        'teacher':             f"{e.teacher.last_name} {e.teacher.first_name}".strip() or e.teacher.username,
+        'classroom':           e.classroom.name if e.classroom else '—',
+        'lesson_type':         e.lesson_type,
+        'lesson_type_display': e.get_lesson_type_display(),
+        'is_approved':         e.is_approved,
+    } for e in qs]})
+
+@admin_required
+@require_http_methods(['GET', 'POST'])
+def subject_configs_api(request):
+    uni = request.user.university
+    from .models import SubjectConfig
+ 
+    if request.method == 'GET':
+        configs = (SubjectConfig.objects
+                   .filter(subject__university=uni)
+                   .select_related('subject', 'teacher', 'fixed_room')
+                   .prefetch_related('groups'))
+        data = [{
+            'id':           c.id,
+            'subject_id':   c.subject_id,
+            'subject_name': c.subject.name,
+            'kind':         c.kind,
+            'room_type':    c.room_type,
+            'teacher_id':   c.teacher_id,
+            'teacher_name': str(c.teacher) if c.teacher else None,
+            'total_pairs':  c.total_pairs,
+            'per_group':    c.per_group,
+            'simultaneous': c.simultaneous,
+            'subgroup_id':  c.subgroup_id,
+            'group_ids':    [g.id for g in c.groups.all()],
+        } for c in configs]
+        return JsonResponse({'configs': data})
+ 
+    body = _json_body(request)
+    from .models import SubjectConfig, Group as GroupModel
+    cfg = SubjectConfig.objects.create(
+        subject_id   = body['subject_id'],
+        kind         = body.get('kind', 'lecture'),
+        room_type    = body.get('room_type', 'seminar'),
+        teacher_id   = body.get('teacher_id') or None,
+        total_pairs  = body.get('total_pairs', 18),
+        per_group    = body.get('per_group', False),
+        simultaneous = body.get('simultaneous', False),
+        subgroup_id  = body.get('subgroup_id', ''),
+    )
+    if body.get('group_ids'):
+        cfg.groups.set(GroupModel.objects.filter(pk__in=body['group_ids']))
+    return JsonResponse({'id': cfg.id}, status=201)
+ 
+ 
+@admin_required
+@require_http_methods(['PUT', 'DELETE'])
+def subject_config_detail(request, pk):
+    uni = request.user.university
+    from .models import SubjectConfig, Group as GroupModel
+    cfg = get_object_or_404(SubjectConfig, pk=pk, subject__university=uni)
+ 
+    if request.method == 'DELETE':
+        cfg.delete()
+        return JsonResponse({'status': 'deleted'})
+ 
+    body = _json_body(request)
+    cfg.subject_id   = body.get('subject_id',  cfg.subject_id)
+    cfg.kind         = body.get('kind',         cfg.kind)
+    cfg.room_type    = body.get('room_type',    cfg.room_type)
+    cfg.teacher_id   = body.get('teacher_id') or None
+    cfg.total_pairs  = body.get('total_pairs',  cfg.total_pairs)
+    cfg.per_group    = body.get('per_group',    cfg.per_group)
+    cfg.simultaneous = body.get('simultaneous', cfg.simultaneous)
+    cfg.subgroup_id  = body.get('subgroup_id',  cfg.subgroup_id)
+    cfg.save()
+    if 'group_ids' in body:
+        cfg.groups.set(GroupModel.objects.filter(pk__in=body['group_ids']))
+    return JsonResponse({'status': 'updated'})
+ 
+ 
+# ──────────────────────────────────────────────────────────────
+#  Generation API
+# ──────────────────────────────────────────────────────────────
+ 
+import threading
+import traceback
+ 
+_generation_status = {}
+ 
+ 
+def _run_generation(university_id, week, weeks, reset):
+    from core.models import University
+    from core.scheduler.db_adapter import (
+        build_input_from_db, load_state_from_db,
+        save_state_to_db, save_schedule_to_db, reset_state,
+    )
+    from algorithm.main import Model, GreedySolver
+    from django.db import transaction
+ 
+    uid = university_id
+    _generation_status[uid] = {'status': 'running', 'log': [], 'progress': 0}
+ 
+    def log(msg):
+        _generation_status[uid]['log'].append(msg)
+ 
+    try:
+        university = University.objects.get(pk=uid)
+        log(f"Загрузка данных для «{university.name}»...")
+ 
+        if reset:
+            reset_state(university)
+            log("Состояние семестра сброшено")
+ 
+        inp   = build_input_from_db(university)
+        state = load_state_from_db(university, inp)
+        sw    = inp['settings'].get('semester_weeks', 18)
+ 
+        log(f"Аудиторий: {len(inp['rooms'])} | Групп: {len(inp['groups'])} | "
+            f"Преподавателей: {len(inp['teachers'])} | Предметов: {len(inp['subjects'])}")
+ 
+        if not inp['rooms']:
+            raise ValueError("Нет аудиторий в системе")
+        if not inp['subjects']:
+            raise ValueError("Нет предметов с конфигурацией (SubjectConfig)")
+ 
+        start_week  = week or (state['current_week'] + 1)
+        total_saved = 0
+ 
+        for w_offset in range(weeks):
+            wn = start_week + w_offset
+            if wn > sw:
+                log(f"Неделя {wn} > {sw}, остановка")
+                break
+ 
+            log(f"\n▶ Неделя {wn}/{sw}")
+            _generation_status[uid]['progress'] = int((w_offset / weeks) * 100)
+ 
+            model = Model(inp, state, wn)
+            if not model.events:
+                log("Нет событий для этой недели")
+                break
+ 
+            log(f"Событий: {len(model.events)}")
+            solver = GreedySolver(model)
+            solver.solve()
+ 
+            with transaction.atomic():
+                n_saved = save_schedule_to_db(university, model, solver, wn)
+                for e in model.events:
+                    key = e.get('state_key')
+                    if key and key in state['remaining']:
+                        state['remaining'][key] = max(0, state['remaining'][key] - 1)
+                state['current_week'] = wn
+                save_state_to_db(university, state)
+ 
+            total_saved += n_saved
+            log(f"✅ Сохранено {n_saved} занятий")
+ 
+        _generation_status[uid] = {
+            'status':       'done',
+            'log':          _generation_status[uid]['log'],
+            'progress':     100,
+            'total':        total_saved,
+            'week':         state['current_week'],
+        }
+ 
+    except Exception as exc:
+        _generation_status[uid] = {
+            'status': 'error',
+            'log':    _generation_status[uid].get('log', []) + [f"ОШИБКА: {exc}"],
+            'error':  traceback.format_exc(),
+        }
+ 
+ 
+@admin_required
+@require_http_methods(['POST'])
+def generate_schedule_api(request):
+    uni = request.user.university
+    if not uni:
+        return JsonResponse({'error': 'Университет не привязан'}, status=400)
+    body = _json_body(request)
+    uid  = uni.id
+    if _generation_status.get(uid, {}).get('status') == 'running':
+        return JsonResponse({'error': 'Генерация уже выполняется'}, status=409)
+    threading.Thread(
+        target=_run_generation,
+        args=(uid, body.get('week'), body.get('weeks', 1), body.get('reset', False)),
+        daemon=True
+    ).start()
+    return JsonResponse({'status': 'started'})
+ 
+ 
+@admin_required
+@require_http_methods(['GET'])
+def generation_status_api(request):
+    uni = request.user.university
+    if not uni:
+        return JsonResponse({'status': 'idle'})
+    status = dict(_generation_status.get(uni.id, {'status': 'idle'}))
+    try:
+        from core.models import SemesterState, ScheduleEntry, UniversitySettings
+        obj = SemesterState.objects.filter(university=uni).first()
+        status['current_week']  = obj.current_week if obj else 0
+        status['generated_at']  = obj.generated_at.isoformat() if obj and obj.generated_at else None
+        try:
+            status['semester_weeks'] = uni.settings.semester_weeks
+        except Exception:
+            status['semester_weeks'] = 18
+        status['entries_count'] = ScheduleEntry.objects.filter(university=uni).count()
+    except Exception:
+        pass
+    return JsonResponse(status)
+ 
+ 
+@admin_required
+@require_http_methods(['DELETE'])
+def clear_schedule_api(request):
+    from core.models import ScheduleEntry
+    n, _ = ScheduleEntry.objects.filter(university=request.user.university).delete()
+    return JsonResponse({'deleted': n})
+ 
+ 
+@admin_required
+@require_http_methods(['POST'])
+def reset_semester_api(request):
+    from core.scheduler.db_adapter import reset_state
+    reset_state(request.user.university)
+    return JsonResponse({'status': 'reset'})
+ 
