@@ -216,7 +216,7 @@ class GreedySolver:
         self.W_MORN = w.get('weight_prefer_morning',5)
         self.W_GAPS = w.get('weight_no_gaps', 3000)
         self.W_ROOM = w.get('weight_room_stickiness',15)
-        self.W_SINGLE = w.get('weight_single_pair_penalty', 5000)
+        self.W_SINGLE = 0
         self.W_MSPD = w.get('weight_max_same_subject_per_day',60)
         self.W_PREF = w.get('weight_teacher_preferred', 8000)
         self.W_LBS = w.get('weight_lecture_before_seminar', 500)
@@ -323,10 +323,7 @@ class GreedySolver:
             if self._tch_day[e['teacher']][d]>=ti.get('max_pairs_per_day',self.m.NS):
                 return False
 
-        if level <= 1:
-            return True
-
-        # ── level 2: лекция строго раньше семинара ────────────────────────
+        # ── лекция строго раньше семинара (все уровни кроме forced) ───
         sid=e['subject_id']
         if e['kind'] in ('seminar','comp'):
             lec_slots=self._lec_ts.get(sid)
@@ -334,8 +331,11 @@ class GreedySolver:
         elif e['kind']=='lecture':
             sem_slots=self._sem_ts.get(sid)
             if sem_slots and ts>=min(sem_slots): return False
+ 
+        if level <= 1:
+            return True
+ 
         return True
-
     def _score(self, eid, ts, r):
         e=self.events[eid]; d=ts//self.m.NS; s=ts%self.m.NS
         sc=0
@@ -348,21 +348,11 @@ class GreedySolver:
         
         for g in e['groups']:
             occ=self._grp_day_slots[g][d]
-            cnt=self._grp_day[g][d]
-            if occ:
-                if cnt==1: sc -= self.W_SINGLE * 2 
-                elif cnt==2: sc -= self.W_SINGLE // 2
-            else:
-                sc += self.W_SINGLE
+            if not occ:
                 sc += s*3
         
         tch_occ = self._tch_day_slots[e['teacher']][d]
-        tch_cnt = self._tch_day[e['teacher']][d]
-        if tch_occ:
-            if tch_cnt == 1: sc -= self.W_SINGLE
-            elif tch_cnt == 2: sc -= self.W_SINGLE // 2
-        else:
-            sc += self.W_SINGLE // 2
+        if not tch_occ:
             sc += s * 3
 
         used=self._sdr[e['subject_id']][d]

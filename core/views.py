@@ -755,20 +755,24 @@ def public_schedule(request):
                   4:'13:45–15:20',5:'15:30–17:05',6:'17:15–18:50'}
     qs = ScheduleEntry.objects.select_related(
         'subject','teacher','classroom','course__direction__university'
-    )
+    ).prefetch_related('groups')
+ 
     if uni := request.GET.get('university_id'):   qs = qs.filter(university_id=uni)
     if did := request.GET.get('direction_id'):    qs = qs.filter(course__direction_id=did)
     if cid := request.GET.get('course_id'):       qs = qs.filter(course_id=cid)
     if tid := request.GET.get('teacher_id'):      qs = qs.filter(teacher_id=tid)
     if rid := request.GET.get('classroom_id'):    qs = qs.filter(classroom_id=rid)
-    # group_id — фильтрация через Group→Course→ScheduleEntry
-    if gid := request.GET.get('group_id'):
-        from .models import Group as GM
+ 
+    # ✅ FIX 1: Фильтрация по номеру недели
+    if week := request.GET.get('week'):
         try:
-            g = GM.objects.get(pk=gid)
-            qs = qs.filter(course=g.course)
-        except GM.DoesNotExist:
-            qs = qs.none()
+            qs = qs.filter(week_number=int(week))
+        except (ValueError, TypeError):
+            pass
+ 
+    # ✅ FIX 2: Фильтрация по группе через M2M (groups), а не через course
+    if gid := request.GET.get('group_id'):
+        qs = qs.filter(groups__id=gid)
  
     return JsonResponse({'entries': [{
         'id':                  e.id,
@@ -782,7 +786,9 @@ def public_schedule(request):
         'lesson_type':         e.lesson_type,
         'lesson_type_display': e.get_lesson_type_display(),
         'is_approved':         e.is_approved,
+        'week_number':         e.week_number,
     } for e in qs]})
+ 
 
 @admin_required
 @require_http_methods(['GET', 'POST'])
@@ -793,7 +799,7 @@ def subject_configs_api(request):
     if request.method == 'GET':
         configs = (SubjectConfig.objects
                    .filter(subject__university=uni)
-                   .select_related('subject', 'teacher')
+                   .select_related('subject', 'teacher', 'fixed_room')
                    .prefetch_related('groups'))
         data = [{
             'id':           c.id,
@@ -813,13 +819,17 @@ def subject_configs_api(request):
  
     body = _json_body(request)
     
+    # Пакетное сохранение (для нашего умного модального окна)
     if body.get('is_bulk'):
         subject_id = body.get('subject_id')
         
+        # НАДЁЖНОЕ УДАЛЕНИЕ: Сначала находим сам предмет
         subj = Subject.objects.filter(id=subject_id, university=uni).first()
         if subj:
+            # Сносим все старые настройки нагрузки для этого предмета
             SubjectConfig.objects.filter(subject=subj).delete()
             
+            # Создаем новые записи
             for c in body.get('configs', []):
                 cfg = SubjectConfig.objects.create(
                     subject      = subj,
@@ -832,7 +842,21 @@ def subject_configs_api(request):
                     cfg.groups.set(GroupModel.objects.filter(pk__in=c['group_ids']))
                     
         return JsonResponse({'status': 'bulk_updated'})
- 
+        
+    # Стандартное создание (если запрос пришел не через is_bulk)
+    cfg = SubjectConfig.objects.create(
+        subject_id   = body['subject_id'],
+        kind         = body.get('kind', 'lecture'),
+        room_type    = body.get('room_type', 'seminar'),
+        teacher_id   = body.get('teacher_id') or None,
+        total_pairs  = body.get('total_pairs', 18),
+        per_group    = body.get('per_group', False),
+        simultaneous = body.get('simultaneous', False),
+        subgroup_id  = body.get('subgroup_id', ''),
+    )
+    if body.get('group_ids'):
+        cfg.groups.set(GroupModel.objects.filter(pk__in=body['group_ids']))
+    return JsonResponse({'id': cfg.id}, status=201)
  
 @admin_required
 @require_http_methods(['PUT', 'DELETE'])

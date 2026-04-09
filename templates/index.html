@@ -123,11 +123,6 @@
     .es { background:rgba(13,13,18,0.025); border:1px dashed rgba(13,13,18,0.06); }
     .lc { border:none; overflow:hidden; cursor:default; }
     .lc::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,0.14),transparent); pointer-events:none; }
-    .ll { background:linear-gradient(135deg,#7c3aed,#5A3FFF); color:#fff; box-shadow:0 6px 18px rgba(90,63,255,0.22); }
-    .lp { background:linear-gradient(135deg,#FF2D55,#FF6B00); color:#fff; box-shadow:0 6px 18px rgba(255,45,85,0.22); }
-    .lb { background:linear-gradient(135deg,#2563eb,#0084FF); color:#fff; box-shadow:0 6px 18px rgba(0,132,255,0.20); }
-    .ls { background:linear-gradient(135deg,#d97706,#f59e0b); color:#fff; box-shadow:0 6px 18px rgba(217,119,6,0.20); }
-    .lo { background:linear-gradient(135deg,#059669,#10b981); color:#fff; box-shadow:0 6px 18px rgba(5,150,105,0.20); }
     .lbg { display:inline-flex; font-size:.56rem; font-weight:900; text-transform:uppercase; letter-spacing:.06em; padding:3px 7px; border-radius:999px; background:rgba(255,255,255,0.2); margin-bottom:4px; }
     .lt2 { font-size:.8rem; font-weight:900; line-height:1.2; margin-bottom:3px; }
     .lm  { font-size:.68rem; font-weight:700; opacity:.9; display:grid; gap:1px; }
@@ -252,13 +247,6 @@
         <h2 id="sTitle">Расписание</h2>
         <p id="sSub">Выберите фильтры</p>
       </div>
-      <div class="leg">
-        <div class="li"><span class="ld" style="background:#7c3aed"></span>Лекция</div>
-        <div class="li"><span class="ld" style="background:#FF2D55"></span>Практика</div>
-        <div class="li"><span class="ld" style="background:#0084FF"></span>Лаба</div>
-        <div class="li"><span class="ld" style="background:#d97706"></span>Семинар</div>
-        <div class="li"><span class="ld" style="background:#059669"></span>Онлайн</div>
-      </div>
     </div>
 
     <div class="gv" id="gv"><div class="ss"><div class="sg" id="sg"></div></div></div>
@@ -284,12 +272,51 @@ const SLOTS = {1:'08:30–10:05',2:'10:15–11:50',3:'12:00–13:35',4:'13:45–
 const TC    = {lecture:'ll',practice:'lp',lab:'lb',seminar:'ls',online:'lo'};
 const TP    = {lecture:'tpl',practice:'tpp',lab:'tpb',seminar:'tps',online:'tpo'};
 const TL    = {lecture:'Лекция',practice:'Практика',lab:'Лаба',seminar:'Семинар',online:'Онлайн'};
-
+ 
+/* ── 12 цветовых схем для предметов ─────────────────────────── */
+const SUBJECT_COLORS = [
+  { bg: 'linear-gradient(135deg, #7c3aed, #5A3FFF)', shadow: 'rgba(90,63,255,0.22)' },
+  { bg: 'linear-gradient(135deg, #f97316, #ea580c)', shadow: 'rgba(249,115,22,0.22)' },
+  { bg: 'linear-gradient(135deg, #059669, #10b981)', shadow: 'rgba(5,150,105,0.22)' },
+  { bg: 'linear-gradient(135deg, #e11d48, #f43f5e)', shadow: 'rgba(225,29,72,0.22)' },
+  { bg: 'linear-gradient(135deg, #2563eb, #3b82f6)', shadow: 'rgba(37,99,235,0.22)' },
+  { bg: 'linear-gradient(135deg, #d97706, #f59e0b)', shadow: 'rgba(217,119,6,0.22)' },
+  { bg: 'linear-gradient(135deg, #7c3aed, #a855f7)', shadow: 'rgba(168,85,247,0.22)' },
+  { bg: 'linear-gradient(135deg, #0891b2, #06b6d4)', shadow: 'rgba(8,145,178,0.22)' },
+  { bg: 'linear-gradient(135deg, #be185d, #ec4899)', shadow: 'rgba(190,24,93,0.22)' },
+  { bg: 'linear-gradient(135deg, #4f46e5, #6366f1)', shadow: 'rgba(79,70,229,0.22)' },
+  { bg: 'linear-gradient(135deg, #15803d, #22c55e)', shadow: 'rgba(21,128,61,0.22)' },
+  { bg: 'linear-gradient(135deg, #b45309, #d97706)', shadow: 'rgba(180,83,9,0.22)' },
+];
+ 
+/* Маппинг предмет → цвет (устойчивый по имени) */
+const _subjectColorCache = {};
+function getSubjectColor(subjectName) {
+  if (_subjectColorCache[subjectName]) return _subjectColorCache[subjectName];
+  /* Детерминированный хэш по имени предмета */
+  let hash = 0;
+  for (let i = 0; i < subjectName.length; i++) {
+    hash = ((hash << 5) - hash + subjectName.charCodeAt(i)) | 0;
+  }
+  const idx = Math.abs(hash) % SUBJECT_COLORS.length;
+  _subjectColorCache[subjectName] = SUBJECT_COLORS[idx];
+  return SUBJECT_COLORS[idx];
+}
+ 
+/* Цвет бейджа типа занятия (маленький тег ЛЕКЦИЯ/СЕМИНАР) */
+const TYPE_BADGE_COLORS = {
+  lecture:  { bg: 'rgba(255,255,255,0.28)', color: '#fff' },
+  practice: { bg: 'rgba(255,255,255,0.28)', color: '#fff' },
+  lab:      { bg: 'rgba(255,255,255,0.28)', color: '#fff' },
+  seminar:  { bg: 'rgba(255,255,255,0.28)', color: '#fff' },
+  online:   { bg: 'rgba(255,255,255,0.28)', color: '#fff' },
+};
+ 
 let mode='students', view='grid', entries=[], currentWeek=1;
-const F = {uni:'',dir:'',group:'',tch:'',cls:''};
-
+const F = {uni:'',dir:'',course:'',group:'',tch:'',cls:''};
+ 
 const api = async url => { const r=await fetch(url); if(!r.ok) throw r.status; return r.json(); };
-
+ 
 function fillSel(id, items, vp, lf, ph='Все') {
   const s=document.getElementById(id);
   s.innerHTML=`<option value="">${ph}</option>`;
@@ -298,7 +325,7 @@ function fillSel(id, items, vp, lf, ph='Все') {
 }
 function resetSel(id,ph='Все'){ const s=document.getElementById(id); s.innerHTML=`<option value="">${ph}</option>`; s.disabled=true; }
 const load = v => document.getElementById('ldr').classList.toggle('on',v);
-
+ 
 /* ── MODE ── */
 function setMode(m) {
   mode=m;
@@ -306,48 +333,44 @@ function setMode(m) {
   const amap={students:'act-s',teachers:'act-t',classrooms:'act-c'};
   const idmap={students:'mb-s',teachers:'mb-t',classrooms:'mb-c'};
   document.getElementById(idmap[m]).classList.add(amap[m]);
-
+ 
   document.getElementById('fs-s').style.display = m==='students'   ? 'flex':'none';
   document.getElementById('fs-t').style.display = m==='teachers'   ? 'flex':'none';
   document.getElementById('fs-c').style.display = m==='classrooms' ? 'flex':'none';
-
-  F.dir=''; F.group=''; F.tch=''; F.cls='';
+ 
+  F.dir=''; F.course=''; F.group=''; F.tch=''; F.cls='';
   if(m==='teachers'  && F.uni) loadTch();
   if(m==='classrooms'&& F.uni) loadCls();
   if(m==='students'  && F.uni) loadDir();
   loadSched();
 }
-
+ 
 /* ── WEEK SWITCHER ── */
 function changeWeek(delta) {
   currentWeek += delta;
   if (currentWeek < 1) currentWeek = 1;
-  if (currentWeek > 18) currentWeek = 18; // Защита от бесконечной прокрутки (макс 18 недель)
+  if (currentWeek > 18) currentWeek = 18;
   document.getElementById('week-lbl').textContent = `Неделя ${currentWeek}`;
-  
-  // Если фильтры уже выбраны, сразу подгружаем новую неделю
-  if (F.uni && (F.group || F.tch || F.cls || F.dir)) {
-    loadSched();
-  }
+  loadSched();
 }
-
+ 
 /* ── UNI ── */
 async function init() {
   try { const d=await api('/api/public/universities/'); fillSel('f-uni',d.universities,'id',u=>u.name,'Все университеты'); document.getElementById('f-uni').disabled=false; } catch(e){}
   renderGrid();
 }
 document.getElementById('f-uni').addEventListener('change',async function(){
-  F.uni=this.value; F.dir=''; F.group=''; F.tch=''; F.cls='';
+  F.uni=this.value; F.dir=''; F.course=''; F.group=''; F.tch=''; F.cls='';
   resetSel('f-dir'); resetSel('f-group'); resetSel('f-tch'); resetSel('f-cls');
   if(F.uni){ if(mode==='students') await loadDir(); else if(mode==='teachers') await loadTch(); else await loadCls(); }
   loadSched();
 });
-
+ 
 async function loadDir(){ try{ const d=await api(`/api/public/directions/?university_id=${F.uni}`); fillSel('f-dir',d.directions,'id',x=>x.name,'Все направления'); document.getElementById('f-dir').disabled=false; }catch(e){} }
 async function loadTch(){ try{ const d=await api(`/api/public/teachers/?university_id=${F.uni}`); fillSel('f-tch',d.teachers,'id',t=>t.name,'Все преподаватели'); document.getElementById('f-tch').disabled=false; }catch(e){} }
 async function loadCls(){ try{ const d=await api(`/api/public/classrooms/?university_id=${F.uni}`); fillSel('f-cls',d.classrooms,'id',c=>c.name,'Все аудитории'); document.getElementById('f-cls').disabled=false; }catch(e){} }
-
-/* DIR → courses+groups combined */
+ 
+/* ── DIR → courses+groups combined (ИСПРАВЛЕНО) ── */
 document.getElementById('f-dir').addEventListener('change',async function(){
   F.dir=this.value; F.group='';
   resetSel('f-group','Все группы');
@@ -356,38 +379,41 @@ document.getElementById('f-dir').addEventListener('change',async function(){
     const d=await api(`/api/public/courses/?direction_id=${F.dir}`);
     const gs=document.getElementById('f-group');
     gs.innerHTML='<option value="">Все группы</option>';
-
+ 
     for(const c of d.courses){
-      const gd=await api(`/api/public/groups/?course_id=${c.id}`);
+      let gd;
+      try { gd=await api(`/api/public/groups/?course_id=${c.id}`); } catch(e){ gd={groups:[]}; }
       /* курс как опция */
       const co=document.createElement('option');
       co.value=`c:${c.id}`; co.textContent=`— ${c.number} курс (все группы)`;
       co.style.cssText='font-weight:800;color:#5A3FFF;';
       gs.appendChild(co);
       /* группы курса */
-      gd.groups.forEach(g=>{
+      (gd.groups||[]).forEach(g=>{
         const go=document.createElement('option');
         go.value=`g:${g.id}`; go.textContent=`\u2003${g.name}`;
         gs.appendChild(go);
       });
     }
     gs.disabled=false;
-  } catch(e){}
+  } catch(e){
+    console.error('Dir load error:', e);
+  }
   loadSched();
 });
-
+ 
 document.getElementById('f-group').addEventListener('change',function(){ F.group=this.value; loadSched(); });
 document.getElementById('f-tch').addEventListener('change',function()  { F.tch=this.value;   loadSched(); });
 document.getElementById('f-cls').addEventListener('change',function()  { F.cls=this.value;   loadSched(); });
-
-/* ── LOAD SCHEDULE ── */
+ 
+/* ── LOAD SCHEDULE (ИСПРАВЛЕНО) ── */
 async function loadSched(){
   load(true);
   try {
     const p=new URLSearchParams();
     if(F.uni) p.set('university_id',F.uni);
-    p.set('week', currentWeek); // Добавляем фильтр по неделе в запрос!
-
+    p.set('week', currentWeek);
+ 
     if(mode==='students'){
       if(F.dir) p.set('direction_id',F.dir);
       if(F.group){
@@ -405,10 +431,10 @@ async function loadSched(){
   load(false);
   render();
 }
-
+ 
 /* ── RENDER ── */
 function render(){ updateHead(); if(view==='grid') renderGrid(); else renderList(); renderStats(); }
-
+ 
 function updateHead(){
   const parts=[];
   const u=document.getElementById('f-uni');
@@ -430,17 +456,17 @@ function updateHead(){
     ? `Найдено занятий: ${entries.length} (Неделя ${currentWeek})`
     : parts.length ? `На неделе ${currentWeek} занятий нет` : 'Выберите фильтры для отображения данных';
 }
-
+ 
 function renderGrid(){
   const g=document.getElementById('sg'); g.innerHTML='';
   const hdr=el('div','gc hc tc'); hdr.innerHTML='<span style="font-size:.6rem;color:var(--text-gray)">Пара</span>'; g.appendChild(hdr);
   DAYS.forEach(d=>{ const c=el('div','gc hc dc'); c.innerHTML=`<strong>${d.slice(0,2)}</strong><span>${d}</span>`; g.appendChild(c); });
-
+ 
   if(!entries.length){ const sp=el('div'); sp.style.cssText='grid-column:1/-1;'; sp.innerHTML=emptyHTML(); g.appendChild(sp); return; }
-
+ 
   const map={}; for(let s=1;s<=6;s++){map[s]={};for(let d=0;d<6;d++)map[s][d]=[];}
   entries.forEach(e=>{ if(map[e.slot]&&map[e.slot][e.weekday]!==undefined) map[e.slot][e.weekday].push(e); });
-
+ 
   for(let s=1;s<=6;s++){
     const tc=el('div','gc hc tc'); tc.innerHTML=`<span class="sn">${s}</span><span>${(SLOTS[s]||'').split('–')[0]}</span>`; g.appendChild(tc);
     for(let d=0;d<6;d++){
@@ -449,9 +475,11 @@ function renderGrid(){
       if(items.length){
         cell.style.cssText='display:flex;flex-direction:column;gap:5px;';
         items.forEach(item=>{
-          const card=el('div',`gc lc ${TC[item.lesson_type]||'ll'}`);
-          card.style.cssText='position:relative;min-height:0;flex:1;border-radius:11px;';
-          card.innerHTML=`<div class="lbg">${TL[item.lesson_type]||item.lesson_type}</div>
+          const color = getSubjectColor(item.subject);
+          const card=el('div','gc lc');
+          card.style.cssText=`position:relative;min-height:0;flex:1;border-radius:11px;border:none;overflow:hidden;cursor:default;background:${color.bg};color:#fff;box-shadow:0 6px 18px ${color.shadow};`;
+          card.innerHTML=`<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.14),transparent);pointer-events:none;"></div>
+            <div class="lbg" style="background:${TYPE_BADGE_COLORS[item.lesson_type]?.bg||'rgba(255,255,255,0.2)'};color:#fff;">${TL[item.lesson_type]||item.lesson_type}</div>
             <div class="lt2">${item.subject}</div>
             <div class="lm"><span>${item.classroom}</span><span>${item.teacher}</span></div>`;
           cell.appendChild(card);
@@ -461,12 +489,14 @@ function renderGrid(){
     }
   }
 }
-
+ 
 function renderList(){
   const b=document.getElementById('lb');
   if(!entries.length){ b.innerHTML=`<tr><td colspan="7">${emptyHTML()}</td></tr>`; return; }
   const sorted=[...entries].sort((a,b)=>a.weekday-b.weekday||a.slot-b.slot);
-  b.innerHTML=sorted.map(e=>`<tr>
+  b.innerHTML=sorted.map(e=>{
+    const color = getSubjectColor(e.subject);
+    return `<tr>
     <td><strong>${DAYS[e.weekday]||e.weekday}</strong></td>
     <td>${e.slot}</td>
     <td style="color:var(--text-gray);font-size:.8rem;">${SLOTS[e.slot]||''}</td>
@@ -474,14 +504,15 @@ function renderList(){
     <td>${e.teacher}</td>
     <td>${e.classroom}</td>
     <td><span class="tp ${TP[e.lesson_type]||''}">${TL[e.lesson_type]||e.lesson_type}</span></td>
-  </tr>`).join('');
+  </tr>`;
+  }).join('');
 }
-
+ 
 function emptyHTML(){ return `<div class="empty">
   <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
   <h3>Нет данных</h3><p>Нет занятий на ${currentWeek} неделе по выбранным фильтрам</p>
 </div>`; }
-
+ 
 function renderStats(){
   const row=document.getElementById('stats');
   if(!entries.length){ row.style.display='none'; return; }
@@ -491,7 +522,7 @@ function renderStats(){
   document.getElementById('st2').textContent=new Set(entries.map(e=>e.teacher_id)).size;
   document.getElementById('st3').textContent=new Set(entries.map(e=>e.classroom)).size;
 }
-
+ 
 function setView(v){
   view=v;
   document.getElementById('gv').style.display=v==='grid'?'block':'none';
@@ -500,10 +531,11 @@ function setView(v){
   document.getElementById('vl').classList.toggle('on',v==='list');
   render();
 }
-
+ 
 function el(tag,cls){ const e=document.createElement(tag); if(cls) e.className=cls; return e; }
-
+ 
 init();
 </script>
+ 
 </body>
 </html>
