@@ -147,7 +147,7 @@ const tables = {
 
   // НИЖНИЙ РЯД
   Course:            { x: 80,   y: 1450, fields: [['bigint','id','PK'],['bigint','direction_id','FK'],['smallint','number','']] },
-  Subject:           { x: 1450, y: 1450, fields: [['bigint','id','PK'],['bigint','university_id','FK'],['bigint','teacher_id','FK'],['bigint','course_id','FK'],['varchar','name',''],['smallint','difficulty_points',''],['smallint','hours_per_semester','']] },
+  Subject:           { x: 1450, y: 1450, fields: [['bigint','id','PK'],['bigint','university_id','FK'],['bigint','teacher_id','FK'],['bigint','course_id','FK'],['varchar','name',''],['smallint','difficulty_points',''],['smallint','pairs_per_semester','']] },
   Group:             { x: 80,   y: 1850, fields: [['bigint','id','PK'],['bigint','course_id','FK'],['varchar','name','']] },
   TeacherPreference: { x: 1450, y: 1850, fields: [['bigint','id','PK'],['bigint','teacher_id','FK'],['smallint','max_lessons_per_day',''],['smallint','max_consecutive_lessons',''],['json','blocked_slots',''],['json','preferred_slots',''],['timestamp','updated_at','']] },
 };

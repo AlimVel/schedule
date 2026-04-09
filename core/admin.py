@@ -134,7 +134,7 @@ class SubjectConfigInline(admin.TabularInline):
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
-    list_display  = ("name", "university", "teacher", "difficulty_points", "hours_per_semester", "config_count")
+    list_display  = ("name", "university", "teacher", "difficulty_points", "pairs_per_semester", "config_count")
     list_filter   = ("university", "difficulty_points")
     search_fields = ("name",)
     list_select_related = ("university", "teacher")

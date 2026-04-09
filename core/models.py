@@ -167,12 +167,15 @@ class Subject(models.Model):
         default=1, verbose_name="Сложность (1–5)",
         help_text="1 — лёгкий, 5 — очень сложный"
     )
-    hours_per_semester = models.PositiveSmallIntegerField(
-        default=36, verbose_name="Часов в семестре"
+    pairs_per_semester = models.PositiveSmallIntegerField(
+        default=18, verbose_name="Пар в семестре"
     )
     course            = models.ForeignKey(
         Course, on_delete=models.SET_NULL, null=True, blank=True,
         related_name="subjects", verbose_name="Курс"
+    )
+    semester          = models.PositiveSmallIntegerField(
+        default=1, verbose_name="Семестр"
     )
 
     class Meta:
@@ -181,7 +184,6 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.name
-
 
 # ──────────────────────────────────────────────────────────────
 #  SubjectConfig  — конфигурация занятий предмета
@@ -307,6 +309,7 @@ class ScheduleEntry(models.Model):
         verbose_name="Тип занятия"
     )
     is_approved = models.BooleanField(default=False, verbose_name="Подтверждено")
+    week_number = models.PositiveSmallIntegerField(default=1, verbose_name="Номер недели")
     created_at  = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True)
 

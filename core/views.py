@@ -168,7 +168,7 @@ def subjects_api(request):
     uni = request.user.university
 
     if request.method == 'GET':
-        subjects = Subject.objects.filter(university=uni).select_related('teacher', 'course')
+        subjects = Subject.objects.filter(university=uni).select_related('teacher', 'course__direction')
         data = [
             {
                 'id': s.id,
@@ -176,22 +176,24 @@ def subjects_api(request):
                 'teacher_id': s.teacher_id,
                 'teacher_name': str(s.teacher) if s.teacher else None,
                 'difficulty_points': s.difficulty_points,
-                'hours_per_semester': s.hours_per_semester,
+                'pairs_per_semester': s.pairs_per_semester,
                 'course_id': s.course_id,
+                'course_name': f"{s.course.number} курс ({s.course.direction.name})" if s.course else None,
+                'semester': s.semester,
             }
             for s in subjects
         ]
         return JsonResponse({'subjects': data})
 
-    # POST — создать предмет
     body = _json_body(request)
     subject = Subject.objects.create(
         university=uni,
         name=body.get('name', ''),
         teacher_id=body.get('teacher_id') or None,
         difficulty_points=body.get('difficulty_points', 1),
-        hours_per_semester=body.get('hours_per_semester', 36),
+        pairs_per_semester=body.get('pairs_per_semester', 18),
         course_id=body.get('course_id') or None,
+        semester=body.get('semester', 1),
     )
     return JsonResponse({'id': subject.id, 'name': subject.name}, status=201)
 
@@ -208,8 +210,9 @@ def subject_detail(request, pk):
             'name': subject.name,
             'teacher_id': subject.teacher_id,
             'difficulty_points': subject.difficulty_points,
-            'hours_per_semester': subject.hours_per_semester,
+            'pairs_per_semester': subject.pairs_per_semester,
             'course_id': subject.course_id,
+            'semester': subject.semester,
         })
 
     if request.method == 'PUT':
@@ -217,15 +220,62 @@ def subject_detail(request, pk):
         subject.name = body.get('name', subject.name)
         subject.teacher_id = body.get('teacher_id') or subject.teacher_id
         subject.difficulty_points = body.get('difficulty_points', subject.difficulty_points)
-        subject.hours_per_semester = body.get('hours_per_semester', subject.hours_per_semester)
+        subject.pairs_per_semester = body.get('pairs_per_semester', subject.pairs_per_semester)
         subject.course_id = body.get('course_id') or subject.course_id
+        subject.semester = body.get('semester', subject.semester)
         subject.save()
         return JsonResponse({'status': 'updated'})
 
-    # DELETE
     subject.delete()
     return JsonResponse({'status': 'deleted'})
 
+
+@admin_required
+@require_http_methods(['GET', 'POST'])
+def subject_configs_api(request):
+    uni = request.user.university
+    from .models import SubjectConfig, Group as GroupModel
+ 
+    if request.method == 'GET':
+        configs = (SubjectConfig.objects
+                   .filter(subject__university=uni)
+                   .select_related('subject', 'teacher', 'fixed_room')
+                   .prefetch_related('groups'))
+        data = [{
+            'id':           c.id,
+            'subject_id':   c.subject_id,
+            'subject_name': c.subject.name,
+            'kind':         c.kind,
+            'room_type':    c.room_type,
+            'teacher_id':   c.teacher_id,
+            'teacher_name': str(c.teacher) if c.teacher else None,
+            'total_pairs':  c.total_pairs,
+            'per_group':    c.per_group,
+            'simultaneous': c.simultaneous,
+            'subgroup_id':  c.subgroup_id,
+            'group_ids':    [g.id for g in c.groups.all()],
+        } for c in configs]
+        return JsonResponse({'configs': data})
+ 
+    body = _json_body(request)
+    
+    # Пакетное сохранение (для нашего нового умного модального окна)
+    if body.get('is_bulk'):
+        subject_id = body.get('subject_id')
+        # Удаляем старую конфигурацию для предмета
+        SubjectConfig.objects.filter(subject_id=subject_id, subject__university=uni).delete()
+        
+        for c in body.get('configs', []):
+            cfg = SubjectConfig.objects.create(
+                subject_id   = subject_id,
+                kind         = c.get('kind', 'lecture'),
+                room_type    = c.get('room_type', 'seminar'),
+                teacher_id   = c.get('teacher_id') or None,
+                total_pairs  = c.get('total_pairs', 18),
+            )
+            if c.get('group_ids'):
+                cfg.groups.set(GroupModel.objects.filter(pk__in=c['group_ids']))
+        return JsonResponse({'status': 'bulk_updated'})
 
 # ──────────────────────────────────────────────────────────────
 #  ADMIN API — Аудитории
@@ -238,7 +288,13 @@ def classrooms_api(request):
 
     if request.method == 'GET':
         data = [
-            {'id': c.id, 'name': c.name, 'capacity': c.capacity}
+            {
+                'id': c.id, 
+                'name': c.name, 
+                'capacity': c.capacity,
+                'room_type': c.room_type,         # <-- Теперь отдаем тип аудитории
+                'low_priority': c.low_priority    # <-- И приоритет
+            }
             for c in Classroom.objects.filter(university=uni)
         ]
         return JsonResponse({'classrooms': data})
@@ -248,6 +304,8 @@ def classrooms_api(request):
         university=uni,
         name=body.get('name', ''),
         capacity=body.get('capacity', 30),
+        room_type=body.get('room_type', 'seminar'),   # <-- Сохраняем тип
+        low_priority=body.get('low_priority', False), # <-- Сохраняем приоритет
     )
     return JsonResponse({'id': classroom.id, 'name': classroom.name}, status=201)
 
@@ -262,12 +320,13 @@ def classroom_detail(request, pk):
         body = _json_body(request)
         classroom.name = body.get('name', classroom.name)
         classroom.capacity = body.get('capacity', classroom.capacity)
+        classroom.room_type = body.get('room_type', classroom.room_type)       # <-- Обновляем тип
+        classroom.low_priority = body.get('low_priority', classroom.low_priority) # <-- Обновляем приоритет
         classroom.save()
         return JsonResponse({'status': 'updated'})
 
     classroom.delete()
     return JsonResponse({'status': 'deleted'})
-
 
 # ──────────────────────────────────────────────────────────────
 #  ADMIN API — Направления и курсы
@@ -324,7 +383,12 @@ def schedule_api(request):
         qs = ScheduleEntry.objects.filter(university=uni).select_related(
             'subject', 'teacher', 'classroom', 'course__direction'
         )
+        week = request.GET.get('week')
+        if week:
+            qs = qs.filter(week_number=int(week))
+            
         # Необязательные фильтры через query-params
+
         course_id = request.GET.get('course_id')
         teacher_id = request.GET.get('teacher_id')
         if course_id:
@@ -724,12 +788,12 @@ def public_schedule(request):
 @require_http_methods(['GET', 'POST'])
 def subject_configs_api(request):
     uni = request.user.university
-    from .models import SubjectConfig
+    from .models import SubjectConfig, Group as GroupModel, Subject
  
     if request.method == 'GET':
         configs = (SubjectConfig.objects
                    .filter(subject__university=uni)
-                   .select_related('subject', 'teacher', 'fixed_room')
+                   .select_related('subject', 'teacher')
                    .prefetch_related('groups'))
         data = [{
             'id':           c.id,
@@ -748,20 +812,26 @@ def subject_configs_api(request):
         return JsonResponse({'configs': data})
  
     body = _json_body(request)
-    from .models import SubjectConfig, Group as GroupModel
-    cfg = SubjectConfig.objects.create(
-        subject_id   = body['subject_id'],
-        kind         = body.get('kind', 'lecture'),
-        room_type    = body.get('room_type', 'seminar'),
-        teacher_id   = body.get('teacher_id') or None,
-        total_pairs  = body.get('total_pairs', 18),
-        per_group    = body.get('per_group', False),
-        simultaneous = body.get('simultaneous', False),
-        subgroup_id  = body.get('subgroup_id', ''),
-    )
-    if body.get('group_ids'):
-        cfg.groups.set(GroupModel.objects.filter(pk__in=body['group_ids']))
-    return JsonResponse({'id': cfg.id}, status=201)
+    
+    if body.get('is_bulk'):
+        subject_id = body.get('subject_id')
+        
+        subj = Subject.objects.filter(id=subject_id, university=uni).first()
+        if subj:
+            SubjectConfig.objects.filter(subject=subj).delete()
+            
+            for c in body.get('configs', []):
+                cfg = SubjectConfig.objects.create(
+                    subject      = subj,
+                    kind         = c.get('kind', 'lecture'),
+                    room_type    = c.get('room_type', 'seminar'),
+                    teacher_id   = c.get('teacher_id') or None,
+                    total_pairs  = c.get('total_pairs', 18),
+                )
+                if c.get('group_ids'):
+                    cfg.groups.set(GroupModel.objects.filter(pk__in=c['group_ids']))
+                    
+        return JsonResponse({'status': 'bulk_updated'})
  
  
 @admin_required

@@ -94,7 +94,7 @@
     .pill-pink   { background: var(--pink-dim);   color: var(--pink); }
     .pill-blue   { background: var(--blue-dim);   color: var(--blue); }
     .pill-orange { background: var(--orange-dim); color: var(--orange); }
-    .empty-row td { text-align: center; padding: 36px; color: var(--text-muted); }
+    .empty-row { text-align: center; padding: 36px !important; color: var(--text-muted); }
 
     /* MODAL */
     .modal-backdrop { position: fixed; inset: 0; z-index: 500; background: rgba(13,13,18,.45); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .25s; }
@@ -126,14 +126,11 @@
     .btn-invite svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
     .btn-invite:hover { background: #4730d4; transform: translateY(-1px); }
 
-    /* ═══════ SCHEDULE PANEL ═══════ */
+    /* SCHEDULE GENERATION PANEL */
     .sched-layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
-
-    /* generation card */
     .gen-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 24px; box-shadow: var(--shadow); }
     .gen-card-title { font-size: .95rem; font-weight: 900; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
     .gen-card-title svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.4; color: var(--purple); }
-
     .gen-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
     .gen-field { display: flex; flex-direction: column; gap: 5px; }
     .gen-field label { font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
@@ -141,7 +138,6 @@
     .gen-input:focus { border-color: var(--purple); background: #fff; }
     .gen-checkbox { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: .85rem; font-weight: 700; color: var(--text-muted); padding: 4px 0; }
     .gen-checkbox input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--purple); }
-
     .gen-actions { display: flex; gap: 10px; margin-top: 16px; }
     .gen-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 13px; border: none; font-family: inherit; font-size: .9rem; font-weight: 800; cursor: pointer; transition: all .22s; }
     .gen-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; flex-shrink: 0; }
@@ -150,27 +146,19 @@
     .gen-btn-run:disabled { opacity: .6; cursor: default; transform: none; }
     .gen-btn-clear { background: #fff; color: var(--text-muted); border: 1.5px solid var(--border); }
     .gen-btn-clear:hover { border-color: var(--pink); color: var(--pink); }
-
-    /* progress */
     .gen-progress { margin-top: 18px; display: none; }
     .gen-progress-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
     .gen-progress-label { font-size: .82rem; font-weight: 700; color: var(--text-muted); }
     .gen-progress-pct { font-size: .82rem; font-weight: 900; color: var(--purple); }
     .gen-bar-track { height: 6px; background: var(--purple-dim); border-radius: 999px; overflow: hidden; }
     .gen-bar-fill { height: 100%; background: linear-gradient(90deg, var(--purple), #4f46e5); border-radius: 999px; width: 0%; transition: width .4s ease; }
-
-    /* log */
     .gen-log-wrap { margin-top: 16px; display: none; }
     .gen-log-label { font-size: .66rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; color: #bbb; margin-bottom: 7px; }
     .gen-log { background: rgba(13,13,18,.04); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; max-height: 220px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: .76rem; line-height: 1.65; color: var(--black); white-space: pre-wrap; scrollbar-width: thin; }
-
-    /* result */
     .gen-result { margin-top: 14px; display: none; }
     .gen-result-ok { padding: 14px 16px; background: var(--green-dim); border: 1px solid rgba(0,230,118,.35); border-radius: 13px; display: flex; align-items: center; gap: 12px; }
     .gen-result-ok svg { width: 20px; height: 20px; stroke: #00A354; fill: none; stroke-width: 2.5; flex-shrink: 0; }
     .gen-result-err { padding: 14px 16px; background: var(--pink-dim); border: 1px solid rgba(255,45,85,.3); border-radius: 13px; font-size: .84rem; font-weight: 700; color: var(--pink); white-space: pre-wrap; }
-
-    /* status sidebar */
     .status-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 22px; box-shadow: var(--shadow); margin-bottom: 16px; }
     .status-card-title { font-size: .88rem; font-weight: 900; margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
     .status-card-title svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; }
@@ -178,18 +166,24 @@
     .status-row:last-child { border: none; }
     .status-key { font-size: .8rem; font-weight: 700; color: var(--text-muted); }
     .status-val { font-size: .88rem; font-weight: 800; }
-
     .config-hint { background: rgba(90,63,255,.06); border: 1px solid rgba(90,63,255,.15); border-radius: 14px; padding: 14px 16px; font-size: .82rem; font-weight: 600; color: var(--text-muted); line-height: 1.6; }
     .config-hint strong { color: var(--black); }
-    .config-hint a { color: var(--purple); font-weight: 800; text-decoration: none; }
+    .config-hint a { color: var(--purple); font-weight: 800; text-decoration: none; cursor: pointer; }
     .config-hint a:hover { text-decoration: underline; }
 
-    /* SUBJECT CONFIG TABLE */
-    .sc-section { margin-top: 28px; }
-    .badge-kind { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .68rem; font-weight: 800; }
-    .bk-lecture  { background: var(--purple-dim); color: var(--purple); }
-    .bk-seminar  { background: var(--orange-dim); color: var(--orange); }
-    .bk-comp     { background: var(--blue-dim);   color: var(--blue); }
+    /* SUBJECT CONFIG TABLE & STYLES */
+    .sc-section { margin-top: 36px; }
+
+    /* SCHEDULE VISUAL GRID */
+    .schedule-grid { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 800px; background: #fff; }
+    .schedule-grid th, .schedule-grid td { border: 1px solid var(--border); padding: 8px; vertical-align: top; }
+    .schedule-grid th { background: rgba(244,244,248,.6); font-weight: 800; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
+    .grid-cell { min-height: 90px; display: flex; flex-direction: column; gap: 6px; }
+    .grid-item { background: var(--purple-dim); border: 1px solid var(--purple-mid); padding: 8px 10px; border-radius: 10px; cursor: pointer; transition: transform 0.2s, background 0.2s, box-shadow 0.2s; color: var(--black); }
+    .grid-item:hover { transform: translateY(-2px); background: var(--purple); color: #fff; box-shadow: 0 4px 12px rgba(90,63,255,0.3); border-color: var(--purple); }
+    .grid-item strong { display: block; font-weight: 800; font-size: 0.8rem; margin-bottom: 4px; line-height: 1.2; }
+    .grid-item div { font-size: 0.7rem; font-weight: 600; opacity: 0.85; margin-bottom: 2px; }
+    .grid-item .room { font-weight: 800; }
 
     /* TOAST */
     .toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; padding: 13px 20px; border-radius: 14px; color: #fff; font-size: .88rem; font-weight: 800; display: flex; align-items: center; gap: 9px; box-shadow: 0 16px 40px rgba(13,13,18,.2); transform: translateY(70px); opacity: 0; transition: all .3s cubic-bezier(.2,.8,.2,1); }
@@ -210,6 +204,20 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(13,13,18,.12); border-radius: 999px; }
 
+    .dist-box { background: #fff; border: 1.5px solid var(--border); border-radius: 16px; overflow: hidden; margin-top: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+    .dist-row { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); transition: background .2s; }
+    .dist-row:last-child { border-bottom: none; }
+    .dist-row.disabled { background: #f8f8fb; opacity: 0.55; }
+    .dist-toggle { display: flex; align-items: center; gap: 10px; width: 130px; cursor: pointer; font-weight: 800; font-size: .9rem; }
+    .dist-toggle input { width: 18px; height: 18px; accent-color: var(--purple); cursor: pointer; }
+    .dist-inputs { display: flex; gap: 10px; flex: 1; transition: opacity .2s; }
+    .dist-inputs input { width: 75px; padding: 10px; border-radius: 10px; border: 1.5px solid var(--border); font-family: inherit; font-weight: 800; text-align: center; outline: none; transition: all .2s; }
+    .dist-inputs input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(90,63,255,.1); }
+    .dist-inputs select { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--border); font-family: inherit; font-weight: 700; outline: none; transition: all .2s; }
+    .dist-inputs select:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(90,63,255,.1); }
+    .dist-sum { padding: 12px 16px; background: rgba(90,63,255,.05); font-size: .8rem; font-weight: 800; color: var(--purple); display: flex; justify-content: space-between; border-top: 1px solid rgba(90,63,255,.1); }
+    .dist-sum.error { background: rgba(255,45,85,.05); color: var(--pink); border-top-color: rgba(255,45,85,.1); }
+
     @media(max-width:900px){ .sidebar{display:none;} .kpi-row{grid-template-columns:1fr 1fr;} .content{padding:16px;} .sched-layout{grid-template-columns:1fr;} }
   </style>
 </head>
@@ -218,7 +226,6 @@
 
 <div class="app">
 
-<!-- ═══ SIDEBAR ═══ -->
 <aside class="sidebar">
   <div class="sb-logo"><a href="{% url 'index' %}" class="logo">Go<span>Shiet</span></a></div>
   <div class="sb-uni">
@@ -234,7 +241,7 @@
     <div class="sb-section">Управление</div>
     <button class="nav-item" onclick="switchPanel('subjects',this)">
       <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      Предметы
+      Предметы и Нагрузка
     </button>
     <button class="nav-item" onclick="switchPanel('classrooms',this)">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -253,10 +260,10 @@
       <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/></svg>
       Генерация
     </button>
-    <a class="nav-item" href="{% url 'schedule' %}">
+    <button class="nav-item" onclick="switchPanel('grid',this)">
       <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-      Просмотр сетки
-    </a>
+      Сетка расписания
+    </button>
   </nav>
   <div class="sb-foot">
     <a href="{% url 'logout' %}" class="nav-item danger">
@@ -266,7 +273,6 @@
   </div>
 </aside>
 
-<!-- ═══ MAIN ═══ -->
 <div class="main">
   <div class="topbar">
     <div class="tb-title" id="topbarTitle">Дашборд</div>
@@ -284,7 +290,6 @@
 
   <div class="content">
 
-    <!-- ═══ OVERVIEW ═══ -->
     <div class="panel active" id="panel-overview">
       <div class="kpi-row">
         <div class="kpi-card">
@@ -321,7 +326,6 @@
       </div>
     </div>
 
-    <!-- ═══ SUBJECTS ═══ -->
     <div class="panel" id="panel-subjects">
       <div class="sec-head">
         <div class="sec-title">Предметы</div>
@@ -330,13 +334,30 @@
           Добавить предмет
         </button>
       </div>
-      <div class="tbl-wrap">
-        <table><thead><tr><th>Название</th><th>Преподаватель</th><th>Сложность</th><th>Часов/сем.</th><th></th></tr></thead>
-        <tbody id="subjects-tbody"><tr><td colspan="5" class="empty-row"><td></tr></tbody></table>
+      <div class="tbl-wrap" style="margin-bottom: 30px;">
+        <table><thead><tr><th>Название</th><th>Курс / Семестр</th><th>Преподаватель</th><th>Сложность</th><th>Пар/сем.</th><th></th></tr></thead>
+        <tbody id="subjects-tbody"><tr><td colspan="6" class="empty-row">Загрузка...</td></tr></tbody></table>
+      </div>
+
+      <div class="sc-section">
+        <div class="sec-head">
+          <div class="sec-title">Нагрузка по предметам</div>
+          <button class="btn-add" onclick="openModal('subjectconfig')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Настроить нагрузку
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Предмет</th><th>Преподаватель</th><th>Группы</th><th>Нагрузка (Лекц/Семин)</th><th></th></tr></thead>
+            <tbody id="subjectconfigs-tbody">
+              <tr><td colspan="5" class="empty-row">Загрузка...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- ═══ CLASSROOMS ═══ -->
     <div class="panel" id="panel-classrooms">
       <div class="sec-head">
         <div class="sec-title">Аудиторный фонд</div>
@@ -347,11 +368,10 @@
       </div>
       <div class="tbl-wrap">
         <table><thead><tr><th>Название</th><th>Вместимость</th><th>Тип</th><th></th></tr></thead>
-        <tbody id="classrooms-tbody"></tbody></table>
+        <tbody id="classrooms-tbody"><tr><td colspan="4" class="empty-row">Загрузка...</td></tr></tbody></table>
       </div>
     </div>
 
-    <!-- ═══ DIRECTIONS ═══ -->
     <div class="panel" id="panel-directions">
       <div class="sec-head">
         <div class="sec-title">Направления и курсы</div>
@@ -362,11 +382,10 @@
       </div>
       <div class="tbl-wrap">
         <table><thead><tr><th>Направление</th><th>Курсы и группы</th></tr></thead>
-        <tbody id="directions-tbody"></tbody></table>
+        <tbody id="directions-tbody"><tr><td colspan="2" class="empty-row">Загрузка...</td></tr></tbody></table>
       </div>
     </div>
 
-    <!-- ═══ TEACHERS ═══ -->
     <div class="panel" id="panel-teachers">
       <div class="sec-head">
         <div class="sec-title">Преподаватели</div>
@@ -377,11 +396,10 @@
       </div>
       <div class="tbl-wrap">
         <table><thead><tr><th>ФИО</th><th>Звание</th><th>Логин</th><th>Email</th><th></th></tr></thead>
-        <tbody id="teachers-tbody"></tbody></table>
+        <tbody id="teachers-tbody"><tr><td colspan="5" class="empty-row">Загрузка...</td></tr></tbody></table>
       </div>
     </div>
 
-    <!-- ═══ SCHEDULE GENERATION PANEL ═══ -->
     <div class="panel" id="panel-schedule">
       <div style="margin-bottom:20px;">
         <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">Генерация расписания</div>
@@ -390,9 +408,7 @@
 
       <div class="sched-layout">
 
-        <!-- LEFT: generation + subject configs -->
         <div>
-          <!-- Generation card -->
           <div class="gen-card" style="margin-bottom:20px;">
             <div class="gen-card-title">
               <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -418,7 +434,7 @@
             <div class="gen-actions">
               <button class="gen-btn gen-btn-clear" onclick="clearSchedule()">
                 <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                Очистить расписание
+                Очистить
               </button>
               <button class="gen-btn gen-btn-run" id="gen-run-btn" onclick="startGeneration()">
                 <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -426,7 +442,6 @@
               </button>
             </div>
 
-            <!-- Progress -->
             <div class="gen-progress" id="gen-progress">
               <div class="gen-progress-head">
                 <span class="gen-progress-label" id="gen-progress-label">Генерация...</span>
@@ -435,39 +450,16 @@
               <div class="gen-bar-track"><div class="gen-bar-fill" id="gen-bar"></div></div>
             </div>
 
-            <!-- Log -->
             <div class="gen-log-wrap" id="gen-log-wrap">
               <div class="gen-log-label">Лог выполнения</div>
               <div class="gen-log" id="gen-log"></div>
             </div>
 
-            <!-- Result -->
             <div class="gen-result" id="gen-result"></div>
-          </div>
-
-          <!-- Subject configs table -->
-          <div class="sc-section">
-            <div class="sec-head">
-              <div class="sec-title">Конфигурации предметов</div>
-              <button class="btn-add" onclick="openModal('subjectconfig')">
-                <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Добавить конфиг
-              </button>
-            </div>
-            <div class="tbl-wrap">
-              <table>
-                <thead><tr><th>Предмет</th><th>Вид</th><th>Преподаватель</th><th>Пар/сем</th><th>Аудитория</th><th></th></tr></thead>
-                <tbody id="subjectconfigs-tbody">
-                  <tr><td colspan="6" class="empty-row">Загрузка...</td></tr>
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
 
-        <!-- RIGHT: status + hint -->
         <div>
-          <!-- Semester status -->
           <div class="status-card">
             <div class="status-card-title">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -479,7 +471,6 @@
             <div class="status-row"><span class="status-key">Последняя генерация</span><span class="status-val" id="ss-last">—</span></div>
           </div>
 
-          <!-- Hint -->
           <div class="status-card">
             <div class="status-card-title">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -489,37 +480,99 @@
               Убедитесь что заданы:<br>
               <strong>1.</strong> Тип каждой аудитории (лекц./семин./комп.)<br>
               <strong>2.</strong> Кол-во студентов в группах<br>
-              <strong>3.</strong> <a href="#" onclick="switchPanelById('schedule')">Конфигурации предметов</a> — кто и что ведёт, сколько пар<br>
+              <strong>3.</strong> <a onclick="switchPanelById('subjects')">Нагрузка</a> в Предметах<br>
               <strong>4.</strong> Пожелания преподавателей (слоты)
             </div>
           </div>
         </div>
 
       </div>
-    </div><!-- /panel-schedule -->
+    </div><div class="panel" id="panel-grid">
+      <div class="sec-head" style="margin-bottom: 20px;">
+        <div class="sec-title">Сетка расписания</div>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid var(--border); border-radius:12px; padding:4px;">
+            <button class="btn-icon" style="border:none;" onclick="changeWeek(-1)">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div style="font-size:.9rem; font-weight:800; min-width:85px; text-align:center;" id="current-week-label">Неделя 1</div>
+            <button class="btn-icon" style="border:none;" onclick="changeWeek(1)">
+                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+           <select id="grid-filter-type" class="gen-input" onchange="updateGridFilter()" style="padding: 9px 12px; font-size: 0.85rem;">
+             <option value="group">По группе</option>
+             <option value="teacher">По преподавателю</option>
+           </select>
+           <select id="grid-filter-val" class="gen-input" onchange="renderGrid()" style="padding: 9px 12px; font-size: 0.85rem; min-width: 200px;">
+           </select>
+        </div>
+      </div>
+      <div class="tbl-wrap" style="overflow-x: auto;">
+        <table class="schedule-grid">
+          <thead>
+            <tr>
+              <th style="width: 70px;">Пара</th>
+              <th>Понедельник</th>
+              <th>Вторник</th>
+              <th>Среда</th>
+              <th>Четверг</th>
+              <th>Пятница</th>
+              <th>Суббота</th>
+            </tr>
+          </thead>
+          <tbody id="grid-tbody">
+            <tr><td colspan="7" class="empty-row">Выберите фильтр для отображения расписания</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
-</div><!-- /app -->
+  </div></div></div><div class="modal-backdrop" id="modal-edit-entry">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-title"><span>Редактировать занятие</span><button class="modal-close" onclick="closeModal('edit-entry')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <input type="hidden" id="edit-entry-id">
+    <div class="field-row">
+      <div class="field"><label>День</label>
+        <select id="edit-entry-day">
+          <option value="0">Понедельник</option><option value="1">Вторник</option><option value="2">Среда</option>
+          <option value="3">Четверг</option><option value="4">Пятница</option><option value="5">Суббота</option>
+        </select>
+      </div>
+      <div class="field"><label>Пара</label>
+        <select id="edit-entry-slot">
+          <option value="1">1 пара (08:30)</option><option value="2">2 пара (10:15)</option><option value="3">3 пара (12:00)</option>
+          <option value="4">4 пара (13:45)</option><option value="5">5 пара (15:30)</option><option value="6">6 пара (17:15)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Аудитория</label>
+      <select id="edit-entry-room"></select>
+    </div>
+    <div class="modal-actions"><button class="btn-secondary" onclick="closeModal('edit-entry')">Отмена</button><button class="btn-primary" onclick="saveEntry()">Сохранить изменения</button></div>
+  </div>
+</div>
 
-<!-- ═══ MODALS ═══ -->
-
-<!-- Subject modal -->
 <div class="modal-backdrop" id="modal-subject">
   <div class="modal">
     <div class="modal-title"><span id="subject-modal-title">Новый предмет</span><button class="modal-close" onclick="closeModal('subject')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <input type="hidden" id="subject-id">
     <div class="field"><label>Название *</label><input type="text" id="subject-name" placeholder="Алгоритмы и структуры данных"></div>
-    <div class="field"><label>Преподаватель</label><select id="subject-teacher"><option value="">— выберите —</option></select></div>
+    <div class="field"><label>Основной преподаватель</label><select id="subject-teacher"><option value="">— выберите —</option></select></div>
+    
+    <div class="field-row">
+      <div class="field"><label>Курс</label><select id="subject-course"><option value="">— нет —</option></select></div>
+      <div class="field"><label>Семестр</label><input type="number" id="subject-semester" min="1" max="12" value="1"></div>
+    </div>
+
     <div class="field-row">
       <div class="field"><label>Сложность (1–5)</label><input type="number" id="subject-diff" min="1" max="5" value="1"></div>
-      <div class="field"><label>Часов в семестре</label><input type="number" id="subject-hours" min="1" value="36"></div>
+      <div class="field"><label>Пар в семестре</label><input type="number" id="subject-pairs" min="1" value="18"></div>
     </div>
     <div class="modal-actions"><button class="btn-secondary" onclick="closeModal('subject')">Отмена</button><button class="btn-primary" onclick="saveSubject()">Сохранить</button></div>
   </div>
 </div>
 
-<!-- Classroom modal -->
 <div class="modal-backdrop" id="modal-classroom">
   <div class="modal">
     <div class="modal-title"><span id="classroom-modal-title">Новая аудитория</span><button class="modal-close" onclick="closeModal('classroom')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
@@ -541,7 +594,6 @@
   </div>
 </div>
 
-<!-- Direction modal -->
 <div class="modal-backdrop" id="modal-direction">
   <div class="modal">
     <div class="modal-title"><span>Новое направление</span><button class="modal-close" onclick="closeModal('direction')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
@@ -550,7 +602,6 @@
   </div>
 </div>
 
-<!-- Group modal -->
 <div class="modal-backdrop" id="modal-group">
   <div class="modal" style="max-width:380px;">
     <div class="modal-title"><span>Новая группа</span><button class="modal-close" onclick="closeModal('group')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
@@ -559,50 +610,67 @@
   </div>
 </div>
 
-<!-- SubjectConfig modal -->
 <div class="modal-backdrop" id="modal-subjectconfig">
-  <div class="modal" style="max-width:540px;">
-    <div class="modal-title"><span id="sc-modal-title">Конфигурация предмета</span><button class="modal-close" onclick="closeModal('subjectconfig')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-    <input type="hidden" id="sc-id">
-    <div class="field"><label>Предмет *</label><select id="sc-subject"><option value="">— выберите предмет —</option></select></div>
-    <div class="field-row">
-      <div class="field"><label>Вид занятия</label>
-        <select id="sc-kind">
-          <option value="lecture">Лекция</option>
-          <option value="seminar">Семинар</option>
-          <option value="comp">Компьютерный класс</option>
-        </select>
-      </div>
-      <div class="field"><label>Тип аудитории</label>
-        <select id="sc-room-type">
-          <option value="lecture">Лекционная</option>
-          <option value="seminar">Семинарская</option>
-          <option value="comp">Компьютерный класс</option>
-          <option value="special">Специализированная</option>
-        </select>
-      </div>
-    </div>
-    <div class="field"><label>Преподаватель *</label><select id="sc-teacher"><option value="">— выберите —</option></select></div>
-    <div class="field-row">
-      <div class="field"><label>Пар за семестр</label><input type="number" id="sc-pairs" min="1" max="72" value="18"></div>
-      <div class="field"><label>ID подгруппы (если есть)</label><input type="text" id="sc-subgroup" placeholder="sg_1"></div>
-    </div>
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-title"><span id="sc-modal-title">Настройка нагрузки</span><button class="modal-close" onclick="closeModal('subjectconfig')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    
     <div class="field">
-      <label>Группы</label>
-      <select id="sc-groups" multiple style="height:120px;padding:8px;">
-        <!-- заполняется JS -->
-      </select>
+      <label>Выберите предмет *</label>
+      <select id="sc-subject" onchange="scSubjectChanged()"><option value="">— выберите предмет —</option></select>
+    </div>
+    
+    <div class="field"><label>Преподаватель (на весь предмет)</label><select id="sc-teacher"><option value="">— выберите —</option></select></div>
+    <div class="field">
+      <label>Связанные группы</label>
+      <select id="sc-groups" multiple style="height:90px;padding:8px; border-radius:12px; border:1.5px solid var(--border); font-family:inherit; font-size:.85rem;">
+        </select>
       <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">Ctrl+click для выбора нескольких</div>
     </div>
-    <div style="display:flex;gap:16px;margin-bottom:8px;">
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.85rem;font-weight:700;"><input type="checkbox" id="sc-per-group" style="accent-color:var(--purple);"> Отдельно для каждой группы</label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:.85rem;font-weight:700;"><input type="checkbox" id="sc-simul" style="accent-color:var(--purple);"> Одновременно (подгруппы)</label>
+
+    <div style="font-size:.75rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin: 24px 0 10px;">Распределение пар</div>
+
+    <div class="dist-box">
+      <div class="dist-row" id="row-lec">
+         <label class="dist-toggle">
+           <input type="checkbox" id="sc-has-lec" checked onchange="updateScUI()">
+           <span class="dist-label">Лекции</span>
+         </label>
+         <div class="dist-inputs" id="sc-lec-inputs">
+           <input type="number" id="sc-lec-pairs" placeholder="0" min="0" oninput="updateScSum()">
+           <select id="sc-lec-room">
+             <option value="lecture">Лекционная</option>
+             <option value="seminar">Семинарская</option>
+           </select>
+         </div>
+      </div>
+
+      <div class="dist-row" id="row-sem">
+         <label class="dist-toggle">
+           <input type="checkbox" id="sc-has-sem" checked onchange="updateScUI()">
+           <span class="dist-label">Семинары</span>
+         </label>
+         <div class="dist-inputs" id="sc-sem-inputs">
+           <input type="number" id="sc-sem-pairs" placeholder="0" min="0" oninput="updateScSum()">
+           <select id="sc-sem-room">
+             <option value="seminar">Семинарская</option>
+             <option value="comp">Комп. класс</option>
+           </select>
+         </div>
+      </div>
+
+      <div class="dist-sum" id="sc-sum-footer">
+        <span>Итого введено: 0 пар</span>
+        <span id="sc-plan-text">По плану: 0 пар</span>
+      </div>
     </div>
-    <div class="modal-actions"><button class="btn-secondary" onclick="closeModal('subjectconfig')">Отмена</button><button class="btn-primary" onclick="saveSubjectConfig()">Сохранить</button></div>
+
+    <div class="modal-actions" style="margin-top:24px;">
+      <button class="btn-secondary" onclick="closeModal('subjectconfig')">Отмена</button>
+      <button class="btn-primary" onclick="saveSubjectConfig()">Сохранить нагрузку</button>
+    </div>
   </div>
 </div>
 
-<!-- Confirm delete -->
 <div class="modal-backdrop" id="modal-confirm">
   <div class="modal confirm-modal">
     <div class="modal-title" style="justify-content:center;">Удалить?</div>
@@ -611,12 +679,18 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" id="toast-icon"></svg><span id="toast-msg"></span></div>
 
 <script>
 const CSRF = '{{ csrf_token }}';
 let teachersCache = [], subjectsCache = [], classroomsCache = [], groupsCache = [];
+let scCache = [], gridEntriesCache = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  refreshCaches().then(() => {
+    switchPanel('overview', document.querySelector('.nav-item.active'));
+  });
+});
 
 // ── helpers ───────────────────────────────────────────────────
 async function api(url, method='GET', body=null) {
@@ -643,8 +717,15 @@ function closeModal(name) { document.getElementById(`modal-${name}`).classList.r
 document.querySelectorAll('.modal-backdrop').forEach(bd=>bd.addEventListener('click',e=>{if(e.target===bd)bd.classList.remove('open');}));
 
 // ── panel switching ───────────────────────────────────────────
-const PANEL_TITLES = {overview:'Дашборд',subjects:'Предметы',classrooms:'Аудиторный фонд',directions:'Направления',teachers:'Преподаватели',schedule:'Генерация расписания'};
-const LOADERS = {subjects:loadSubjects,classrooms:loadClassrooms,directions:loadDirections,teachers:loadTeachers,schedule:loadSchedulePanel};
+const PANEL_TITLES = {overview:'Дашборд',subjects:'Предметы и Нагрузка',classrooms:'Аудиторный фонд',directions:'Направления',teachers:'Преподаватели',schedule:'Генерация расписания',grid:'Сетка расписания'};
+const LOADERS = {
+  subjects: () => { loadSubjects(); loadSubjectConfigs(); },
+  classrooms: loadClassrooms,
+  directions: loadDirections,
+  teachers: loadTeachers,
+  schedule: loadSchedulePanel,
+  grid: loadGridPanel
+};
 function switchPanel(name, btn) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -655,24 +736,28 @@ function switchPanel(name, btn) {
 }
 function switchPanelById(name) {
   const btn = document.querySelector(`.nav-item[onclick*="${name}"]`);
-  switchPanel(name, btn);
+  if(btn) switchPanel(name, btn);
 }
 
 // ── caches ────────────────────────────────────────────────────
 async function refreshCaches() {
-  const [tr,sr,cr] = await Promise.all([api('/api/teachers/'),api('/api/subjects/'),api('/api/classrooms/')]);
-  teachersCache=tr.teachers||[]; subjectsCache=sr.subjects||[]; classroomsCache=cr.classrooms||[];
-  // load all groups
-  const {directions}=await api('/api/directions/');
-  groupsCache=[];
-  for(const d of directions){
-    const {courses}=await api(`/api/directions/${d.id}/courses/`);
-    for(const c of courses){
-      const {groups}=await api(`/api/courses/${c.id}/groups/`);
-      groups.forEach(g=>groupsCache.push({...g,course_number:c.number,direction_name:d.name}));
+  try { teachersCache = (await api('/api/teachers/').catch(()=>({})))?.teachers || []; } catch(e) {}
+  try { subjectsCache = (await api('/api/subjects/').catch(()=>({})))?.subjects || []; } catch(e) {}
+  try { classroomsCache = (await api('/api/classrooms/').catch(()=>({})))?.classrooms || []; } catch(e) {}
+  
+  try {
+    const dRes = await api('/api/directions/').catch(() => ({directions:[]}));
+    groupsCache = [];
+    for (const d of (dRes.directions || [])) {
+      const cRes = await api(`/api/directions/${d.id}/courses/`).catch(()=>({courses:[]}));
+      for (const c of (cRes.courses || [])) {
+        const gRes = await api(`/api/courses/${c.id}/groups/`).catch(()=>({groups:[]}));
+        (gRes.groups || []).forEach(g => groupsCache.push({...g, course_number: c.number, direction_name: d.name}));
+      }
     }
-  }
+  } catch(e) {}
 }
+
 function fillSel(id,items,vp,lf,cur=''){
   const s=document.getElementById(id); const first=s.options[0]; s.innerHTML=''; s.appendChild(first);
   items.forEach(i=>{const o=document.createElement('option');o.value=i[vp];o.textContent=lf(i);if(String(i[vp])===String(cur))o.selected=true;s.appendChild(o);});
@@ -680,35 +765,72 @@ function fillSel(id,items,vp,lf,cur=''){
 
 // ── SUBJECTS ─────────────────────────────────────────────────
 async function loadSubjects() {
-  const {subjects}=await api('/api/subjects/'); subjectsCache=subjects;
-  const tb=document.getElementById('subjects-tbody');
-  if(!subjects.length){tb.innerHTML='<tr><td colspan="5" class="empty-row">Предметов пока нет</td></tr>';return;}
-  tb.innerHTML=subjects.map(s=>`<tr>
-    <td><strong>${s.name}</strong></td>
-    <td>${s.teacher_name||'<span style="color:#bbb">—</span>'}</td>
-    <td>${diffPill(s.difficulty_points)}</td>
-    <td>${s.hours_per_semester} ч.</td>
-    <td><div class="row-actions">
-      <button class="btn-icon edit" onclick='editSubject(${JSON.stringify(s)})'><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-      <button class="btn-icon del" onclick="confirmDelete('/api/subjects/${s.id}/',loadSubjects,'${s.name}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
-    </div></td></tr>`).join('');
+  try {
+    const {subjects} = await api('/api/subjects/'); 
+    subjectsCache = subjects;
+    const tb = document.getElementById('subjects-tbody');
+    if(!subjects.length){tb.innerHTML='<tr><td colspan="6" class="empty-row">Предметов пока нет</td></tr>';return;}
+    
+    tb.innerHTML=subjects.map(s=>`<tr>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.course_id ? `<span class="pill" style="background:var(--blue-dim); color:var(--blue);">${s.course_name}, ${s.semester} сем.</span>` : '<span style="color:#bbb">—</span>'}</td>
+      <td>${s.teacher_name||'<span style="color:#bbb">—</span>'}</td>
+      <td>${diffPill(s.difficulty_points)}</td>
+      <td>${s.pairs_per_semester}</td>
+      <td><div class="row-actions">
+        <button class="btn-icon edit" onclick="editSubject(${s.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="btn-icon del" onclick="confirmDelete('/api/subjects/${s.id}/',loadSubjects,'${s.name}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+      </div></td></tr>`).join('');
+  } catch (e) {
+    document.getElementById('subjects-tbody').innerHTML = `<tr><td colspan="6" class="empty-row" style="color:red">Ошибка: ${e.message}</td></tr>`;
+  }
 }
+
 function diffPill(n){const c=['','pill-green','pill-green','pill-orange','pill-pink','pill-pink'];return `<span class="pill ${c[n]||''}">${n}/5</span>`;}
+
 async function prepareSubjectModal(cur=''){
-  await refreshCaches();
-  fillSel('subject-teacher',teachersCache,'id',t=>`${t.full_name}${t.academic_title?' ('+t.academic_title+')':''}`,cur);
+  if (!teachersCache.length) await refreshCaches();
+  fillSel('subject-teacher',teachersCache,'id',t=>`${t.full_name||t.username}${t.academic_title?' ('+t.academic_title+')':''}`,cur);
+  
+  // Уникальные курсы
+  const cs = document.getElementById('subject-course');
+  cs.innerHTML = '<option value="">— нет —</option>';
+  const coursesDone = new Set();
+  groupsCache.forEach(g => {
+      if(!coursesDone.has(g.course_id)) {
+          coursesDone.add(g.course_id);
+          cs.innerHTML += `<option value="${g.course_id}">${g.direction_name} — ${g.course_number} курс</option>`;
+      }
+  });
 }
-function editSubject(s){
+
+function editSubject(id){
+  const s = subjectsCache.find(x => x.id === id);
+  if (!s) return;
   document.getElementById('subject-modal-title').textContent='Редактировать предмет';
   document.getElementById('subject-id').value=s.id;
   document.getElementById('subject-name').value=s.name;
   document.getElementById('subject-diff').value=s.difficulty_points;
-  document.getElementById('subject-hours').value=s.hours_per_semester;
-  prepareSubjectModal(s.teacher_id).then(()=>document.getElementById('modal-subject').classList.add('open'));
+  document.getElementById('subject-pairs').value=s.pairs_per_semester;
+  
+  prepareSubjectModal(s.teacher_id).then(() => {
+     document.getElementById('subject-course').value = s.course_id || '';
+     document.getElementById('subject-semester').value = s.semester || 1;
+     document.getElementById('modal-subject').classList.add('open')
+  });
 }
+
 async function saveSubject(){
   const id=document.getElementById('subject-id').value;
-  const body={name:document.getElementById('subject-name').value.trim(),teacher_id:document.getElementById('subject-teacher').value||null,difficulty_points:+document.getElementById('subject-diff').value,hours_per_semester:+document.getElementById('subject-hours').value};
+  const body={
+    name: document.getElementById('subject-name').value.trim(),
+    teacher_id: document.getElementById('subject-teacher').value || null,
+    difficulty_points: +document.getElementById('subject-diff').value,
+    pairs_per_semester: +document.getElementById('subject-pairs').value,
+    course_id: document.getElementById('subject-course').value || null,
+    semester: +document.getElementById('subject-semester').value || 1
+  };
+  
   if(!body.name){toast('err','Введите название');return;}
   try{
     if(id) await api(`/api/subjects/${id}/`,'PUT',body); else await api('/api/subjects/','POST',body);
@@ -720,19 +842,25 @@ async function saveSubject(){
 // ── CLASSROOMS ────────────────────────────────────────────────
 const ROOM_TYPE_LABELS={'lecture':'Лекционная','seminar':'Семинарская','comp':'Комп. класс','special':'Специализир.'};
 async function loadClassrooms(){
-  const {classrooms}=await api('/api/classrooms/'); classroomsCache=classrooms;
-  const tb=document.getElementById('classrooms-tbody');
-  if(!classrooms.length){tb.innerHTML='<tr><td colspan="4" class="empty-row">Аудиторий пока нет</td></tr>';return;}
-  tb.innerHTML=classrooms.map(c=>`<tr>
-    <td><strong>${c.name}</strong>${c.low_priority?'<span class="pill" style="margin-left:6px;background:rgba(13,13,18,.07);color:var(--text-muted)">низкий приоритет</span>':''}</td>
-    <td><span class="pill pill-blue">${c.capacity} мест</span></td>
-    <td><span class="pill ${c.room_type==='lecture'?'pill-purple':c.room_type==='comp'?'pill-blue':c.room_type==='special'?'pill-orange':'pill-green'}">${ROOM_TYPE_LABELS[c.room_type]||c.room_type||'—'}</span></td>
-    <td><div class="row-actions">
-      <button class="btn-icon edit" onclick='editClassroom(${JSON.stringify(c)})'><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-      <button class="btn-icon del" onclick="confirmDelete('/api/classrooms/${c.id}/',loadClassrooms,'${c.name}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
-    </div></td></tr>`).join('');
+  try {
+    const {classrooms}=await api('/api/classrooms/'); classroomsCache=classrooms;
+    const tb=document.getElementById('classrooms-tbody');
+    if(!classrooms.length){tb.innerHTML='<tr><td colspan="4" class="empty-row">Аудиторий пока нет</td></tr>';return;}
+    tb.innerHTML=classrooms.map(c=>`<tr>
+      <td><strong>${c.name}</strong>${c.low_priority?'<span class="pill" style="margin-left:6px;background:rgba(13,13,18,.07);color:var(--text-muted)">низкий приоритет</span>':''}</td>
+      <td><span class="pill pill-blue">${c.capacity} мест</span></td>
+      <td><span class="pill ${c.room_type==='lecture'?'pill-purple':c.room_type==='comp'?'pill-blue':c.room_type==='special'?'pill-orange':'pill-green'}">${ROOM_TYPE_LABELS[c.room_type]||c.room_type||'—'}</span></td>
+      <td><div class="row-actions">
+        <button class="btn-icon edit" onclick="editClassroom(${c.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="btn-icon del" onclick="confirmDelete('/api/classrooms/${c.id}/',loadClassrooms,'${c.name}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+      </div></td></tr>`).join('');
+  } catch (e) {
+    document.getElementById('classrooms-tbody').innerHTML=`<tr><td colspan="4" class="empty-row" style="color:red">Ошибка: ${e.message}</td></tr>`;
+  }
 }
-function editClassroom(c){
+function editClassroom(id){
+  const c = classroomsCache.find(x => x.id === id);
+  if (!c) return;
   document.getElementById('classroom-modal-title').textContent='Редактировать аудиторию';
   document.getElementById('classroom-id').value=c.id;
   document.getElementById('classroom-name').value=c.name;
@@ -754,25 +882,29 @@ async function saveClassroom(){
 
 // ── DIRECTIONS ────────────────────────────────────────────────
 async function loadDirections(){
-  const{directions}=await api('/api/directions/');
-  const tb=document.getElementById('directions-tbody');
-  if(!directions.length){tb.innerHTML='<tr><td colspan="2" class="empty-row">Направлений нет</td></tr>';return;}
-  const rows=await Promise.all(directions.map(async d=>{
-    const{courses}=await api(`/api/directions/${d.id}/courses/`);
-    const courseBlocks=await Promise.all(courses.map(async c=>{
-      const{groups}=await api(`/api/courses/${c.id}/groups/`);
-      const gp=groups.map(g=>`<span class="group-pill">${g.name}<button class="pill-del" onclick="deleteGroup(${g.id},event)">×</button></span>`).join('');
-      return `<div class="course-row"><div class="course-head"><span class="pill pill-purple">${c.number} курс</span>
-        <button class="btn-icon" style="width:24px;height:24px;border-radius:7px;" title="Добавить группу" onclick="addGroup(${c.id},event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-        <button class="btn-icon del" style="width:24px;height:24px;border-radius:7px;" onclick="deleteCourse(${c.id},event)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
-        </div><div class="groups-wrap">${gp||'<span style="color:#bbb;font-size:.76rem">нет групп</span>'}</div></div>`;
+  try {
+    const{directions}=await api('/api/directions/');
+    const tb=document.getElementById('directions-tbody');
+    if(!directions.length){tb.innerHTML='<tr><td colspan="2" class="empty-row">Направлений нет</td></tr>';return;}
+    const rows=await Promise.all(directions.map(async d=>{
+      const{courses}=await api(`/api/directions/${d.id}/courses/`);
+      const courseBlocks=await Promise.all(courses.map(async c=>{
+        const{groups}=await api(`/api/courses/${c.id}/groups/`);
+        const gp=groups.map(g=>`<span class="group-pill">${g.name}<button class="pill-del" onclick="deleteGroup(${g.id},event)">×</button></span>`).join('');
+        return `<div class="course-row"><div class="course-head"><span class="pill pill-purple">${c.number} курс</span>
+          <button class="btn-icon" style="width:24px;height:24px;border-radius:7px;" title="Добавить группу" onclick="addGroup(${c.id},event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="btn-icon del" style="width:24px;height:24px;border-radius:7px;" onclick="deleteCourse(${c.id},event)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+          </div><div class="groups-wrap">${gp||'<span style="color:#bbb;font-size:.76rem">нет групп</span>'}</div></div>`;
+      }));
+      const addBtn=courses.length<6?`<button class="btn-icon" style="margin-left:4px;" title="Добавить курс" onclick="addCourse(${d.id},event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>`:'';
+      return `<tr><td><div style="display:flex;align-items:center;gap:8px;"><strong>${d.name}</strong>${addBtn}
+        <button class="btn-icon del" onclick="confirmDelete('/api/directions/${d.id}/',loadDirections,'${d.name}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        </div></td><td>${courseBlocks.length?courseBlocks.join(''):'<span style="color:#bbb;font-size:.8rem">нет курсов</span>'}</td></tr>`;
     }));
-    const addBtn=courses.length<6?`<button class="btn-icon" style="margin-left:4px;" title="Добавить курс" onclick="addCourse(${d.id},event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>`:'';
-    return `<tr><td><div style="display:flex;align-items:center;gap:8px;"><strong>${d.name}</strong>${addBtn}
-      <button class="btn-icon del" onclick="confirmDelete('/api/directions/${d.id}/',loadDirections,'${d.name}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
-      </div></td><td>${courseBlocks.length?courseBlocks.join(''):'<span style="color:#bbb;font-size:.8rem">нет курсов</span>'}</td></tr>`;
-  }));
-  tb.innerHTML=rows.join('');
+    tb.innerHTML=rows.join('');
+  } catch(e) {
+    document.getElementById('directions-tbody').innerHTML=`<tr><td colspan="2" class="empty-row" style="color:red">Ошибка: ${e.message}</td></tr>`;
+  }
 }
 async function saveDirection(){
   const name=document.getElementById('direction-name').value.trim();
@@ -788,106 +920,248 @@ async function deleteCourse(id,e){if(e)e.stopPropagation();if(!confirm('Удал
 
 // ── TEACHERS ─────────────────────────────────────────────────
 async function loadTeachers(){
-  const{teachers}=await api('/api/teachers/');
-  const tb=document.getElementById('teachers-tbody');
-  if(!teachers.length){tb.innerHTML='<tr><td colspan="5" class="empty-row">Преподавателей пока нет</td></tr>';return;}
-  tb.innerHTML=teachers.map(t=>`<tr>
-    <td><strong>${t.full_name||'—'}</strong></td>
-    <td>${t.academic_title?`<span class="pill pill-purple">${t.academic_title}</span>`:'<span style="color:#bbb">—</span>'}</td>
-    <td style="font-family:monospace;font-size:.82rem">${t.username}</td>
-    <td style="color:var(--text-muted)">${t.email||'—'}</td>
-    <td><a href="/admin/teacher/${t.id}/" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9px;border:1px solid rgba(90,63,255,.2);background:rgba(90,63,255,.07);color:#5A3FFF;font-size:.78rem;font-weight:800;text-decoration:none;">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Управлять
-    </a></td></tr>`).join('');
+  try {
+    const{teachers}=await api('/api/teachers/');
+    const tb=document.getElementById('teachers-tbody');
+    if(!teachers.length){
+      tb.innerHTML='<tr><td colspan="5" class="empty-row">Преподавателей пока нет</td></tr>';
+      return;
+    }
+    tb.innerHTML=teachers.map(t=>`<tr>
+      <td><strong>${t.full_name||'—'}</strong></td>
+      <td>${t.academic_title?`<span class="pill pill-purple">${t.academic_title}</span>`:'<span style="color:#bbb">—</span>'}</td>
+      <td style="font-family:monospace;font-size:.82rem">${t.username}</td>
+      <td style="color:var(--text-muted)">${t.email||'—'}</td>
+      <td><a href="/admin/teacher/${t.id}/" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9px;border:1px solid rgba(90,63,255,.2);background:rgba(90,63,255,.07);color:#5A3FFF;font-size:.78rem;font-weight:800;text-decoration:none;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Управлять
+      </a></td></tr>`).join('');
+  } catch (e) {
+    document.getElementById('teachers-tbody').innerHTML=`<tr><td colspan="5" class="empty-row" style="color:red">Ошибка загрузки: ${e.message}</td></tr>`;
+  }
 }
 
-// ── SUBJECT CONFIG ────────────────────────────────────────────
+// ── SUBJECT CONFIG (УМНОЕ РАЗБИЕНИЕ НА ПАРЫ) ──────────────────
 async function loadSubjectConfigs(){
   try{
-    const d=await api('/api/subject-configs/');
-    const tb=document.getElementById('subjectconfigs-tbody');
-    const configs=d.configs||[];
-    if(!configs.length){tb.innerHTML='<tr><td colspan="6" class="empty-row">Конфигураций нет. Добавьте хотя бы одну для генерации расписания.</td></tr>';return;}
-    tb.innerHTML=configs.map(c=>`<tr>
-      <td><strong>${c.subject_name}</strong></td>
-      <td><span class="badge-kind bk-${c.kind}">${{lecture:'Лекция',seminar:'Семинар',comp:'Комп.'}[c.kind]||c.kind}</span></td>
-      <td>${c.teacher_name||'<span style="color:#bbb">—</span>'}</td>
-      <td>${c.total_pairs}</td>
-      <td><span class="pill ${c.room_type==='lecture'?'pill-purple':c.room_type==='comp'?'pill-blue':'pill-green'}">${{lecture:'Лекц.',seminar:'Семин.',comp:'Комп.',special:'Спец.'}[c.room_type]||c.room_type}</span></td>
-      <td><div class="row-actions">
-        <button class="btn-icon edit" onclick='editScConfig(${JSON.stringify(c)})'><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button class="btn-icon del" onclick="confirmDelete('/api/subject-configs/${c.id}/',loadSubjectConfigs,'конфиг')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
-      </div></td></tr>`).join('');
-  }catch(e){document.getElementById('subjectconfigs-tbody').innerHTML='<tr><td colspan="6" class="empty-row">Ошибка загрузки</td></tr>';}
+    if (!groupsCache.length) await refreshCaches();
+    const d = await api('/api/subject-configs/');
+    scCache = d.configs || [];
+    const tb = document.getElementById('subjectconfigs-tbody');
+    
+    if(!scCache.length){
+      tb.innerHTML='<tr><td colspan="5" class="empty-row">Нагрузка не настроена. Заполните, чтобы алгоритм сработал.</td></tr>';
+      return;
+    }
+    
+    // Группируем по предметам в 1 строку!
+    const configsBySubject = {};
+    scCache.forEach(c => {
+        if(!configsBySubject[c.subject_id]) configsBySubject[c.subject_id] = {
+            subject_name: c.subject_name,
+            teacher_name: c.teacher_name,
+            groups: c.group_ids,
+            items: [],
+            id: c.subject_id 
+        };
+        configsBySubject[c.subject_id].items.push(c);
+    });
+
+    tb.innerHTML = Object.values(configsBySubject).map(sbj => {
+        const groupsStr = (sbj.groups || []).map(gid => {
+            const g = groupsCache.find(x => x.id === gid);
+            return g ? `<span class="pill" style="background:var(--blue-dim);color:var(--blue);font-size:0.65rem;padding:2px 6px;margin:2px;">${g.name}</span>` : '';
+        }).join('');
+
+        const loadStr = sbj.items.map(c => {
+            const kind = {lecture:'Лекц.', seminar:'Сем.', comp:'Комп.'}[c.kind]||c.kind;
+            const rt = {lecture:'Лекц.', seminar:'Семин.', comp:'Комп.', special:'Спец.'}[c.room_type]||c.room_type;
+            const color = c.kind === 'lecture' ? 'var(--purple)' : (c.kind === 'seminar' ? 'var(--orange)' : 'var(--blue)');
+            const bg = c.kind === 'lecture' ? 'var(--purple-dim)' : (c.kind === 'seminar' ? 'var(--orange-dim)' : 'var(--blue-dim)');
+            return `<span class="pill" style="margin-right:4px; margin-bottom:4px; display:inline-block; background:${bg}; color:${color}; border:1px solid rgba(0,0,0,0.05);">${kind} <b>${c.total_pairs}п.</b> (${rt})</span>`;
+        }).join('');
+
+        return `<tr>
+        <td><strong>${sbj.subject_name}</strong></td>
+        <td>${sbj.teacher_name||'<span style="color:#bbb">—</span>'}</td>
+        <td style="max-width:200px;">${groupsStr || '<span style="color:#bbb">—</span>'}</td>
+        <td>${loadStr}</td>
+        <td><div class="row-actions">
+          <button class="btn-icon edit" onclick="editScConfig(${sbj.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="btn-icon del" onclick="confirmDeleteConfig(${sbj.id}, '${sbj.subject_name}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        </div></td></tr>`
+    }).join('');
+  }catch(e){
+    document.getElementById('subjectconfigs-tbody').innerHTML=`<tr><td colspan="5" class="empty-row" style="color:red">Ошибка загрузки</td></tr>`;
+  }
 }
 
 async function prepareScModal(){
-  await refreshCaches();
-  // subjects
-  const ss=document.getElementById('sc-subject');
-  ss.innerHTML='<option value="">— выберите предмет —</option>';
-  subjectsCache.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});
-  // teachers
-  const ts=document.getElementById('sc-teacher');
-  ts.innerHTML='<option value="">— выберите преподавателя —</option>';
-  teachersCache.forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.full_name||t.username;ts.appendChild(o);});
-  // groups multiselect
-  const gs=document.getElementById('sc-groups');
-  gs.innerHTML='';
-  groupsCache.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=`${g.name} (${g.direction_name||''} ${g.course_number||''} курс)`;gs.appendChild(o);});
+  if (!subjectsCache.length || !teachersCache.length) await refreshCaches();
+  fillSel('sc-subject', subjectsCache, 'id', s => s.name);
+  fillSel('sc-teacher', teachersCache, 'id', t => t.full_name || t.username);
+  
+  const gs=document.getElementById('sc-groups'); gs.innerHTML='';
+  groupsCache.forEach(g=>{
+      const o=document.createElement('option'); o.value=g.id; 
+      o.textContent=`${g.name} (${g.direction_name||''} ${g.course_number||''}к)`;
+      gs.appendChild(o);
+  });
 }
 
-function editScConfig(c){
-  document.getElementById('sc-modal-title').textContent='Редактировать конфигурацию';
-  document.getElementById('sc-id').value=c.id;
-  prepareScModal().then(()=>{
-    document.getElementById('sc-subject').value=c.subject_id;
-    document.getElementById('sc-kind').value=c.kind;
-    document.getElementById('sc-room-type').value=c.room_type;
-    document.getElementById('sc-teacher').value=c.teacher_id||'';
-    document.getElementById('sc-pairs').value=c.total_pairs;
-    document.getElementById('sc-subgroup').value=c.subgroup_id||'';
-    document.getElementById('sc-per-group').checked=c.per_group;
-    document.getElementById('sc-simul').checked=c.simultaneous;
-    if(c.group_ids){
-      Array.from(document.getElementById('sc-groups').options).forEach(o=>{
-        o.selected=c.group_ids.includes(parseInt(o.value));
-      });
+function scSubjectChanged() {
+    const sid = document.getElementById('sc-subject').value;
+    if(!sid) { updateScSum(); return; }
+    
+    const subj = subjectsCache.find(s => s.id == sid);
+    if(subj) {
+        if(subj.teacher_id) document.getElementById('sc-teacher').value = subj.teacher_id;
+        
+        // Базовое авто-разбиение только при первичном выборе предмета
+        document.getElementById('sc-has-lec').checked = true;
+        document.getElementById('sc-has-sem').checked = true;
+        
+        const total = subj.pairs_per_semester || 0;
+        document.getElementById('sc-lec-pairs').value = Math.floor(total / 2);
+        document.getElementById('sc-sem-pairs').value = Math.ceil(total / 2);
+        
+        updateScUI();
     }
+}
+
+function updateScUI() {
+    const hasLec = document.getElementById('sc-has-lec').checked;
+    const hasSem = document.getElementById('sc-has-sem').checked;
+
+    // Включаем/отключаем визуал строк
+    document.getElementById('row-lec').classList.toggle('disabled', !hasLec);
+    document.getElementById('sc-lec-inputs').style.opacity = hasLec ? '1' : '0.4';
+    document.getElementById('sc-lec-inputs').style.pointerEvents = hasLec ? 'all' : 'none';
+
+    document.getElementById('row-sem').classList.toggle('disabled', !hasSem);
+    document.getElementById('sc-sem-inputs').style.opacity = hasSem ? '1' : '0.4';
+    document.getElementById('sc-sem-inputs').style.pointerEvents = hasSem ? 'all' : 'none';
+
+    // Пересчитываем сумму (не переписывая инпуты!)
+    updateScSum();
+}
+
+function updateScSum() {
+    const sid = document.getElementById('sc-subject').value;
+    const subj = subjectsCache.find(s => s.id == sid);
+    const planTotal = subj ? (subj.pairs_per_semester || 0) : 0;
+
+    let currentTotal = 0;
+    if (document.getElementById('sc-has-lec').checked) {
+        currentTotal += parseInt(document.getElementById('sc-lec-pairs').value) || 0;
+    }
+    if (document.getElementById('sc-has-sem').checked) {
+        currentTotal += parseInt(document.getElementById('sc-sem-pairs').value) || 0;
+    }
+
+    const footer = document.getElementById('sc-sum-footer');
+    footer.querySelector('span:first-child').innerHTML = `Итого введено: <b>${currentTotal} пар</b>`;
+    document.getElementById('sc-plan-text').textContent = `По плану: ${planTotal} пар`;
+
+    // Если введенная сумма не равна плану, подсвечиваем красным, но сохранять разрешаем
+    if (currentTotal !== planTotal && sid) {
+        footer.classList.add('error');
+    } else {
+        footer.classList.remove('error');
+    }
+}
+
+function editScConfig(subjectId){
+  const items = scCache.filter(c => c.subject_id === subjectId);
+  if (!items.length) return;
+  
+  document.getElementById('sc-modal-title').textContent='Редактировать нагрузку';
+  prepareScModal().then(()=>{
+    document.getElementById('sc-subject').value = subjectId;
+    
+    document.getElementById('sc-teacher').value = items[0].teacher_id || '';
+    Array.from(document.getElementById('sc-groups').options).forEach(o=>{
+      o.selected = items[0].group_ids.includes(parseInt(o.value));
+    });
+
+    const lec = items.find(i => i.kind === 'lecture');
+    const sem = items.find(i => i.kind === 'seminar' || i.kind === 'comp');
+
+    document.getElementById('sc-has-lec').checked = !!lec;
+    if(lec) {
+        document.getElementById('sc-lec-pairs').value = lec.total_pairs;
+        document.getElementById('sc-lec-room').value = lec.room_type;
+    } else { document.getElementById('sc-lec-pairs').value = ''; }
+
+    document.getElementById('sc-has-sem').checked = !!sem;
+    if(sem) {
+        document.getElementById('sc-sem-pairs').value = sem.total_pairs;
+        document.getElementById('sc-sem-room').value = sem.room_type;
+    } else { document.getElementById('sc-sem-pairs').value = ''; }
+    
+    updateScUI();
     document.getElementById('modal-subjectconfig').classList.add('open');
   });
 }
 
 async function saveSubjectConfig(){
-  const id=document.getElementById('sc-id').value;
-  const gs=Array.from(document.getElementById('sc-groups').selectedOptions).map(o=>parseInt(o.value));
-  const body={
-    subject_id:parseInt(document.getElementById('sc-subject').value),
-    kind:document.getElementById('sc-kind').value,
-    room_type:document.getElementById('sc-room-type').value,
-    teacher_id:document.getElementById('sc-teacher').value?parseInt(document.getElementById('sc-teacher').value):null,
-    total_pairs:parseInt(document.getElementById('sc-pairs').value),
-    subgroup_id:document.getElementById('sc-subgroup').value.trim(),
-    per_group:document.getElementById('sc-per-group').checked,
-    simultaneous:document.getElementById('sc-simul').checked,
-    group_ids:gs,
-  };
-  if(!body.subject_id){toast('err','Выберите предмет');return;}
+  const sid = document.getElementById('sc-subject').value;
+  const tid = document.getElementById('sc-teacher').value;
+  const gids = Array.from(document.getElementById('sc-groups').selectedOptions).map(o=>parseInt(o.value));
+
+  if(!sid){toast('err','Выберите предмет');return;}
+
+  const configs = [];
+  if(document.getElementById('sc-has-lec').checked) {
+      configs.push({
+          kind: 'lecture',
+          room_type: document.getElementById('sc-lec-room').value,
+          total_pairs: parseInt(document.getElementById('sc-lec-pairs').value) || 0,
+          teacher_id: tid ? parseInt(tid) : null,
+          group_ids: gids
+      });
+  }
+  if(document.getElementById('sc-has-sem').checked) {
+      configs.push({
+          kind: document.getElementById('sc-sem-room').value === 'comp' ? 'comp' : 'seminar',
+          room_type: document.getElementById('sc-sem-room').value,
+          total_pairs: parseInt(document.getElementById('sc-sem-pairs').value) || 0,
+          teacher_id: tid ? parseInt(tid) : null,
+          group_ids: gids
+      });
+  }
+
   try{
-    if(id) await api(`/api/subject-configs/${id}/`,'PUT',body);
-    else   await api('/api/subject-configs/','POST',body);
-    closeModal('subjectconfig'); document.getElementById('sc-id').value='';
-    document.getElementById('sc-modal-title').textContent='Конфигурация предмета';
-    toast('ok',id?'Обновлено':'Добавлено'); loadSubjectConfigs();
+    await api('/api/subject-configs/', 'POST', { is_bulk: true, subject_id: parseInt(sid), configs });
+    closeModal('subjectconfig'); 
+    document.getElementById('sc-modal-title').textContent='Настройка нагрузки';
+    toast('ok', 'Нагрузка успешно сохранена'); 
+    loadSubjectConfigs();
   }catch(e){toast('err','Ошибка: '+e.message);}
 }
 
-// ── SCHEDULE PANEL ────────────────────────────────────────────
-async function loadSchedulePanel(){
-  loadSubjectConfigs();
-  loadSemesterStatus();
+function confirmDeleteConfig(subjectId, label) {
+    document.getElementById('confirm-text').textContent=`Удалить всю нагрузку для предмета «${label}»?`;
+    document.getElementById('confirm-ok-btn').onclick = async () => {
+        try {
+            await api('/api/subject-configs/', 'POST', { is_bulk: true, subject_id: subjectId, configs: [] });
+            toast('ok', 'Нагрузка удалена');
+            closeModal('confirm');
+            loadSubjectConfigs();
+        } catch(e) { toast('err', e.message); }
+    };
+    document.getElementById('modal-confirm').classList.add('open');
 }
 
+// ── Остальные скрипты генерации ────────────────────────────────────────────────
+function confirmDelete(url,cb,label){
+  document.getElementById('confirm-text').textContent=`Удалить «${label}»? Нельзя отменить.`;
+  document.getElementById('confirm-ok-btn').onclick=async()=>{
+    try{await api(url,'DELETE');toast('ok','Удалено');closeModal('confirm');if(cb)cb();}catch(e){toast('err','Ошибка: '+e.message);}
+  };
+  document.getElementById('modal-confirm').classList.add('open');
+}
+
+async function loadSchedulePanel(){ loadSemesterStatus(); }
 async function loadSemesterStatus(){
   try{
     const d=await api('/api/schedule/status/');
@@ -898,9 +1172,7 @@ async function loadSemesterStatus(){
   }catch(e){/* silent */}
 }
 
-// ── GENERATION ────────────────────────────────────────────────
 let _pollTimer = null;
-
 async function startGeneration(){
   const btn   = document.getElementById('gen-run-btn');
   const label = document.getElementById('gen-btn-label');
@@ -958,7 +1230,7 @@ function showOk(total,week){
     <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
     <div><div style="font-weight:800;font-size:.92rem;color:#00A354">Расписание сгенерировано</div>
     <div style="font-size:.8rem;color:var(--text-muted);margin-top:2px">Занятий сохранено: <strong>${total}</strong> · Неделя: <strong>${week}</strong></div></div>
-    <a href="/" style="margin-left:auto;padding:8px 14px;border-radius:10px;background:#00A354;color:#fff;text-decoration:none;font-size:.82rem;font-weight:800;">Смотреть →</a>
+    <a href="#" onclick="switchPanelById('grid')" style="margin-left:auto;padding:8px 14px;border-radius:10px;background:#00A354;color:#fff;text-decoration:none;font-size:.82rem;font-weight:800;">Смотреть сетку →</a>
   </div>`;
 }
 function showErr(msg){
@@ -971,13 +1243,114 @@ async function clearSchedule(){
   try{const r=await api('/api/schedule/clear/','DELETE');toast('ok',`Удалено ${r.deleted} записей`);loadSemesterStatus();}catch(e){toast('err','Ошибка');}
 }
 
-// ── CONFIRM DELETE ────────────────────────────────────────────
-function confirmDelete(url,cb,label){
-  document.getElementById('confirm-text').textContent=`Удалить «${label}»? Нельзя отменить.`;
-  document.getElementById('confirm-ok-btn').onclick=async()=>{
-    try{await api(url,'DELETE');toast('ok','Удалено');closeModal('confirm');if(cb)cb();}catch(e){toast('err','Ошибка: '+e.message);}
+// ── GRID PANEL (VISUAL SCHEDULE EDITING) ────────────────────────
+async function loadGridPanel() {
+  if (!groupsCache.length || !teachersCache.length) await refreshCaches();
+  updateGridFilter();
+}
+
+function updateGridFilter() {
+  const type = document.getElementById('grid-filter-type').value;
+  const sel = document.getElementById('grid-filter-val');
+  sel.innerHTML = '<option value="">— выберите —</option>';
+  if (type === 'group') {
+    groupsCache.forEach(g => sel.innerHTML += `<option value="${g.id}">${g.name} (${g.course_number}к)</option>`);
+  } else {
+    teachersCache.forEach(t => sel.innerHTML += `<option value="${t.id}">${t.full_name||t.username}</option>`);
+  }
+  document.getElementById('grid-tbody').innerHTML = '<tr><td colspan="7" class="empty-row">Выберите фильтр для отображения расписания</td></tr>';
+}
+
+// Добавь переменную в начало скриптов
+let currentWeek = 1;
+
+// Добавь функцию перемотки
+function changeWeek(delta) {
+    currentWeek += delta;
+    if (currentWeek < 1) currentWeek = 1;
+    if (currentWeek > 18) currentWeek = 18; // Лимит (например, 18 недель семестра)
+    
+    document.getElementById('current-week-label').textContent = `Неделя ${currentWeek}`;
+    renderGrid(); // Сразу обновляем таблицу
+}
+
+async function renderGrid() {
+  const type = document.getElementById('grid-filter-type').value;
+  const val = document.getElementById('grid-filter-val').value;
+  const tb = document.getElementById('grid-tbody');
+  
+  if (!val) { 
+    tb.innerHTML = '<tr><td colspan="7" class="empty-row">Выберите фильтр для отображения расписания</td></tr>'; 
+    return; 
+  }
+  tb.innerHTML = '<tr><td colspan="7" class="empty-row">Загрузка сетки...</td></tr>';
+  
+  try {
+    // ВОТ ЗДЕСЬ ДОБАВИЛИ &week=${currentWeek} в URL:
+    const {entries} = await api(`/api/public/schedule/?${type}_id=${val}&week=${currentWeek}`);
+    gridEntriesCache = entries || [];
+    
+    if (!gridEntriesCache.length) {
+      tb.innerHTML = '<tr><td colspan="7" class="empty-row">Расписание пусто</td></tr>'; 
+      return; 
+    }
+
+    let html = '';
+    for (let slot = 1; slot <= 6; slot++) {
+      html += `<tr><td style="font-weight:900; text-align:center; color:var(--text-muted); background: rgba(244,244,248,.6); border-right: 1px solid var(--border);">${slot} пара</td>`;
+      for (let day = 0; day <= 5; day++) {
+        const evts = gridEntriesCache.filter(e => e.weekday === day && e.slot === slot);
+        const items = evts.map(e => `
+          <div class="grid-item" onclick="openEditEntry(${e.id})">
+            <strong>${e.subject}</strong>
+            <div>${e.teacher}</div>
+            <div class="room">Ауд: ${e.classroom}</div>
+          </div>
+        `).join('');
+        html += `<td><div class="grid-cell">${items}</div></td>`;
+      }
+      html += `</tr>`;
+    }
+    tb.innerHTML = html;
+  } catch (e) {
+    tb.innerHTML = `<tr><td colspan="7" class="empty-row" style="color:red">Ошибка: ${e.message}</td></tr>`;
+  }
+}
+
+async function openEditEntry(id) {
+  const data = gridEntriesCache.find(x => x.id === id);
+  if (!data) return;
+
+  document.getElementById('edit-entry-id').value = data.id;
+  document.getElementById('edit-entry-day').value = data.weekday;
+  document.getElementById('edit-entry-slot').value = data.slot;
+  
+  const rSel = document.getElementById('edit-entry-room');
+  rSel.innerHTML = '<option value="">— не назначена —</option>';
+  classroomsCache.forEach(c => rSel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+  
+  const roomMatch = classroomsCache.find(c => c.name === data.classroom);
+  if (roomMatch) rSel.value = roomMatch.id;
+  
+  document.getElementById('modal-edit-entry').classList.add('open');
+}
+
+async function saveEntry() {
+  const id = document.getElementById('edit-entry-id').value;
+  const body = {
+    weekday: parseInt(document.getElementById('edit-entry-day').value),
+    slot_number: parseInt(document.getElementById('edit-entry-slot').value),
+    classroom_id: document.getElementById('edit-entry-room').value ? parseInt(document.getElementById('edit-entry-room').value) : null
   };
-  document.getElementById('modal-confirm').classList.add('open');
+  
+  try {
+    await api(`/api/schedule/${id}/`, 'PUT', body);
+    closeModal('edit-entry');
+    toast('ok', 'Изменения сохранены');
+    renderGrid(); 
+  } catch(e) { 
+    toast('err', 'Ошибка сохранения: Убедитесь, что views.schedule_entry добавлен в urls.py'); 
+  }
 }
 </script>
 </body>

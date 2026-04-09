@@ -260,76 +260,63 @@ def reset_state(university):
 # ──────────────────────────────────────────────────────────────
 
 def save_schedule_to_db(university, model, solver, week_num):
-    """
-    Конвертирует результат работы солвера в ScheduleEntry записи.
-
-    Перед сохранением удаляет старые записи этой недели
-    (определяется по полю week_number если добавить, или полностью для универа).
-    """
     from core.models import ScheduleEntry, Subject, Classroom, User, Group
 
     days_list = model.inp["settings"]["days"]
-    NS        = model.NS  # пар в день
+    NS = model.NS
 
-    # Удаляем существующее расписание этого университета
-    # (простая стратегия: заменяем полностью)
-    ScheduleEntry.objects.filter(university=university).delete()
+    ScheduleEntry.objects.filter(university=university, week_number=week_num).delete()
 
     entries_to_create = []
-    m2m_data = []  # [(entry, [group_ids])]
+    m2m_data = []
 
     for event in model.events:
         if solver.asgn[event["id"]] is None:
             continue
 
         ts, room_idx = solver.asgn[event["id"]]
-        weekday   = ts // NS          # 0–5
-        slot_num  = (ts % NS) + 1     # 1–6
+        weekday = ts // NS
+        slot_num = (ts % NS) + 1
 
-        # subject
         try:
             subject = Subject.objects.get(pk=int(event["subject_id"]))
         except (Subject.DoesNotExist, ValueError):
             continue
 
-        # teacher
         try:
             teacher = User.objects.get(pk=int(event["teacher"]))
         except (User.DoesNotExist, ValueError):
             continue
 
-        # classroom
         room_db_id = model.room_ids[room_idx]
         try:
             classroom = Classroom.objects.get(pk=int(room_db_id))
         except (Classroom.DoesNotExist, ValueError):
             classroom = None
 
-        # lesson_type mapping
         kind_map = {
-            "lecture":  "lecture",
-            "seminar":  "seminar",
-            "comp":     "lab",
+            "lecture": "lecture",
+            "seminar": "seminar",
+            "comp": "lab",
         }
         lesson_type = kind_map.get(event["kind"], "lecture")
 
         entry = ScheduleEntry(
-            university   = university,
-            subject      = subject,
-            teacher      = teacher,
-            classroom    = classroom,
-            weekday      = weekday,
-            slot_number  = slot_num,
-            lesson_type  = lesson_type,
-            is_approved  = False,
+            university=university,
+            subject=subject,
+            teacher=teacher,
+            classroom=classroom,
+            weekday=weekday,
+            slot_number=slot_num,
+            lesson_type=lesson_type,
+            is_approved=False,
+            week_number=week_num
         )
         entries_to_create.append(entry)
-        m2m_data.append(event["groups"])  # список строковых id групп
+        m2m_data.append(event["groups"])
 
-    # bulk create
     created = ScheduleEntry.objects.bulk_create(entries_to_create)
 
-    # M2M groups (bulk_create не устанавливает M2M)
     for entry, group_ids in zip(created, m2m_data):
         db_ids = []
         for gid in group_ids:

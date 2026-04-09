@@ -79,6 +79,14 @@
     }
     .fsel:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(90,63,255,0.1); }
     .fsel:disabled { opacity:.45; cursor:default; background-color:rgba(244,244,248,.7); }
+    
+    /* WEEK SWITCHER (КАЛЕНДАРЬ) */
+    .week-switch { display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid var(--border); border-radius:12px; padding:4px; height:44px; margin-right:auto; }
+    .week-btn { width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:8px; cursor:pointer; color:var(--text-gray); transition:all .2s; }
+    .week-btn:hover { background:var(--purple-dim); color:var(--purple); }
+    .week-btn svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5; }
+    .week-lbl { font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:800; min-width:80px; text-align:center; color:var(--black); }
+
     .fsep { width:1px; background:var(--border); height:44px; align-self:flex-end; flex-shrink:0; }
 
     .vtabs { display:flex; gap:6px; align-self:flex-end; flex-shrink:0; }
@@ -149,6 +157,7 @@
       nav{left:12px;right:12px;top:10px;padding:10px 16px;}
       .page{padding:88px 14px 32px;}
       .stats{grid-template-columns:1fr 1fr;}
+      .week-switch{margin-right:0; flex:1; justify-content:space-between;}
       .fsep{display:none;}
       .fg{min-width:110px;}
       .mBtn{padding:9px 14px;font-size:.82rem;}
@@ -171,7 +180,6 @@
 
 <div class="page">
 
-  <!-- MODE SWITCHER -->
   <div class="mode-bar">
     <button class="mBtn act-s" id="mb-s" onclick="setMode('students')">
       <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -187,15 +195,12 @@
     </button>
   </div>
 
-  <!-- FILTER BAR -->
   <div class="fbar">
-    <!-- общий -->
     <div class="fg">
       <label>Университет</label>
       <select class="fsel" id="f-uni"><option value="">Все</option></select>
     </div>
 
-    <!-- students-only -->
     <div id="fs-s" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;flex:1;">
       <div class="fg">
         <label>Направление</label>
@@ -207,7 +212,6 @@
       </div>
     </div>
 
-    <!-- teachers-only -->
     <div id="fs-t" style="display:none;flex-wrap:wrap;gap:12px;align-items:flex-end;flex:1;">
       <div class="fg">
         <label>Преподаватель</label>
@@ -215,12 +219,17 @@
       </div>
     </div>
 
-    <!-- classrooms-only -->
     <div id="fs-c" style="display:none;flex-wrap:wrap;gap:12px;align-items:flex-end;flex:1;">
       <div class="fg">
         <label>Аудитория</label>
         <select class="fsel" id="f-cls" disabled><option value="">Все</option></select>
       </div>
+    </div>
+
+    <div class="week-switch">
+      <button class="week-btn" onclick="changeWeek(-1)" title="Предыдущая неделя"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div class="week-lbl" id="week-lbl">Неделя 1</div>
+      <button class="week-btn" onclick="changeWeek(1)" title="Следующая неделя"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
 
     <div class="fsep"></div>
@@ -235,7 +244,6 @@
     </div>
   </div>
 
-  <!-- SCHEDULE SHELL -->
   <div class="shell">
     <div class="ldr" id="ldr"><div class="spin"></div></div>
 
@@ -262,7 +270,7 @@
   </div>
 
   <div class="stats" id="stats" style="display:none;">
-    <div class="sc"><div class="n" id="st0" style="color:var(--purple)">0</div><div class="l">Занятий в неделю</div></div>
+    <div class="sc"><div class="n" id="st0" style="color:var(--purple)">0</div><div class="l">Занятий на этой неделе</div></div>
     <div class="sc"><div class="n" id="st1" style="color:#059669">0</div><div class="l">Учебных дней</div></div>
     <div class="sc"><div class="n" id="st2" style="color:var(--blue)">0</div><div class="l">Преподавателей</div></div>
     <div class="sc"><div class="n" id="st3" style="color:var(--orange)">0</div><div class="l">Аудиторий</div></div>
@@ -277,7 +285,7 @@ const TC    = {lecture:'ll',practice:'lp',lab:'lb',seminar:'ls',online:'lo'};
 const TP    = {lecture:'tpl',practice:'tpp',lab:'tpb',seminar:'tps',online:'tpo'};
 const TL    = {lecture:'Лекция',practice:'Практика',lab:'Лаба',seminar:'Семинар',online:'Онлайн'};
 
-let mode='students', view='grid', entries=[];
+let mode='students', view='grid', entries=[], currentWeek=1;
 const F = {uni:'',dir:'',group:'',tch:'',cls:''};
 
 const api = async url => { const r=await fetch(url); if(!r.ok) throw r.status; return r.json(); };
@@ -308,6 +316,19 @@ function setMode(m) {
   if(m==='classrooms'&& F.uni) loadCls();
   if(m==='students'  && F.uni) loadDir();
   loadSched();
+}
+
+/* ── WEEK SWITCHER ── */
+function changeWeek(delta) {
+  currentWeek += delta;
+  if (currentWeek < 1) currentWeek = 1;
+  if (currentWeek > 18) currentWeek = 18; // Защита от бесконечной прокрутки (макс 18 недель)
+  document.getElementById('week-lbl').textContent = `Неделя ${currentWeek}`;
+  
+  // Если фильтры уже выбраны, сразу подгружаем новую неделю
+  if (F.uni && (F.group || F.tch || F.cls || F.dir)) {
+    loadSched();
+  }
 }
 
 /* ── UNI ── */
@@ -365,6 +386,8 @@ async function loadSched(){
   try {
     const p=new URLSearchParams();
     if(F.uni) p.set('university_id',F.uni);
+    p.set('week', currentWeek); // Добавляем фильтр по неделе в запрос!
+
     if(mode==='students'){
       if(F.dir) p.set('direction_id',F.dir);
       if(F.group){
@@ -404,8 +427,8 @@ function updateHead(){
   }
   document.getElementById('sTitle').textContent=parts.length ? parts.join(' · ') : 'Расписание';
   document.getElementById('sSub').textContent=entries.length
-    ? `Найдено занятий: ${entries.length}`
-    : parts.length ? 'Нет занятий по выбранным фильтрам' : 'Выберите фильтры для отображения данных';
+    ? `Найдено занятий: ${entries.length} (Неделя ${currentWeek})`
+    : parts.length ? `На неделе ${currentWeek} занятий нет` : 'Выберите фильтры для отображения данных';
 }
 
 function renderGrid(){
@@ -456,7 +479,7 @@ function renderList(){
 
 function emptyHTML(){ return `<div class="empty">
   <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-  <h3>Нет данных</h3><p>Нет занятий по выбранным фильтрам</p>
+  <h3>Нет данных</h3><p>Нет занятий на ${currentWeek} неделе по выбранным фильтрам</p>
 </div>`; }
 
 function renderStats(){
