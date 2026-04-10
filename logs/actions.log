@@ -1,0 +1,5 @@
+2026-04-10 11:40:04 | INFO | classroom_created              | user=admin                | uni=MSU                       | ip=127.0.0.1       | Аудитория: 125 | тип=seminar | 30 мест | низкий приоритет=False
+2026-04-10 11:40:17 | INFO | classroom_deleted              | user=admin                | uni=MSU                       | ip=127.0.0.1       | Аудитория: 125
+2026-04-10 11:40:32 | INFO | schedule_generation_started    | user=admin                | uni=MSU                       | ip=127.0.0.1       | Запуск генерации: неделя=None, кол-во недель=20, сброс=True
+2026-04-10 11:40:32 | INFO | semester_reset                 | user=admin                | uni=MSU                       | ip=—               | Состояние семестра сброшено перед генерацией
+2026-04-10 11:40:33 | ERROR | schedule_generation_error      | user=admin                | uni=1 | ip=—               | "<ScheduleEntry: Среда пара 1 — Чисмет (Радик Альхамов)>" needs to have a value for field "id" before this many-to-many relationship can be used.
