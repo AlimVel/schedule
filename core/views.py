@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-
+from django.db.models import Q
 from .models import (
     InviteLink, User, University,
     Direction, Course, Classroom, Subject,
@@ -811,8 +811,19 @@ def public_schedule(request):
     ).prefetch_related('groups')
 
     if uni := request.GET.get('university_id'):   qs = qs.filter(university_id=uni)
-    if did := request.GET.get('direction_id'):    qs = qs.filter(course__direction_id=did)
-    if cid := request.GET.get('course_id'):       qs = qs.filter(course_id=cid)
+    if did := request.GET.get('direction_id'):
+        qs = qs.filter(
+            Q(course__direction_id=did) | 
+            Q(groups__course__direction_id=did) | 
+            Q(subject__course__direction_id=did)
+        ).distinct()
+        
+    if cid := request.GET.get('course_id'):
+        qs = qs.filter(
+            Q(course_id=cid) | 
+            Q(groups__course_id=cid) | 
+            Q(subject__course_id=cid)
+        ).distinct()
     if tid := request.GET.get('teacher_id'):      qs = qs.filter(teacher_id=tid)
     if rid := request.GET.get('classroom_id'):    qs = qs.filter(classroom_id=rid)
 
