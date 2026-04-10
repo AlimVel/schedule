@@ -87,9 +87,26 @@
     .btn-back { background: transparent; color: var(--text-gray); border: 1px solid rgba(13,13,18,0.1); margin-top: 16px; width: 100%; }
     .btn-back:hover { background: #fff; color: var(--black); }
 
-    /* Адаптив для маленьких телефонов */
+   /* Адаптив для маленьких телефонов */
     @media (max-width: 480px) {
-      .card { padding: 32px 24px; }
+      /* Возвращаем флекс, чтобы карточка встала ровно по центру */
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 20px 16px;
+        background-attachment: fixed;
+      }
+      
+      .card { 
+        padding: 32px 20px; 
+        border-radius: 28px; 
+        margin: auto; /* Гарантирует центрирование */
+        width: 100%;
+      }
+      
       .link-box { flex-direction: column; padding: 12px; }
       .link-box input { text-align: center; width: 100%; padding: 8px 0; }
       .btn-copy { width: 100%; }

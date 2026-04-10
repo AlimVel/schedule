@@ -148,14 +148,79 @@
     .sc .n { font-size:1.5rem; font-weight:900; letter-spacing:-.04em; }
     .sc .l { font-size:.72rem; font-weight:700; color:var(--text-gray); margin-top:2px; }
 
-    @media(max-width:860px){
-      nav{left:12px;right:12px;top:10px;padding:10px 16px;}
-      .page{padding:88px 14px 32px;}
-      .stats{grid-template-columns:1fr 1fr;}
-      .week-switch{margin-right:0; flex:1; justify-content:space-between;}
-      .fsep{display:none;}
-      .fg{min-width:110px;}
-      .mBtn{padding:9px 14px;font-size:.82rem;}
+   @media(max-width:860px){
+      nav { left:12px; right:12px; top:10px; padding:10px 16px; }
+      .page { padding:88px 14px 32px; }
+      .stats { grid-template-columns:1fr 1fr; }
+      
+      /* 1. Кнопки (Студенты/Преподаватели) */
+      .mode-bar { 
+        flex-wrap: wrap; 
+        justify-content: center; 
+      }
+      .mBtn { 
+        flex: 1 1 auto; 
+        justify-content: center; 
+        padding: 10px 14px; 
+        font-size: .8rem; 
+        white-space: nowrap; 
+      }
+      
+      /* 2. Фильтры встают друг под другом */
+      .fbar { flex-direction: column; align-items: stretch; gap: 14px; }
+      .fg { min-width: 100%; width: 100%; }
+      #fs-s, #fs-t, #fs-c { flex-direction: column; align-items: stretch !important; width: 100%; }
+      
+      /* 3. Календарь и переключатель вида */
+      .week-switch { margin-right: 0; width: 100%; justify-content: space-between; }
+      .fsep { display: none; }
+      .vtabs { width: 100%; }
+      .vtab { flex: 1; justify-content: center; }
+      
+      /* 4. Таблица в режиме "Список" */
+      .lv { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 12px; }
+      table.lt { min-width: 700px; }
+
+      /* ── 5. ИСПРАВЛЕНИЕ "МАТРИЦЫ" (СЕТКИ РАСПИСАНИЯ) ── */
+      .ss { 
+        margin: 0 -14px; /* Убираем боковые отступы, чтобы свайпать от края до края экрана */
+        padding: 0 14px 24px 14px; /* Отступ снизу для ползунка */
+        overflow-x: auto; 
+        -webkit-overflow-scrolling: touch; 
+        scrollbar-width: auto;
+      }
+      
+      /* Добавляем удобный, всегда видимый ползунок (как мы делали ранее) */
+      .ss::-webkit-scrollbar { height: 10px; -webkit-appearance: none; }
+      .ss::-webkit-scrollbar-track { background: rgba(13,13,18,0.06); border-radius: 10px; margin: 0 20px; }
+      .ss::-webkit-scrollbar-thumb { background: rgba(90,63,255,0.5); border-radius: 10px; }
+      .ss::-webkit-scrollbar-thumb:active { background: var(--purple); }
+
+      .sg { 
+        grid-template-columns: 56px repeat(6, minmax(130px, 1fr)); /* Сжимаем колонку времени, расширяем карточки */
+        gap: 6px; 
+      }
+
+      /* ── ПРИКЛЕИВАЕМ КОЛОНКУ ВРЕМЕНИ СЛЕВА ── */
+      .tc { 
+        position: sticky; 
+        left: 0; 
+        z-index: 5; 
+        background: rgba(255,255,255,0.95); /* Плотный фон, чтобы карточки не просвечивали при свайпе */
+        backdrop-filter: blur(8px);
+        box-shadow: 4px 0 12px rgba(13,13,18,0.06); /* Тень для объема */
+      }
+
+      /* Пустая левая верхняя клетка (над временем) должна быть поверх всего */
+      .sg > .tc:first-child { z-index: 6; }
+
+      /* Делаем текст внутри карточек чуть компактнее для телефона */
+      .gc { padding: 8px; border-radius: 12px; }
+      .tc .sn { font-size: .95rem; }
+      .tc span { font-size: .65rem; }
+      .lbg { font-size: .55rem; padding: 3px 6px; }
+      .lt2 { font-size: .8rem; margin-bottom: 4px; line-height: 1.2; }
+      .lm { font-size: .65rem; gap: 2px; }
     }
   </style>
 </head>

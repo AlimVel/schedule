@@ -218,15 +218,62 @@
     .dist-sum { padding: 12px 16px; background: rgba(90,63,255,.05); font-size: .8rem; font-weight: 800; color: var(--purple); display: flex; justify-content: space-between; border-top: 1px solid rgba(90,63,255,.1); }
     .dist-sum.error { background: rgba(255,45,85,.05); color: var(--pink); border-top-color: rgba(255,45,85,.1); }
 
-    @media(max-width:900px){ .sidebar{display:none;} .kpi-row{grid-template-columns:1fr 1fr;} .content{padding:16px;} .sched-layout{grid-template-columns:1fr;} }
+   /* ── mobile menu (только для мобилок) ── */
+    .hamburger-db {
+      display: none; flex-direction: column; gap: 4px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .hamburger-db span {
+      width: 24px; height: 2px; background: var(--black);
+      border-radius: 2px; transition: all 0.3s;
+    }
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0; z-index: 99;
+      background: rgba(13,13,18,0.4); backdrop-filter: blur(4px);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .sidebar-overlay.show { display: block; opacity: 1; }
+
+    /* Стили для мобильного меню */
+    .hamburger-db {
+      display: none; flex-direction: column; gap: 4px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .hamburger-db span {
+      width: 24px; height: 2px; background: var(--black);
+      border-radius: 2px; transition: all 0.3s;
+    }
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0; z-index: 99;
+      background: rgba(13,13,18,0.4); backdrop-filter: blur(4px);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .sidebar-overlay.show { display: block; opacity: 1; }
+
+    @media(max-width:900px){
+      .sidebar {
+        display: flex; position: fixed; left: -280px; top: 0; bottom: 0; z-index: 100;
+        transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 20px 0 40px rgba(0,0,0,0.2);
+      }
+      .sidebar.open { left: 0; }
+      .hamburger-db { display: flex; }
+      .kpi-row { grid-template-columns: 1fr 1fr; }
+      .content { padding: 16px; }
+      .sched-layout { grid-template-columns: 1fr; }
+      .topbar { padding: 0 16px; }
+      .tb-badge { display: none; }
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table { min-width: 600px; }
+    }
   </style>
 </head>
 <body>
 <div class="orbs"><div class="orb o1"></div><div class="orb o2"></div></div>
 
 <div class="app">
-
-<aside class="sidebar">
+  <div class="sidebar-overlay" id="sb-overlay"></div>
+  <aside class="sidebar" id="mobile-sidebar">
   <div class="sb-logo"><a href="{% url 'index' %}" class="logo">Go<span>Shiet</span></a></div>
   <div class="sb-uni">
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -275,7 +322,12 @@
 
 <div class="main">
   <div class="topbar">
-    <div class="tb-title" id="topbarTitle">Дашборд</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button class="hamburger-db" id="db-hamburger">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="tb-title" id="topbarTitle">Дашборд</div>
+    </div>
     <div class="tb-right">
       <div class="tb-badge">Администратор</div>
       <div class="tb-user">
@@ -1352,6 +1404,24 @@ async function saveEntry() {
     toast('err', 'Ошибка сохранения: Убедитесь, что views.schedule_entry добавлен в urls.py'); 
   }
 }
+const dbHamburger = document.getElementById('db-hamburger');
+  const mobileSidebar = document.getElementById('mobile-sidebar');
+  const sbOverlay = document.getElementById('sb-overlay');
+
+  function toggleSidebar() {
+    mobileSidebar.classList.toggle('open');
+    sbOverlay.classList.toggle('show');
+  }
+
+  if (dbHamburger) dbHamburger.addEventListener('click', toggleSidebar);
+  if (sbOverlay) sbOverlay.addEventListener('click', toggleSidebar);
+
+  // Закрывать меню при клике на пункты (для мобилок)
+  document.querySelectorAll('.nav-item').forEach(link => {
+    link.addEventListener('click', () => {
+      if(window.innerWidth <= 900) toggleSidebar();
+    });
+  });
 </script>
 </body>
 </html>

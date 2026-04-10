@@ -332,11 +332,41 @@
 
     /* ── responsive ── */
     @media (max-width: 900px) {
-      .sidebar { display: none; }
+      .sidebar {
+        display: flex; position: fixed; left: -280px; top: 0; bottom: 0; z-index: 100;
+        transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 20px 0 40px rgba(0,0,0,0.2);
+      }
+      .sidebar.open { left: 0; }
+      .hamburger-td { display: flex; }
+
       .main { padding: 20px 16px; }
       .topbar { flex-direction: column; align-items: flex-start; gap: 16px; }
       .save-btn { width: 100%; justify-content: center; }
       .limits-row { grid-template-columns: 1fr; }
+      
+      /* ── Компактная матрица без скролла (ОСТАВЛЯЕМ, ОНА ИДЕАЛЬНА) ── */
+      .matrix-grid-wrap { overflow: visible; padding-bottom: 0; }
+      .matrix-grid { 
+        grid-template-columns: 42px repeat(6, 1fr); 
+        gap: 4px; min-width: 100%; 
+      }
+      .mg-label, .mg-time, .mg-slot { 
+        min-height: 42px; height: 42px; 
+        font-size: 0.75rem; padding: 0; border-radius: 8px; 
+      }
+      .mg-time { font-size: 0.6rem; line-height: 1.1; }
+      .mg-slot.blocked::after, .mg-slot.preferred::after { font-size: 0.85rem; }
+
+      /* ── ВОЗВРАЩАЕМ ТАБЛИЦЕ СТРОГИЙ ВИД С ГОРИЗОНТАЛЬНЫМ СКРОЛЛОМ ── */
+      .schedule-card {
+        padding: 16px; /* Делаем отступы чуть меньше для телефона */
+        overflow-x: auto; /* Включаем горизонтальный скролл */
+        -webkit-overflow-scrolling: touch; /* Гладкий скролл для iOS */
+      }
+      .sched-table {
+        min-width: 550px; /* Фиксируем ширину, чтобы текст не сжимался */
+      }
     }
   </style>
 </head>
@@ -507,6 +537,16 @@
       {% endif %}
     </div>
 
+    <div style="margin-top: 36px; text-align: center; padding-bottom: 24px;">
+      <a href="{% url 'index' %}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #fff; border: 1.5px solid var(--border); padding: 15px 28px; border-radius: 16px; color: var(--black); font-family: inherit; font-size: 1rem; font-weight: 800; text-decoration: none; box-shadow: 0 8px 24px rgba(13,13,18,0.06); transition: transform 0.2s, box-shadow 0.2s; width: 100%; max-width: 320px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(13,13,18,0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(13,13,18,0.06)';">
+        В GoShiet
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
   </main>
 </div>
 
@@ -653,6 +693,26 @@ function showToast(type, msg) {
 // ── init ──────────────────────────────────────────────────────
 loadInitial();
 buildGrid();
+
+// ── управление мобильным меню ─────────────────────────────────
+const btnMenu = document.querySelector('.hamburger-td');
+const sidebar = document.getElementById('mobile-sidebar');
+const overlay = document.getElementById('sb-overlay');
+
+if (btnMenu && sidebar && overlay) {
+  btnMenu.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden'; // Убираем скролл фона
+  });
+  
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  });
+}
+
 </script>
 </body>
 </html>
