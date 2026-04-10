@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мои пожелания — GoShiet</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #5A3FFF;
+      --purple-dim: rgba(90,63,255,0.12);
+      --green: #00E676;
+      --green-dim: rgba(0,230,118,0.13);
+      --pink: #FF2D55;
+      --pink-dim: rgba(255,45,85,0.12);
+      --orange: #FF6B00;
+      --black: #0D0D12;
+      --surface: #F4F4F8;
+      --card: rgba(255,255,255,0.92);
+      --border: rgba(13,13,18,0.08);
+      --text-muted: #5A5A6A;
+      --shadow: 0 12px 40px rgba(13,13,18,0.07);
+      --shadow-lg: 0 24px 64px rgba(90,63,255,0.13);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--black);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── орбы ── */
+    .orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(110px); opacity: .35; }
+    .o1 { width: 520px; height: 520px; background: var(--purple); top: -160px; right: -120px; animation: breathe 11s ease-in-out infinite alternate; }
+    .o2 { width: 400px; height: 400px; background: var(--green); bottom: -120px; left: -80px; animation: breathe 9s ease-in-out infinite alternate-reverse; }
+    @keyframes breathe { from { transform: scale(1); opacity:.3; } to { transform: scale(1.12); opacity:.45; } }
+
+    /* ── layout ── */
+    .app { display: flex; width: 100%; min-height: 100vh; position: relative; z-index: 1; }
+
+    /* ── sidebar ── */
+    .sidebar {
+      width: 256px; flex-shrink: 0;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: sticky; top: 0; height: 100vh;
+    }
+    .sb-head { padding: 28px 24px 20px; }
+    .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -.04em; text-decoration: none; color: var(--black); }
+    .logo span { color: var(--purple); }
+
+    .sb-avatar {
+      margin: 0 20px 20px;
+      padding: 16px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--purple), #4f46e5);
+      color: #fff;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .av-circle {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1rem; flex-shrink: 0;
+    }
+    .av-name { font-size: .88rem; font-weight: 800; line-height: 1.3; }
+    .av-role { font-size: .72rem; opacity: .75; font-weight: 600; }
+
+    .sb-nav { flex: 1; padding: 0 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border-radius: 14px;
+      text-decoration: none; font-size: .88rem; font-weight: 700;
+      color: var(--text-muted); transition: all .2s;
+      cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.3; flex-shrink: 0; }
+    .nav-item:hover { background: var(--purple-dim); color: var(--purple); }
+    .nav-item.active { background: var(--purple-dim); color: var(--purple); }
+
+    .sb-foot { padding: 16px 12px; border-top: 1px solid var(--border); }
+    .nav-item.logout { color: var(--pink); }
+    .nav-item.logout:hover { background: var(--pink-dim); }
+
+    /* ── main ── */
+    .main { flex: 1; padding: 36px 40px; overflow-y: auto; }
+
+    /* ── topbar ── */
+    .topbar { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
+    .topbar h1 { font-size: 2rem; font-weight: 900; letter-spacing: -.04em; margin-bottom: 4px; }
+    .topbar p { font-size: .92rem; color: var(--text-muted); font-weight: 600; }
+    .save-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--black); color: #fff; border: none;
+      padding: 13px 24px; border-radius: 14px; font-family: inherit;
+      font-size: .92rem; font-weight: 800; cursor: pointer;
+      transition: all .25s; box-shadow: 0 8px 24px rgba(13,13,18,.18);
+      position: relative; overflow: hidden;
+    }
+    .save-btn::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(135deg, var(--purple), #4f46e5);
+      opacity: 0; transition: opacity .3s;
+    }
+    .save-btn:hover::before { opacity: 1; }
+    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(90,63,255,.35); }
+    .save-btn span, .save-btn svg { position: relative; z-index: 1; }
+    .save-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    .save-btn.saving { pointer-events: none; opacity: .7; }
+    .save-btn.saved::before { opacity: 1; background: linear-gradient(135deg, #00B86B, #00E676); }
+
+    /* ── section title ── */
+    .section-label {
+      display: flex; align-items: center; gap: 10px;
+      font-size: .72rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text-muted); margin-bottom: 14px;
+    }
+    .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+    /* ── limits row ── */
+    .limits-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 28px; }
+    .limit-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 22px; padding: 22px 24px;
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .limit-icon {
+      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .limit-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    .limit-label { font-size: .8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
+    .limit-stepper { display: flex; align-items: center; gap: 12px; }
+    .step-btn {
+      width: 34px; height: 34px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: #fff; cursor: pointer; font-size: 1.1rem; font-weight: 700;
+      color: var(--black); display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .step-btn:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-dim); }
+    .step-val { font-size: 1.6rem; font-weight: 900; letter-spacing: -.04em; min-width: 28px; text-align: center; }
+
+    /* ── matrix ── */
+    .matrix-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 24px; padding: 28px;
+      box-shadow: var(--shadow); margin-bottom: 28px;
+    }
+    .matrix-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .matrix-title { font-size: 1.05rem; font-weight: 900; }
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; }
+    .leg { display: flex; align-items: center; gap: 7px; font-size: .78rem; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+    .leg-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+
+    .leg .leg-dot[style*="255,45,85"] {
+      box-shadow: 0 0 0 2px rgba(255, 45, 85, 0.12);
+    }
+
+    .leg .leg-dot[style*="0,230,118"] {
+      box-shadow: 0 0 0 2px rgba(0, 230, 118, 0.12);
+    }
+
+    .matrix-grid-wrap {
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 84px repeat(6, minmax(92px, 1fr));
+      gap: 10px;
+      min-width: 720px;
+      align-items: stretch;
+    }
+
+    .mg-label {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      background: rgba(13,13,18,0.04);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .mg-time {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6px;
+      font-size: .72rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--text-muted);
+      background: rgba(13,13,18,0.035);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .mg-slot {
+      min-height: 64px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: rgba(255,255,255,.82);
+      cursor: pointer;
+      position: relative;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .mg-slot:hover {
+      border-color: rgba(90,63,255,.38);
+      box-shadow: 0 0 0 3px rgba(90,63,255,.08);
+      transform: none;
+      z-index: 1;
+    }
+
+    .mg-slot.blocked {
+      background: #FFD6DF;
+      border: 2px solid #FF2D55;
+      box-shadow: 0 0 0 3px rgba(255, 45, 85, 0.14);
+    }
+
+    .mg-slot.preferred {
+      background: #CFFBE3;
+      border: 2px solid #00B86B;
+      box-shadow: 0 0 0 3px rgba(0, 184, 107, 0.14);
+    }
+
+    .mg-slot.blocked::after {
+      content: '✕';
+      color: #C40030;
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    .mg-slot.preferred::after {
+      content: '★';
+      color: #007A3D;
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    /* ── hint bar ── */
+    .hint-bar {
+      display: flex; gap: 8px; align-items: center;
+      background: rgba(90,63,255,.06); border: 1px solid rgba(90,63,255,.12);
+      border-radius: 12px; padding: 10px 16px; margin-bottom: 28px;
+      font-size: .82rem; font-weight: 600; color: var(--text-muted);
+    }
+    .hint-bar svg { width: 16px; height: 16px; stroke: var(--purple); fill: none; stroke-width: 2.5; flex-shrink:0; }
+
+    /* ── schedule preview ── */
+    .schedule-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 24px; padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .sched-empty {
+      text-align: center; padding: 40px 20px;
+      color: var(--text-muted); font-size: .92rem; font-weight: 600;
+    }
+    .sched-empty svg { width: 40px; height: 40px; stroke: rgba(13,13,18,.15); fill:none; stroke-width: 1.5; display:block; margin: 0 auto 12px; }
+
+    .sched-table { width: 100%; border-collapse: collapse; }
+    .sched-table th {
+      text-align: left; padding: 10px 12px; font-size: .72rem;
+      font-weight: 900; text-transform: uppercase; letter-spacing: .06em;
+      color: var(--text-muted); border-bottom: 1px solid var(--border);
+    }
+    .sched-table td { padding: 13px 12px; border-bottom: 1px solid var(--border); font-size: .88rem; font-weight: 600; }
+    .sched-table tr:last-child td { border: none; }
+    .sched-table tr:hover td { background: var(--purple-dim); }
+
+    .type-pill {
+      display: inline-block; padding: 4px 10px; border-radius: 999px;
+      font-size: .7rem; font-weight: 800;
+    }
+    .type-lecture  { background: var(--purple-dim); color: var(--purple); }
+    .type-practice { background: var(--pink-dim);   color: var(--pink); }
+    .type-lab      { background: rgba(0,132,255,.1); color: #0084FF; }
+    .type-seminar  { background: rgba(255,214,0,.15); color: #996600; }
+    .type-online   { background: var(--green-dim);  color: #00A354; }
+
+    .approved-dot {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .75rem; font-weight: 800;
+    }
+    .approved-dot.yes { color: #00A354; }
+    .approved-dot.no  { color: var(--orange); }
+    .approved-dot::before { content:''; width:7px; height:7px; border-radius:50%; background:currentColor; display:inline-block; }
+
+    /* ── toast ── */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 1000;
+      padding: 14px 22px; border-radius: 16px;
+      font-size: .9rem; font-weight: 800; color: #fff;
+      box-shadow: 0 16px 40px rgba(13,13,18,.2);
+      transform: translateY(80px); opacity: 0;
+      transition: all .35s cubic-bezier(.2,.8,.2,1);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.ok   { background: linear-gradient(135deg, #00B86B, #00E676); }
+    .toast.err  { background: linear-gradient(135deg, var(--pink), var(--orange)); }
+    .toast svg  { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2.8; }
+
+    /* ── responsive ── */
+    @media (max-width: 900px) {
+      .sidebar {
+        display: flex; position: fixed; left: -280px; top: 0; bottom: 0; z-index: 100;
+        transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 20px 0 40px rgba(0,0,0,0.2);
+      }
+      .sidebar.open { left: 0; }
+      .hamburger-td { display: flex; }
+
+      .main { padding: 20px 16px; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .save-btn { width: 100%; justify-content: center; }
+      .limits-row { grid-template-columns: 1fr; }
+      
+      /* ── Компактная матрица без скролла (ОСТАВЛЯЕМ, ОНА ИДЕАЛЬНА) ── */
+      .matrix-grid-wrap { overflow: visible; padding-bottom: 0; }
+      .matrix-grid { 
+        grid-template-columns: 42px repeat(6, 1fr); 
+        gap: 4px; min-width: 100%; 
+      }
+      .mg-label, .mg-time, .mg-slot { 
+        min-height: 42px; height: 42px; 
+        font-size: 0.75rem; padding: 0; border-radius: 8px; 
+      }
+      .mg-time { font-size: 0.6rem; line-height: 1.1; }
+      .mg-slot.blocked::after, .mg-slot.preferred::after { font-size: 0.85rem; }
+
+      /* ── ВОЗВРАЩАЕМ ТАБЛИЦЕ СТРОГИЙ ВИД С ГОРИЗОНТАЛЬНЫМ СКРОЛЛОМ ── */
+      .schedule-card {
+        padding: 16px; /* Делаем отступы чуть меньше для телефона */
+        overflow-x: auto; /* Включаем горизонтальный скролл */
+        -webkit-overflow-scrolling: touch; /* Гладкий скролл для iOS */
+      }
+      .sched-table {
+        min-width: 550px; /* Фиксируем ширину, чтобы текст не сжимался */
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="orbs">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+</div>
+
+<div class="app">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sb-head">
+      <a href="{% url 'index' %}" class="logo">Go<span>Shiet</span></a>
+    </div>
+
+    <div class="sb-avatar">
+      <div class="av-circle">
+        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+      </div>
+      <div>
+        <div class="av-name">{{ user.last_name }} {{ user.first_name }}</div>
+        <div class="av-role">{{ user.academic_title|default:"Преподаватель" }} · {{ user.university.name }}</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <a class="nav-item active" href="{% url 'teacher_dashboard' %}">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Мои пожелания
+      </a>
+      <a class="nav-item" href="{% url 'schedule' %}">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Просмотр расписания
+      </a>
+    </nav>
+
+    <div class="sb-foot">
+      <a href="{% url 'logout' %}" class="nav-item logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Выйти
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <h1>Настройка пожеланий</h1>
+        <p>Отметьте удобные и неудобные слоты — алгоритм учтёт их при генерации</p>
+      </div>
+      <button class="save-btn" id="saveBtn" onclick="savePreferences()">
+        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span>Сохранить</span>
+      </button>
+    </div>
+
+    <!-- Hint -->
+    <div class="hint-bar">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Кликните один раз — слот заблокирован (✕). Дважды — предпочтительный (★). Трижды — сброс.
+    </div>
+
+    <!-- Limits -->
+    <div class="section-label">Лимиты нагрузки</div>
+    <div class="limits-row">
+
+      <div class="limit-card">
+        <div class="limit-icon" style="background:var(--purple-dim); color:var(--purple);">
+          <svg viewBox="0 0 24 24"><path d="M12 20V4"/><path d="M5 9l7-7 7 7"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div class="limit-label">Максимум пар в день</div>
+          <div class="limit-stepper">
+            <button class="step-btn" onclick="step('day',-1)">−</button>
+            <div class="step-val" id="val-day">{{ pref.max_lessons_per_day }}</div>
+            <button class="step-btn" onclick="step('day',1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="limit-card">
+        <div class="limit-icon" style="background:rgba(255,107,0,.1); color:var(--orange);">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div class="limit-label">Максимум пар подряд</div>
+          <div class="limit-stepper">
+            <button class="step-btn" onclick="step('consec',-1)">−</button>
+            <div class="step-val" id="val-consec">{{ pref.max_consecutive_lessons }}</div>
+            <button class="step-btn" onclick="step('consec',1)">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Matrix -->
+    <div class="section-label">Матрица доступности</div>
+    <div class="matrix-card">
+      <div class="matrix-head">
+        <div class="matrix-title">Недельная сетка</div>
+        <div class="legend">
+          <div class="leg"><div class="leg-dot" style="background:rgba(13,13,18,.06); border:1.5px solid var(--border);"></div>Нейтрально</div>
+          <div class="leg"><div class="leg-dot" style="background:var(--pink-dim); border:1.5px solid rgba(255,45,85,.4);"></div>Не могу</div>
+          <div class="leg"><div class="leg-dot" style="background:var(--green-dim); border:1.5px solid rgba(0,230,118,.4);"></div>Идеально</div>
+        </div>
+      </div>
+
+      <div class="matrix-grid-wrap">
+        <div class="matrix-grid" id="matrixGrid">
+          <!-- заголовок -->
+          <div class="mg-label"></div>
+          <div class="mg-label">Пн</div>
+          <div class="mg-label">Вт</div>
+          <div class="mg-label">Ср</div>
+          <div class="mg-label">Чт</div>
+          <div class="mg-label">Пт</div>
+          <div class="mg-label">Сб</div>
+          <!-- слоты генерируются JS-ом -->
+        </div>
+      </div>
+    </div>
+
+    <!-- My schedule preview -->
+    <div class="section-label">Моё расписание</div>
+    <div class="schedule-card">
+      {% if my_schedule %}
+        <table class="sched-table">
+          <thead>
+            <tr>
+              <th>День</th>
+              <th>Пара</th>
+              <th>Предмет</th>
+              <th>Аудитория</th>
+              <th>Тип</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in my_schedule %}
+            <tr>
+              <td>{{ e.get_weekday_display }}</td>
+              <td>{{ e.slot_number }}</td>
+              <td>{{ e.subject.name }}</td>
+              <td>{{ e.classroom.name|default:"—" }}</td>
+              <td><span class="type-pill type-{{ e.lesson_type }}">{{ e.get_lesson_type_display }}</span></td>
+              <td>
+                {% if e.is_approved %}
+                  <span class="approved-dot yes">Подтверждено</span>
+                {% else %}
+                  <span class="approved-dot no">Ожидает</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="sched-empty">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Расписание ещё не сгенерировано — ваши пожелания учтут при первой генерации.
+        </div>
+      {% endif %}
+    </div>
+
+    <div style="margin-top: 36px; text-align: center; padding-bottom: 24px;">
+      <a href="{% url 'index' %}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #fff; border: 1.5px solid var(--border); padding: 15px 28px; border-radius: 16px; color: var(--black); font-family: inherit; font-size: 1rem; font-weight: 800; text-decoration: none; box-shadow: 0 8px 24px rgba(13,13,18,0.06); transition: transform 0.2s, box-shadow 0.2s; width: 100%; max-width: 320px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(13,13,18,0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(13,13,18,0.06)';">
+        В GoShiet
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" id="toastIcon"></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+// ── данные из Django ──────────────────────────────────────────
+const INITIAL_BLOCKED   = {{ pref.blocked_slots|safe }};
+const INITIAL_PREFERRED = {{ pref.preferred_slots|safe }};
+const CSRF_TOKEN = '{{ csrf_token }}';
+
+const SLOT_TIMES = ['08:30','10:15','12:00','13:45','15:30','17:15'];
+const DAYS = 6;   // 0=Пн … 5=Сб
+const SLOTS = 6;  // пары 1-6
+
+// ── state ─────────────────────────────────────────────────────
+// matrix[weekday][slot] = 0|'blocked'|'preferred'
+const matrix = Array.from({length: DAYS}, () => Array(SLOTS).fill(0));
+
+function loadInitial() {
+  INITIAL_BLOCKED.forEach(({weekday, slot}) => {
+    if (weekday >= 0 && weekday < DAYS && slot >= 1 && slot <= SLOTS)
+      matrix[weekday][slot - 1] = 'blocked';
+  });
+  INITIAL_PREFERRED.forEach(({weekday, slot}) => {
+    if (weekday >= 0 && weekday < DAYS && slot >= 1 && slot <= SLOTS)
+      matrix[weekday][slot - 1] = 'preferred';
+  });
+}
+
+// ── build grid ────────────────────────────────────────────────
+function buildGrid() {
+  const grid = document.getElementById('matrixGrid');
+  // удаляем старые слоты (оставляем 7 заголовков)
+  while (grid.children.length > 7) grid.removeChild(grid.lastChild);
+
+  for (let s = 0; s < SLOTS; s++) {
+    // time label
+    const tl = document.createElement('div');
+    tl.className = 'mg-time';
+    tl.innerHTML = SLOT_TIMES[s].replace(':','<br>');
+    grid.appendChild(tl);
+
+    for (let d = 0; d < DAYS; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'mg-slot';
+      cell.dataset.d = d;
+      cell.dataset.s = s;
+      applyState(cell, matrix[d][s]);
+      cell.addEventListener('click', () => cycleSlot(d, s));
+      grid.appendChild(cell);
+    }
+  }
+}
+
+function applyState(cell, state) {
+  cell.classList.remove('blocked', 'preferred');
+  if (state === 'blocked')   cell.classList.add('blocked');
+  if (state === 'preferred') cell.classList.add('preferred');
+}
+
+function cycleSlot(d, s) {
+  const cur = matrix[d][s];
+  matrix[d][s] = cur === 0 ? 'blocked' : cur === 'blocked' ? 'preferred' : 0;
+  const cell = document.querySelector(`.mg-slot[data-d="${d}"][data-s="${s}"]`);
+  applyState(cell, matrix[d][s]);
+}
+
+// ── steppers ──────────────────────────────────────────────────
+const limits = {
+  day:    parseInt(document.getElementById('val-day').textContent)    || 4,
+  consec: parseInt(document.getElementById('val-consec').textContent) || 2,
+};
+
+function step(key, delta) {
+  const min = 1, max = key === 'day' ? 8 : 4;
+  limits[key] = Math.max(min, Math.min(max, limits[key] + delta));
+  document.getElementById(`val-${key}`).textContent = limits[key];
+}
+
+// ── save ──────────────────────────────────────────────────────
+async function savePreferences() {
+  const btn = document.getElementById('saveBtn');
+  btn.classList.add('saving');
+  btn.querySelector('span').textContent = 'Сохраняю…';
+
+  const blocked = [], preferred = [];
+  for (let d = 0; d < DAYS; d++) {
+    for (let s = 0; s < SLOTS; s++) {
+      if (matrix[d][s] === 'blocked')   blocked.push({weekday: d, slot: s + 1});
+      if (matrix[d][s] === 'preferred') preferred.push({weekday: d, slot: s + 1});
+    }
+  }
+
+  const body = {
+    max_lessons_per_day:    limits.day,
+    max_consecutive_lessons: limits.consec,
+    blocked_slots:   blocked,
+    preferred_slots: preferred,
+  };
+
+  try {
+    const res = await fetch('/api/preferences/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': CSRF_TOKEN,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    showToast('ok', '✓ Пожелания сохранены!');
+    btn.classList.add('saved');
+    btn.querySelector('span').textContent = 'Сохранено';
+    setTimeout(() => {
+      btn.classList.remove('saved', 'saving');
+      btn.querySelector('span').textContent = 'Сохранить';
+    }, 2500);
+  } catch (err) {
+    showToast('err', 'Ошибка: ' + err.message);
+    btn.classList.remove('saving');
+    btn.querySelector('span').textContent = 'Сохранить';
+  }
+}
+
+// ── toast ─────────────────────────────────────────────────────
+function showToast(type, msg) {
+  const t = document.getElementById('toast');
+  const icon = document.getElementById('toastIcon');
+  t.className = `toast ${type}`;
+  document.getElementById('toastMsg').textContent = msg;
+  icon.innerHTML = type === 'ok'
+    ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
+    : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── init ──────────────────────────────────────────────────────
+loadInitial();
+buildGrid();
+
+// ── управление мобильным меню ─────────────────────────────────
+const btnMenu = document.querySelector('.hamburger-td');
+const sidebar = document.getElementById('mobile-sidebar');
+const overlay = document.getElementById('sb-overlay');
+
+if (btnMenu && sidebar && overlay) {
+  btnMenu.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden'; // Убираем скролл фона
+  });
+  
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  });
+}
+
+</script>
+</body>
+</html>
